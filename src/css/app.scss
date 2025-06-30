@@ -1,0 +1,19 @@
+// app global css in SCSS form
+@import 'fontawesome/css/all.css';
+@import 'fontawesome/css/sharp-light.css';
+@import 'fontawesome/css/sharp-regular.css';
+@import 'fontawesome/css/sharp-solid.css';
+@import 'fontawesome/css/sharp-thin.css';
+
+@font-face {
+  font-family: allods;
+  src: url(./fonts/Allods.ttf);
+}
+
+body {
+  background-color: rgb(107, 107, 107);
+}
+
+.allods {
+  font-family: allods, Helvetica, Arial, Verdana, Tahoma, sans-serif;
+}
