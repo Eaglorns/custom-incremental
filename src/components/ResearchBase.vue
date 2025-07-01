@@ -1,47 +1,94 @@
 <template>
-  <div class="research-card-container">
+  <div class="q-gutter-md row wrap items-stretch q-pa-md" style="overflow-y: auto">
     <q-card
       v-for="meta in researchMeta"
       :key="meta.key"
-      class="card-main-custom q-pa-md research-card"
       flat
       bordered
+      class="q-pa-md column flex justify-between"
+      :style="{
+        background: 'var(--color-card-bg)',
+        borderColor: 'var(--color-card-border)',
+        minWidth: '260px',
+        maxWidth: '260px',
+        minHeight: '14vh',
+        maxHeight: '24vh',
+        position: 'relative',
+        boxSizing: 'border-box',
+        flex: '0 0 260px',
+      }"
       :class="{
-        active: researchingKey === meta.key,
-        inactive: (researchingKey && researchingKey !== meta.key) || isMaxLevel(meta.key).value,
-        completed: isMaxLevel(meta.key).value,
+        'bg-grey-1': !isMaxLevel(meta.key).value,
+        'bg-grey-3': isMaxLevel(meta.key).value,
       }"
     >
-      <div v-if="isMaxLevel(meta.key).value" class="completed-banner">Завершено</div>
-      <q-tooltip anchor="top middle" self="bottom middle" :offset="[0, 10]" class="tooltip-desc">
-        <div class="tooltip-title">{{ meta.title }}</div>
-        <div class="tooltip-text">
-          {{ meta.description }}
+      <div
+        v-if="isMaxLevel(meta.key).value"
+        class="q-pa-md flex flex-center text-white text-bold"
+        :style="{
+          background: 'var(--color-banner-completed-bg)',
+          color: 'var(--color-banner-completed-text)',
+          fontSize: '22px',
+          letterSpacing: '2px',
+          zIndex: 2,
+          pointerEvents: 'none',
+          borderRadius: '8px',
+          textShadow: '0 1px 2px #fff, 0 0 1px #fff, 0 0 2px #fff',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          width: '140%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          fontWeight: 900,
+          boxShadow: '0 2px 12px rgba(0,0,0,0.25)',
+          userSelect: 'none',
+          padding: '12px 0',
+        }"
+      >
+        Завершено
+      </div>
+      <q-tooltip
+        anchor="top middle"
+        self="bottom middle"
+        :offset="[0, 10]"
+        class="bg-grey-9 text-white"
+        style="
+          max-width: 240px;
+          font-size: 13px;
+          line-height: 1.4;
+          border-radius: 10px;
+          box-shadow: 0 2px 12px 0 rgba(80, 100, 200, 0.1);
+        "
+      >
+        <div class="text-bold" style="font-size: 15px; margin-bottom: 6px; color: #fff">
+          {{ meta.title }}
         </div>
+        <div style="font-size: 13px; color: #fff">{{ meta.description }}</div>
       </q-tooltip>
-      <q-card-section class="q-pa-sm card-section-fixed">
-        <div class="text-subtitle2 row items-center no-wrap">
-          <q-icon :name="meta.icon" size="18px" class="icon-cpu-custom q-mr-xs research-icon" />
+      <q-card-section class="q-pa-sm">
+        <div class="text-subtitle2 row items-center no-wrap ellipsis">
+          <q-icon :name="meta.icon" size="18px" class="text-primary q-mr-xs" />
           {{ meta.title }}
         </div>
       </q-card-section>
-      <div class="research-bottom q-px-sm q-pt-xs q-pb-none">
-        <div class="level-info q-mb-xs">
-          <q-icon name="fa-duotone fa-signal-bars" class="level-icon" />
+      <div class="column q-px-sm q-pt-xs q-pb-none flex-1">
+        <div class="row items-center text-grey-7 q-mb-xs" style="font-size: 13px; font-weight: 600">
+          <q-icon name="fa-duotone fa-signal-bars" class="q-mr-xs" />
           Уровень: {{ getResearch(meta.key).level }} / {{ getResearch(meta.key).maxLevel }}
         </div>
-        <div class="row justify-between items-center q-mb-xs research-cost-time-row">
+        <div class="row justify-between items-center q-mb-xs">
           <div class="row items-center">
-            <q-icon name="fa-duotone fa-coins" size="15px" class="q-mr-xs cost-icon" />
-            <q-badge class="text-label-custom" style="font-size: 11px">
-              {{ formatNumber(getResearchCost(meta.key).value) }}
-            </q-badge>
+            <q-icon name="fa-duotone fa-coins" size="15px" class="q-mr-xs text-grey-7" />
+            <q-badge class="q-pa-xs text-bold bg-grey-3 text-primary" style="font-size: 11px">{{
+              formatNumber(getResearchCost(meta.key).value)
+            }}</q-badge>
           </div>
           <div class="row items-center">
-            <q-icon name="fa-duotone fa-clock" size="15px" class="q-mr-xs time-icon" />
-            <q-badge class="text-label-custom" style="font-size: 11px">
-              {{ formatNumber(getResearchTime(meta.key).value) }} сек
-            </q-badge>
+            <q-icon name="fa-duotone fa-clock" size="15px" class="q-mr-xs text-grey-7" />
+            <q-badge class="q-pa-xs text-bold bg-grey-3 text-primary" style="font-size: 11px"
+              >{{ formatNumber(getResearchTime(meta.key).value) }} сек</q-badge
+            >
           </div>
         </div>
         <div v-if="getResearch(meta.key).maxLevel.gt(1)">
@@ -53,9 +100,11 @@
           />
         </div>
         <div v-else>
-          <q-badge :color="getResearch(meta.key).level ? 'green' : 'grey'" style="font-size: 11px">
-            {{ getResearch(meta.key).level ? 'Изучено' : 'Не изучено' }}
-          </q-badge>
+          <q-badge
+            :color="getResearch(meta.key).level ? 'green' : 'grey'"
+            style="font-size: 11px"
+            >{{ getResearch(meta.key).level ? 'Изучено' : 'Не изучено' }}</q-badge
+          >
         </div>
       </div>
       <q-separator spaced class="q-my-xs" />
@@ -77,10 +126,12 @@
               : 'Улучшить'
           "
           @click="startResearch(meta.key, false)"
-          :class="[
-            'btn-main-custom',
-            { cancel: researchingKey === meta.key && getResearch(meta.key).currentTime.gt(0) },
-          ]"
+          class="q-mx-xs"
+          :color="
+            researchingKey === meta.key && getResearch(meta.key).currentTime.gt(0)
+              ? 'negative'
+              : 'primary'
+          "
         />
       </q-card-actions>
     </q-card>
@@ -183,142 +234,3 @@ onMounted(() => {
   }
 });
 </script>
-
-<style lang="sass">
-@import 'src/css/theme-colors';
-
-.research-card-container
-  flex: 1 1 auto
-  min-height: 0
-  min-width: 0
-  width: 100%
-  display: flex
-  flex-wrap: wrap
-  align-items: stretch
-  align-content: flex-start
-  gap: 0.8vw
-  padding: 0.8vw
-  overflow-y: auto
-
-.research-card
-  flex: 0 0 260px
-  min-width: 260px
-  max-width: 260px
-  min-height: 14vh
-  max-height: 24vh
-  margin: 0
-  display: flex
-  flex-direction: column
-  position: relative
-  box-sizing: border-box
-
-.card-section-fixed
-  display: flex
-  flex-direction: column
-  flex: 0 0 auto
-  justify-content: flex-start
-  padding-top: 8px !important
-  padding-bottom: 0 !important
-
-.research-bottom
-  flex: 1 1 auto
-  display: flex
-  flex-direction: column
-  justify-content: flex-end
-  min-height: 40px
-
-  .text-label-custom
-    @include badge-main
-    font-size: 11px
-    margin-bottom: 2px
-    text-shadow: none
-
-  .q-badge.text-label-custom
-    @include badge-main
-    font-size: 11px
-    margin-bottom: 2px
-
-  .q-badge[style*="color: green"]
-    @include badge-success
-
-  .q-badge[style*="color: grey"]
-    @include badge-muted
-
-  .level-info
-    @include level-info
-
-  .level-info .level-icon
-    color: var(--color-level)
-    font-size: 15px
-    margin-right: 2px
-
-.text-subtitle2
-  @include card-title
-  min-height: 24px
-  max-height: 48px
-  overflow: hidden
-  text-overflow: ellipsis
-  white-space: normal
-  display: -webkit-box
-  -webkit-line-clamp: 2
-  -webkit-box-orient: vertical
-
-.research-icon
-  flex: 0 0 18px
-
-.tooltip-desc
-  max-width: 240px
-  white-space: normal
-  font-size: 13px
-  line-height: 1.4
-  padding: 10px 14px
-  border-radius: 10px
-  box-shadow: 0 2px 12px 0 rgba(80,100,200,0.10)
-  background: rgba(120, 100, 200, 0.70)
-  color: #222
-
-.tooltip-title
-  font-size: 15px
-  font-weight: bold
-  margin-bottom: 6px
-  color: #222
-
-.tooltip-text
-  font-size: 13px
-  color: #fff
-
-.q-badge
-  padding: 2px 6px
-
-.q-card-actions
-  margin-top: 2px
-  flex-shrink: 0
-
-.completed-banner
-  position: absolute
-  top: 50%
-  left: 50%
-  width: 140%
-  transform: translate(-50%, -50%)
-  background: rgba(60, 60, 60, 0.40)
-  color: #fff
-  text-align: center
-  font-size: 22px
-  font-weight: 900
-  letter-spacing: 2px
-  z-index: 2
-  pointer-events: none
-  padding: 12px 0
-  box-shadow: 0 2px 12px rgba(0,0,0,0.25)
-  user-select: none
-  border-radius: 8px
-  text-shadow: 0 1px 2px #fff, 0 0 1px #fff, 0 0 2px #fff
-
-.research-cost-time-row
-  width: 100%
-
-  .cost-icon,
-  .time-icon
-    color: var(--q-color-grey-7)
-    font-size: 15px
-</style>

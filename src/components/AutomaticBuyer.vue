@@ -224,7 +224,6 @@ function increaseBatch(helper: Helper) {
 </script>
 
 <style lang="sass">
-@import 'src/css/theme-colors';
 .helper-wrapper
   max-width: 280px
   min-width: 240px

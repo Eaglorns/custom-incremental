@@ -1,8 +1,13 @@
 <template>
-  <q-card flat bordered class="card-main-custom q-pa-lg">
-    <div class="card-header-custom flex items-center q-mb-lg">
-      <q-icon name="fa-duotone fa-memory" class="icon-ram-custom q-mr-md" size="32px" />
-      <span class="text-main-custom text-h5 text-weight-bold">Оперативная память</span>
+  <q-card
+    flat
+    bordered
+    class="q-pa-lg"
+    :style="{ background: 'var(--color-card-bg)', borderColor: 'var(--color-card-border)' }"
+  >
+    <div class="row items-center q-mb-lg">
+      <q-icon name="fa-duotone fa-memory" class="text-primary q-mr-md" size="32px" />
+      <span class="text-h5 text-weight-bold text-primary">Оперативная память</span>
     </div>
     <q-form>
       <div class="row q-col-gutter-lg">
@@ -10,16 +15,16 @@
           <q-input
             :model-value="formatNumber(value)"
             label="Значение"
-            class="my-ipnut q-mb-md"
+            class="q-mb-md"
             :disable="true"
             dense
-            :label-class="'text-label-custom text-weight-bold text-body1'"
-            :input-class="'text-value-custom text-h6 text-main-custom'"
+            label-class="text-weight-bold text-body1 text-primary"
+            input-class="text-h6 text-primary"
             color="primary"
             outlined
           >
             <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-gauge" class="icon-input-custom" />
+              <q-icon name="fa-duotone fa-gauge" class="text-primary" />
             </template>
           </q-input>
         </div>
@@ -27,16 +32,16 @@
           <q-input
             :model-value="formatNumber(multiply)"
             label="Множитель"
-            class="my-ipnut q-mb-md"
+            class="q-mb-md"
             :disable="true"
             dense
-            :label-class="'text-label-custom text-weight-bold text-body1'"
-            :input-class="'text-value-custom text-h6 text-main-custom'"
+            label-class="text-weight-bold text-body1 text-primary"
+            input-class="text-h6 text-primary"
             color="primary"
             outlined
           >
             <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-xmark" class="icon-input-custom" />
+              <q-icon name="fa-duotone fa-xmark" class="text-primary" />
             </template>
           </q-input>
         </div>
@@ -44,16 +49,16 @@
           <q-input
             :model-value="formatNumber(costMain)"
             label="Основная стоимость"
-            class="my-ipnut q-mb-md"
+            class="q-mb-md"
             :disable="true"
             dense
-            :label-class="'text-label-custom text-weight-bold text-body1'"
-            :input-class="'text-value-custom text-h6 text-main-custom'"
+            label-class="text-weight-bold text-body1 text-primary"
+            input-class="text-h6 text-primary"
             color="primary"
             outlined
           >
             <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-coins" class="icon-input-custom" />
+              <q-icon name="fa-duotone fa-coins" class="text-primary" />
             </template>
           </q-input>
         </div>
@@ -61,16 +66,16 @@
           <q-input
             :model-value="formatNumber(costMultiply)"
             label="Стоимость множителя"
-            class="my-ipnut q-mb-md"
+            class="q-mb-md"
             :disable="true"
             dense
-            :label-class="'text-label-custom text-weight-bold text-body1'"
-            :input-class="'text-value-custom text-h6 text-main-custom'"
+            label-class="text-weight-bold text-body1 text-primary"
+            input-class="text-h6 text-primary"
             color="primary"
             outlined
           >
             <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-arrow-up-right-dots" class="icon-input-custom" />
+              <q-icon name="fa-duotone fa-arrow-up-right-dots" class="text-primary" />
             </template>
           </q-input>
         </div>
@@ -78,16 +83,16 @@
           <q-input
             :model-value="formatNumber(gainPerTick)"
             label="Прирост хранилища за тик"
-            class="my-ipnut q-mb-md"
+            class="q-mb-md"
             :disable="true"
             dense
-            :label-class="'text-label-custom text-weight-bold text-body1'"
-            :input-class="'text-value-custom text-h6 text-main-custom'"
+            label-class="text-weight-bold text-body1 text-primary"
+            input-class="text-h6 text-primary"
             color="primary"
             outlined
           >
             <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-arrow-trend-up" class="icon-input-custom" />
+              <q-icon name="fa-duotone fa-arrow-trend-up" class="text-primary" />
             </template>
           </q-input>
         </div>
@@ -98,7 +103,7 @@
             color="primary"
             outline
             label="Купить"
-            class="full-width btn-main-custom"
+            class="full-width"
             @click="onBuyMain"
             size="lg"
             :disable="!canBuyMain"
@@ -109,7 +114,7 @@
             color="primary"
             outline
             label="Умножить"
-            class="full-width btn-main-custom"
+            class="full-width"
             @click="onBuyMultiply"
             size="lg"
             :disable="!canBuyMultiply"
@@ -160,42 +165,3 @@ const onBuyMultiply = () => {
   ram.multiply = ram.multiply.plus(1);
 };
 </script>
-
-<style scoped>
-.card-main-custom {
-  background-color: var(--q-color-white);
-  border: 1px solid var(--q-color-primary);
-  border-radius: 8px;
-}
-
-.card-header-custom {
-  display: flex;
-  align-items: center;
-}
-
-.icon-ram-custom {
-  color: var(--q-color-primary);
-}
-
-.text-main-custom {
-  color: var(--q-color-primary);
-}
-
-.text-label-custom {
-  color: var(--q-color-primary);
-}
-
-.text-value-custom {
-  color: var(--q-color-primary);
-}
-
-.btn-main-custom {
-  background-color: var(--q-color-primary);
-  color: var(--q-color-white);
-  border-radius: 4px;
-}
-
-.btn-main-custom:hover {
-  background-color: var(--q-color-primary-darker);
-}
-</style>
