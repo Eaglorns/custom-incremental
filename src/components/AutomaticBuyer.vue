@@ -224,6 +224,7 @@ function increaseBatch(helper: Helper) {
 </script>
 
 <style lang="sass">
+@import 'src/css/theme-colors';
 .helper-wrapper
   max-width: 280px
   min-width: 240px
@@ -268,4 +269,18 @@ function increaseBatch(helper: Helper) {
 
 .upgrade-btn-narrow
   flex: 0 0 auto
+
+.upgrade-btn-custom
+  background: #d3d6de !important // гораздо более серый
+  color: #2563eb !important // насыщенно синий текст
+  border: 2px solid #c2cbe0
+  border-radius: 8px
+  box-shadow: 0 2px 8px 0 rgba(80,100,200,0.10)
+  font-weight: 700
+  letter-spacing: 0.02em
+  transition: background 0.2s, color 0.2s, border 0.2s
+  &:hover:not(:disabled)
+    background: #bfc3ce !important
+    color: #1e40af !important
+    border-color: #aab3c8
 </style>

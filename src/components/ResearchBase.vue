@@ -26,16 +26,23 @@
         </div>
       </q-card-section>
       <div class="research-bottom q-px-sm q-pt-xs q-pb-none">
-        <div class="text-label-custom text-weight-medium q-mb-xs" style="font-size: 12px">
+        <div class="level-info q-mb-xs">
+          <q-icon name="fa-duotone fa-signal-bars" class="level-icon" />
           Уровень: {{ getResearch(meta.key).level }} / {{ getResearch(meta.key).maxLevel }}
         </div>
-        <div class="row items-center q-mb-xs">
-          <q-badge class="q-mr-xs text-label-custom" style="font-size: 11px">
-            {{ formatNumber(getResearchCost(meta.key).value) }}
-          </q-badge>
-          <q-badge class="text-label-custom" style="font-size: 11px">
-            {{ formatNumber(getResearchTime(meta.key).value) }} сек
-          </q-badge>
+        <div class="row justify-between items-center q-mb-xs research-cost-time-row">
+          <div class="row items-center">
+            <q-icon name="fa-duotone fa-coins" size="15px" class="q-mr-xs cost-icon" />
+            <q-badge class="text-label-custom" style="font-size: 11px">
+              {{ formatNumber(getResearchCost(meta.key).value) }}
+            </q-badge>
+          </div>
+          <div class="row items-center">
+            <q-icon name="fa-duotone fa-clock" size="15px" class="q-mr-xs time-icon" />
+            <q-badge class="text-label-custom" style="font-size: 11px">
+              {{ formatNumber(getResearchTime(meta.key).value) }} сек
+            </q-badge>
+          </div>
         </div>
         <div v-if="getResearch(meta.key).maxLevel.gt(1)">
           <q-linear-progress
@@ -70,7 +77,10 @@
               : 'Улучшить'
           "
           @click="startResearch(meta.key, false)"
-          class="btn-main-custom"
+          :class="[
+            'btn-main-custom',
+            { cancel: researchingKey === meta.key && getResearch(meta.key).currentTime.gt(0) },
+          ]"
         />
       </q-card-actions>
     </q-card>
@@ -175,6 +185,8 @@ onMounted(() => {
 </script>
 
 <style lang="sass">
+@import 'src/css/theme-colors';
+
 .research-card-container
   flex: 1 1 auto
   min-height: 0
@@ -188,10 +200,10 @@ onMounted(() => {
   padding: 0.8vw
   overflow-y: auto
 
-.research-card.compact
-  flex: 1 1 11vw
-  min-width: 120px
-  max-width: 13vw
+.research-card
+  flex: 0 0 260px
+  min-width: 260px
+  max-width: 260px
   min-height: 14vh
   max-height: 24vh
   margin: 0
@@ -215,7 +227,33 @@ onMounted(() => {
   justify-content: flex-end
   min-height: 40px
 
+  .text-label-custom
+    @include badge-main
+    font-size: 11px
+    margin-bottom: 2px
+    text-shadow: none
+
+  .q-badge.text-label-custom
+    @include badge-main
+    font-size: 11px
+    margin-bottom: 2px
+
+  .q-badge[style*="color: green"]
+    @include badge-success
+
+  .q-badge[style*="color: grey"]
+    @include badge-muted
+
+  .level-info
+    @include level-info
+
+  .level-info .level-icon
+    color: var(--color-level)
+    font-size: 15px
+    margin-right: 2px
+
 .text-subtitle2
+  @include card-title
   min-height: 24px
   max-height: 48px
   overflow: hidden
@@ -224,9 +262,6 @@ onMounted(() => {
   display: -webkit-box
   -webkit-line-clamp: 2
   -webkit-box-orient: vertical
-  font-weight: bold
-  margin-bottom: 10px
-  line-height: 1.2
 
 .research-icon
   flex: 0 0 18px
@@ -278,4 +313,12 @@ onMounted(() => {
   user-select: none
   border-radius: 8px
   text-shadow: 0 1px 2px #fff, 0 0 1px #fff, 0 0 2px #fff
+
+.research-cost-time-row
+  width: 100%
+
+  .cost-icon,
+  .time-icon
+    color: var(--q-color-grey-7)
+    font-size: 15px
 </style>

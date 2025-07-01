@@ -101,6 +101,7 @@
             class="full-width btn-main-custom"
             @click="onBuyMain"
             size="lg"
+            :disable="!canBuyMain"
           />
         </div>
         <div class="col-6">
@@ -111,6 +112,7 @@
             class="full-width btn-main-custom"
             @click="onBuyMultiply"
             size="lg"
+            :disable="!canBuyMultiply"
           />
         </div>
       </div>
