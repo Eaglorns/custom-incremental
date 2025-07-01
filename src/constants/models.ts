@@ -10,3 +10,13 @@ export interface Research {
   timeMultiply: Decimal;
   maxLevel: Decimal;
 }
+
+export interface HelperState {
+  key: string;
+  count: number;
+  batch: number;
+  cost: number;
+  upgradeCost: number;
+  canHire: boolean;
+  canUpgrade: boolean;
+}

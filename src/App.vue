@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, onBeforeUnmount, computed } from 'vue';
 import { useStoreGame } from 'src/stores/game';
-import type { Research } from 'components/models';
+import type { Research } from 'src/constants/models';
 
 const storeGame = useStoreGame();
 
@@ -35,9 +35,9 @@ const giveEpicNumber = computed(() => {
 });
 
 const giveCapacity = computed(() => {
-  const parRAMCPU = storeGame.shop.ram.value;
+  const parRAM = storeGame.shop.ram.value;
   const parResearchRam = storeGame.research.list.ramPow;
-  return parRAMCPU.pow(parResearchRam.bonus.mul(parResearchRam.level).plus(1));
+  return parRAM.pow(parResearchRam.bonus.mul(parResearchRam.level).plus(1));
 });
 
 const gameTick = () => {

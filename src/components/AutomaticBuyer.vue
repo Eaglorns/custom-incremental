@@ -14,7 +14,7 @@
                 size="20px"
                 class="q-mr-sm helper-icon icon-default-custom"
               />
-              <span class="text-body1 text-weight-bold helper-title text-primary-custom">
+              <span class="text-body1 text-weight-bold helper-title text-blue-4">
                 {{ helper.title }}
               </span>
             </div>
@@ -34,12 +34,14 @@
                       class="q-mr-xs icon-default-custom"
                     />
                     <span class="text-caption q-mr-xs text-secondary-custom">Количество:</span>
-                    <span class="text-body2 text-weight-bold text-primary-custom">{{
-                      helper.count
-                    }}</span>
+                    <span class="text-body2 text-weight-bold text-blue-4">{{ helper.count }}</span>
                   </div>
                   <div class="row items-center q-gutter-xs">
-                    <q-chip dense class="q-pa-xs upgrade-cost-chip-wide upgrade-chip-custom">
+                    <q-chip
+                      dense
+                      class="q-pa-xs upgrade-cost-chip-wide upgrade-chip-custom"
+                      style="min-width: 90px"
+                    >
                       <q-icon
                         name="fa-duotone fa-coins"
                         size="12px"
@@ -49,50 +51,17 @@
                     </q-chip>
                     <q-btn
                       label="Нанять"
-                      @click="hireHelper(helper)"
                       :disable="!helper.canHire"
                       size="sm"
                       dense
                       unelevated
-                      class="upgrade-btn-narrow upgrade-btn-custom"
+                      class="upgrade-btn-narrow upgrade-btn-custom btn-equal-width"
+                      style="min-width: 90px"
                     />
                   </div>
                 </div>
 
                 <q-separator class="q-my-xs separator-custom" />
-
-                <div class="column q-gutter-xs">
-                  <div class="row items-center">
-                    <q-icon
-                      name="fa-duotone fa-boxes-stacked"
-                      size="16px"
-                      class="q-mr-xs icon-default-custom"
-                    />
-                    <span class="text-caption q-mr-xs text-secondary-custom">За раз:</span>
-                    <span class="text-body2 text-weight-bold text-primary-custom">{{
-                      helper.batch
-                    }}</span>
-                  </div>
-                  <div class="row items-center q-gutter-xs">
-                    <q-chip dense class="q-pa-xs upgrade-cost-chip-wide upgrade-chip-custom">
-                      <q-icon
-                        name="fa-duotone fa-coins"
-                        size="12px"
-                        class="q-mr-xs icon-accent-custom"
-                      />
-                      {{ formatNumber(helper.upgradeCost) }}
-                    </q-chip>
-                    <q-btn
-                      label="Улучшить"
-                      @click="increaseBatch(helper)"
-                      :disable="!helper.canUpgrade"
-                      size="sm"
-                      dense
-                      unelevated
-                      class="upgrade-btn-narrow upgrade-btn-custom"
-                    />
-                  </div>
-                </div>
 
                 <q-separator class="q-my-xs separator-custom" />
 
@@ -104,12 +73,16 @@
                       class="q-mr-xs icon-default-custom"
                     />
                     <span class="text-caption q-mr-xs text-secondary-custom">Шанс покупки:</span>
-                    <span class="text-body2 text-weight-bold text-primary-custom"
+                    <span class="text-body2 text-weight-bold text-blue-4"
                       >{{ calcChance(helper.count) }}%</span
                     >
                   </div>
                   <div class="row items-center q-gutter-xs">
-                    <q-chip dense class="q-pa-xs upgrade-cost-chip-wide upgrade-chip-custom">
+                    <q-chip
+                      dense
+                      class="q-pa-xs upgrade-cost-chip-wide upgrade-chip-custom"
+                      style="min-width: 90px"
+                    >
                       <q-icon
                         name="fa-duotone fa-coins"
                         size="12px"
@@ -119,12 +92,12 @@
                     </q-chip>
                     <q-btn
                       label="Улучшить"
-                      @click="increaseChance(helper)"
                       :disable="!helper.canUpgrade"
                       size="sm"
                       dense
                       unelevated
-                      class="upgrade-btn-narrow upgrade-btn-custom"
+                      class="upgrade-btn-narrow upgrade-btn-custom btn-equal-width"
+                      style="min-width: 90px"
                     />
                   </div>
                 </div>
@@ -138,8 +111,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed } from 'vue';
+import { helpersMeta } from 'src/constants/helpersMeta';
+import type { HelperState } from 'src/constants/models';
+import { useStoreGame } from 'src/stores/game';
 
+const storeGame = useStoreGame();
+
+// Собираем массив карточек для cpu, hdd, ram
+const helpers = computed(() => {
+  return helpersMeta.map((meta) => {
+    // Данные из storeGame.helpers (cpu, hdd, ram)
+    const state = storeGame.helpers[meta.key as keyof typeof storeGame.helpers];
+    return {
+      ...meta,
+      ...state,
+    };
+  });
+});
 function formatNumber(val: number) {
   return val.toLocaleString();
 }
@@ -153,74 +142,6 @@ function calcChance(count: number) {
   if (chance > max) chance = max;
   return chance.toFixed(1).replace('.0', '');
 }
-
-interface Helper {
-  key: string;
-  icon: string;
-  color: string;
-  title: string;
-  description: string;
-  cost: number;
-  upgradeCost: number;
-  batch: number;
-  count: number;
-  canHire: boolean;
-  canUpgrade: boolean;
-}
-
-const helpers = ref<Helper[]>([
-  {
-    key: 'cpu',
-    icon: 'fa-duotone fa-microchip',
-    color: 'primary',
-    title: 'Скупщик процессоров',
-    description: 'Находит выгодные предложения и автоматически закупает процессоры.',
-    cost: 1000,
-    upgradeCost: 5000,
-    batch: 1,
-    count: 0,
-    canHire: true,
-    canUpgrade: true,
-  },
-  {
-    key: 'hdd',
-    icon: 'fa-duotone fa-hard-drive',
-    color: 'deep-orange',
-    title: 'Скупщик жёстких дисков',
-    description: 'Знает все тайные склады и всегда находит лучшие жёсткие диски для вашей системы.',
-    cost: 2000,
-    upgradeCost: 9000,
-    batch: 1,
-    count: 0,
-    canHire: true,
-    canUpgrade: true,
-  },
-  {
-    key: 'ram',
-    icon: 'fa-duotone fa-memory',
-    color: 'secondary',
-    title: 'Скупщик памяти',
-    description: 'Постоянно мониторит рынок и пополняет запасы оперативной памяти.',
-    cost: 1500,
-    upgradeCost: 7000,
-    batch: 1,
-    count: 0,
-    canHire: true,
-    canUpgrade: true,
-  },
-]);
-
-function hireHelper(helper: Helper) {
-  helper.count++;
-}
-
-function increaseChance(helper: Helper) {
-  helper.count++;
-}
-
-function increaseBatch(helper: Helper) {
-  helper.batch++;
-}
 </script>
 
 <style lang="sass">
@@ -230,11 +151,13 @@ function increaseBatch(helper: Helper) {
   flex: 0 0 260px
 
 .helper-card
-  height: 342px
   min-height: 342px
   display: flex
   flex-direction: column
   width: 100%
+  box-sizing: border-box
+  max-width: 100%
+  height: auto
 
 .helper-header
   flex: 0 0 auto
@@ -265,13 +188,17 @@ function increaseBatch(helper: Helper) {
 
 .upgrade-cost-chip-wide
   flex: 1 1 auto
+  font-size: 14px
+  min-width: 0
+  max-width: 100%
+  box-sizing: border-box
 
 .upgrade-btn-narrow
   flex: 0 0 auto
 
 .upgrade-btn-custom
-  background: #d3d6de !important // гораздо более серый
-  color: #2563eb !important // насыщенно синий текст
+  background: #d3d6de !important
+  color: #2563eb !important
   border: 2px solid #c2cbe0
   border-radius: 8px
   box-shadow: 0 2px 8px 0 rgba(80,100,200,0.10)
@@ -282,4 +209,11 @@ function increaseBatch(helper: Helper) {
     background: #bfc3ce !important
     color: #1e40af !important
     border-color: #aab3c8
+
+.btn-equal-width
+  min-width: 90px
+  max-width: 100%
+  width: 90px
+  justify-content: center
+  box-sizing: border-box
 </style>

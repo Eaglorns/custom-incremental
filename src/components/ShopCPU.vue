@@ -19,7 +19,7 @@
             :disable="true"
             dense
             label-class="text-weight-bold text-body1 text-primary"
-            input-class="text-h6 text-primary"
+            input-class="text-h6 text-blue-4"
             color="primary"
             outlined
           >
@@ -36,7 +36,7 @@
             :disable="true"
             dense
             label-class="text-weight-bold text-body1 text-primary"
-            input-class="text-h6 text-primary"
+            input-class="text-h6 text-blue-4"
             color="primary"
             outlined
           >
@@ -53,7 +53,7 @@
             :disable="true"
             dense
             label-class="text-weight-bold text-body1 text-primary"
-            input-class="text-h6 text-primary"
+            input-class="text-h6 text-blue-4"
             color="primary"
             outlined
           >
@@ -70,7 +70,7 @@
             :disable="true"
             dense
             label-class="text-weight-bold text-body1 text-primary"
-            input-class="text-h6 text-primary"
+            input-class="text-h6 text-blue-4"
             color="primary"
             outlined
           >
@@ -87,7 +87,7 @@
             :disable="true"
             dense
             label-class="text-weight-bold text-body1 text-primary"
-            input-class="text-h6 text-primary"
+            input-class="text-h6 text-blue-4"
             color="primary"
             outlined
           >
