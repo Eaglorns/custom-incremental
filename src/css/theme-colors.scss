@@ -1,0 +1,95 @@
+// Общие цветовые переменные для проекта
+:root {
+  --color-card-border: #e0e0e0;
+  --color-text-primary: #1976d2;
+  --color-text-secondary: #757575;
+  --color-text-muted: #bdbdbd;
+
+  --color-btn-main: #1976d2;
+  --color-btn-main-hover: #1565c0;
+  --color-btn-main-text: #fff;
+
+  --color-icon-main: #1976d2;
+  --color-icon-cpu: #1976d2;
+  --color-icon-ram: #1976d2;
+  --color-icon-hard: #1976d2;
+
+  --color-input-label: #424242;
+  --color-input-value: #1976d2;
+}
+
+@mixin card-style {
+  border: 1px solid var(--color-card-border);
+  border-radius: 8px;
+}
+
+@mixin button-main {
+  background-color: var(--color-btn-main);
+  color: var(--color-btn-main-text);
+  font-size: 16px;
+  font-weight: 500;
+  padding: 12px 0;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: var(--color-btn-main-hover);
+  }
+}
+
+@mixin text-main {
+  color: var(--color-text-primary);
+}
+
+@mixin text-label {
+  color: var(--color-input-label);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@mixin text-value {
+  color: var(--color-input-value);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+@mixin icon-main {
+  color: var(--color-icon-main);
+}
+
+.card-main-custom {
+  @include card-style;
+}
+
+.card-header-custom {
+  padding: 16px;
+}
+
+.text-main-custom {
+  @include text-main;
+}
+
+.text-label-custom {
+  @include text-label;
+}
+
+.text-value-custom {
+  @include text-value;
+}
+
+.icon-input-custom {
+  @include icon-main;
+}
+
+.btn-main-custom {
+  @include button-main;
+}
+
+.icon-cpu-custom {
+  color: var(--color-icon-cpu);
+}
+.icon-ram-custom {
+  color: var(--color-icon-ram);
+}
+.icon-hard-custom {
+  color: var(--color-icon-hard);
+}

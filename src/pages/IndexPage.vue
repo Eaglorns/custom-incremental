@@ -1,9 +1,9 @@
 <template>
-  <q-page class="column items-stretch full-width full-height">
-    <q-banner style="background: transparent; min-height: 0; padding: 0; margin-top: 8px">
-      <div class="row items-center full-width" style="width: 100%">
-        <div style="flex: 1 1 0"></div>
-        <div class="row items-center justify-center" style="flex: 2 2 0; min-width: 0">
+  <q-page class="main-layout">
+    <q-banner class="main-banner">
+      <div class="banner-row">
+        <div class="banner-empty"></div>
+        <div class="banner-main">
           <q-icon name="fa-duotone fa-gauge-high" size="24px" color="primary" />
           <span class="text-weight-bold text-h5 q-mx-xs">{{
             formatNumber(storeGame.epicNumber)
@@ -14,28 +14,18 @@
             formatNumber(storeGame.capacity)
           }}</span>
         </div>
-        <div class="banner-research-status" style="font-size: 1rem; white-space: nowrap">
+        <div class="banner-research-status">
           <div v-if="currentResearch" class="row items-center">
-            <span class="banner-research-title" style="font-size: 1rem; white-space: nowrap">
+            <span class="banner-research-title">
               {{ currentResearchTime }} сек.
               <q-icon name="fa-duotone fa-flask" color="secondary" size="20px" class="q-ml-xs" />
               {{ currentResearch.title }}
             </span>
           </div>
-          <div v-else></div>
         </div>
       </div>
     </q-banner>
-    <q-card
-      class="full-width full-height q-pa-none"
-      style="
-        flex: 1 1 0;
-        align-self: stretch;
-        padding: 8px 0 8px 0;
-        margin-bottom: 8px;
-        margin-top: 8px;
-      "
-    >
+    <q-card class="main-card">
       <q-tabs
         v-model="tab"
         dense
@@ -53,11 +43,9 @@
         <q-tab name="help" icon="fa-duotone fa-circle-question" label="Помощь" />
         <q-tab name="setting" icon="fa-duotone fa-gear-complex" label="Настройки" />
       </q-tabs>
-
       <q-separator />
-
-      <q-tab-panels v-model="tab">
-        <q-tab-panel name="shop" class="q-pa-none">
+      <q-tab-panels v-model="tab" animated>
+        <q-tab-panel name="shop" class="panel-flex">
           <q-splitter v-model="splitterModel">
             <template v-slot:before>
               <q-tabs v-model="innerShop" vertical class="text-teal">
@@ -66,28 +54,20 @@
                 <q-tab name="innerShopRAM" icon="fa-duotone fa-memory" label="Оперативная память" />
               </q-tabs>
             </template>
-
             <template v-slot:after>
               <q-tab-panels
                 v-model="innerShop"
                 transition-prev="slide-down"
                 transition-next="slide-up"
               >
-                <q-tab-panel name="innerShopCPU">
-                  <ShopCPU />
-                </q-tab-panel>
-                <q-tab-panel name="innerShopHard">
-                  <ShopHard />
-                </q-tab-panel>
-                <q-tab-panel name="innerShopRAM">
-                  <ShopRAM />
-                </q-tab-panel>
+                <q-tab-panel name="innerShopCPU"><ShopCPU /></q-tab-panel>
+                <q-tab-panel name="innerShopHard"><ShopHard /></q-tab-panel>
+                <q-tab-panel name="innerShopRAM"><ShopRAM /></q-tab-panel>
               </q-tab-panels>
             </template>
           </q-splitter>
         </q-tab-panel>
-
-        <q-tab-panel name="research" class="q-pa-none">
+        <q-tab-panel name="research" class="panel-flex">
           <q-splitter v-model="splitterModel">
             <template v-slot:before>
               <q-tabs v-model="innerResearch" vertical class="text-teal">
@@ -98,21 +78,18 @@
                 />
               </q-tabs>
             </template>
-
             <template v-slot:after>
               <q-tab-panels
                 v-model="innerResearch"
                 transition-prev="slide-down"
                 transition-next="slide-up"
               >
-                <q-tab-panel name="innerResearchBase">
-                  <ResearchBase />
-                </q-tab-panel>
+                <q-tab-panel name="innerResearchBase"><ResearchBase /></q-tab-panel>
               </q-tab-panels>
             </template>
           </q-splitter>
         </q-tab-panel>
-        <q-tab-panel name="automatic">
+        <q-tab-panel name="automatic" class="panel-flex">
           <q-splitter v-model="splitterModel">
             <template v-slot:before>
               <q-tabs v-model="innerAutomatic" vertical class="text-teal">
@@ -123,38 +100,33 @@
                 />
               </q-tabs>
             </template>
-
             <template v-slot:after>
               <q-tab-panels
                 v-model="innerAutomatic"
                 transition-prev="slide-down"
                 transition-next="slide-up"
               >
-                <q-tab-panel name="innerAutomaticBuyer">
-                  <AutomaticBuyer />
-                </q-tab-panel>
+                <q-tab-panel name="innerAutomaticBuyer"><AutomaticBuyer /></q-tab-panel>
               </q-tab-panels>
             </template>
           </q-splitter>
         </q-tab-panel>
-        <q-tab-panel name="eternity"></q-tab-panel>
-        <q-tab-panel name="infinity"></q-tab-panel>
-        <q-tab-panel name="achievement"></q-tab-panel>
-        <q-tab-panel name="help"></q-tab-panel>
-        <q-tab-panel name="setting"></q-tab-panel>
+        <q-tab-panel name="eternity" class="panel-flex"></q-tab-panel>
+        <q-tab-panel name="infinity" class="panel-flex"></q-tab-panel>
+        <q-tab-panel name="achievement" class="panel-flex"></q-tab-panel>
+        <q-tab-panel name="help" class="panel-flex"></q-tab-panel>
+        <q-tab-panel name="setting" class="panel-flex"></q-tab-panel>
       </q-tab-panels>
     </q-card>
-    <q-footer class="q-pa-sm bg-grey-10">
-      <div class="row items-center" style="width: 100%; justify-content: center">
+    <q-footer class="main-footer">
+      <div class="footer-row">
         <q-icon
           name="fa-duotone fa-hourglass-end"
           color="deep-purple-3"
           size="20px"
           class="q-mr-xs"
         />
-        <span class="q-mr-md" style="color: #fff; font-weight: 500; font-size: 16px">
-          До вечности:
-        </span>
+        <span class="q-mr-md footer-label">До вечности:</span>
         <q-linear-progress
           :value="infinityProgress"
           color="deep-purple-5"
@@ -164,9 +136,7 @@
           class="q-mr-md"
         >
           <div class="absolute-full flex flex-center">
-            <span style="color: #fff; font-weight: bold; font-size: 15px">
-              {{ (infinityProgress * 100).toFixed(2) }}%
-            </span>
+            <span class="footer-progress">{{ (infinityProgress * 100).toFixed(2) }}%</span>
           </div>
         </q-linear-progress>
       </div>
@@ -220,27 +190,37 @@ const infinityProgress = computed(() => {
 </script>
 
 <style lang="sass">
-.my-ipnut-full
-  min-width: 150px
-  margin-bottom: 8px
-  .q-field__native, .q-field__input
-    text-align: center
+.main-layout
+  min-height: 100vh
+  min-width: 100vw
+  display: flex
+  flex-direction: column
 
-.my-number
-  font-size: 20px;
-  color: red
+.main-banner
+  flex: 0 0 8vh
+  min-height: 8vh
+  max-height: 12vh
+  width: 100vw
+  background: transparent
+  padding: 0
+  margin-top: 8px
 
-.my-ipnut
-  min-width: 100px;
+.banner-row
+  display: flex
+  flex-direction: row
+  align-items: center
+  width: 100%
+  height: 100%
 
-.full-width
-  width: 100% !important
+.banner-empty
+  flex: 1 1 0
 
-.full-height
-  height: 100% !important
-
-.q-tabs .q-tab:not(.q-tab--active)
-  color: #607d8b !important
+.banner-main
+  flex: 2 2 0
+  min-width: 0
+  display: flex
+  align-items: center
+  justify-content: center
 
 .banner-research-status
   flex: 1 1 0
@@ -260,4 +240,62 @@ const infinityProgress = computed(() => {
   white-space: nowrap
   display: inline-block
   vertical-align: middle
+
+.main-card
+  flex: 1 1 auto
+  min-height: 0
+  min-width: 0
+  width: 100vw
+  display: flex
+  flex-direction: column
+  background: transparent
+  box-shadow: none
+  padding: 0
+
+.panel-flex
+  flex: 1 1 auto
+  min-height: 0
+  min-width: 0
+  display: flex
+  flex-direction: column
+
+.main-footer
+  flex: 0 0 4vh
+  min-height: 4vh
+  max-height: 4vh
+  width: 100vw
+  padding: 0
+  background: #23243a
+  display: flex
+  align-items: center
+  justify-content: center
+
+.footer-row
+  display: flex
+  align-items: center
+  justify-content: center
+  width: 100%
+  height: 100%
+
+.footer-label
+  color: #fff
+  font-weight: 500
+  font-size: 16px
+
+.footer-progress
+  color: #fff
+  font-weight: bold
+  font-size: 15px
+
+.q-tab-panels
+  flex: 1 1 auto
+  min-height: 0
+  display: flex
+  flex-direction: column
+
+.q-panel-parent
+  flex: 1 1 auto
+  min-height: 0
+  display: flex
+  flex-direction: column
 </style>

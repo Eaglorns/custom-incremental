@@ -1,16 +1,15 @@
 <template>
-  <div class="row q-gutter-xs q-pa-xs">
+  <div class="research-card-container">
     <q-card
       v-for="meta in researchMeta"
       :key="meta.key"
-      class="research-card compact"
+      class="card-main-custom q-pa-md research-card"
       flat
       bordered
       :class="{
-        'active-research': researchingKey === meta.key,
-        'inactive-research':
-          (researchingKey && researchingKey !== meta.key) || isMaxLevel(meta.key).value,
-        'completed-research': isMaxLevel(meta.key).value,
+        active: researchingKey === meta.key,
+        inactive: (researchingKey && researchingKey !== meta.key) || isMaxLevel(meta.key).value,
+        completed: isMaxLevel(meta.key).value,
       }"
     >
       <div v-if="isMaxLevel(meta.key).value" class="completed-banner">Завершено</div>
@@ -21,17 +20,20 @@
         </div>
       </q-tooltip>
       <q-card-section class="q-pa-sm card-section-fixed">
-        <div class="text-subtitle2">{{ meta.title }}</div>
+        <div class="text-subtitle2 row items-center no-wrap">
+          <q-icon :name="meta.icon" size="18px" class="icon-cpu-custom q-mr-xs research-icon" />
+          {{ meta.title }}
+        </div>
       </q-card-section>
       <div class="research-bottom q-px-sm q-pt-xs q-pb-none">
-        <div class="text-caption text-weight-medium q-mb-xs" style="font-size: 12px">
+        <div class="text-label-custom text-weight-medium q-mb-xs" style="font-size: 12px">
           Уровень: {{ getResearch(meta.key).level }} / {{ getResearch(meta.key).maxLevel }}
         </div>
         <div class="row items-center q-mb-xs">
-          <q-badge color="primary" class="q-mr-xs" style="font-size: 11px">
+          <q-badge class="q-mr-xs text-label-custom" style="font-size: 11px">
             {{ formatNumber(getResearchCost(meta.key).value) }}
           </q-badge>
-          <q-badge color="secondary" style="font-size: 11px">
+          <q-badge class="text-label-custom" style="font-size: 11px">
             {{ formatNumber(getResearchTime(meta.key).value) }} сек
           </q-badge>
         </div>
@@ -52,20 +54,23 @@
       <q-separator spaced class="q-my-xs" />
       <q-card-actions align="right" class="q-pa-none q-mt-auto">
         <q-btn
-          :disable="(researchingKey && researchingKey !== meta.key) || isMaxLevel(meta.key).value"
-          :color="
-            (researchingKey && researchingKey !== meta.key) || isMaxLevel(meta.key).value
-              ? 'grey-6'
-              : 'primary'
+          :disable="
+            (researchingKey && researchingKey !== meta.key) ||
+            isMaxLevel(meta.key).value ||
+            (!storeGame.epicNumber.gte(getResearchCost(meta.key).value) &&
+              !(researchingKey === meta.key && getResearch(meta.key).currentTime.gt(0))) ||
+            (getResearchTime(meta.key).value.gt(1000) &&
+              !(researchingKey === meta.key && getResearch(meta.key).currentTime.gt(0)))
           "
           size="sm"
           dense
           :label="
             researchingKey === meta.key && getResearch(meta.key).currentTime.gt(0)
-              ? `... ${formatNumber(getResearch(meta.key).currentTime)} сек.`
+              ? `Отменить (${formatNumber(getResearch(meta.key).currentTime)} сек.)`
               : 'Улучшить'
           "
           @click="startResearch(meta.key, false)"
+          class="btn-main-custom"
         />
       </q-card-actions>
     </q-card>
@@ -131,6 +136,12 @@ function getResearchTime(key: string) {
 function startResearch(key: string, isLoad: boolean) {
   const research = researchList[key];
   if (!research) return;
+
+  if (!isLoad && researchingKey.value === key && research.currentTime.gt(0)) {
+    cancelResearch(key);
+    return;
+  }
+
   if (!isLoad) {
     if (isMaxLevel(key).value) return;
     if (research.currentTime.gt(0)) return;
@@ -147,6 +158,14 @@ function startResearch(key: string, isLoad: boolean) {
   }
 }
 
+function cancelResearch(key: string) {
+  const research = researchList[key];
+  if (!research) return;
+
+  research.currentTime = new Decimal(0);
+  storeGame.research.researchingKey = '';
+}
+
 onMounted(() => {
   if (storeGame.research.researchingKey != '') {
     if (researchList[storeGame.research.researchingKey]?.currentTime.gt(0))
@@ -156,24 +175,30 @@ onMounted(() => {
 </script>
 
 <style lang="sass">
+.research-card-container
+  flex: 1 1 auto
+  min-height: 0
+  min-width: 0
+  width: 100%
+  display: flex
+  flex-wrap: wrap
+  align-items: stretch
+  align-content: flex-start
+  gap: 0.8vw
+  padding: 0.8vw
+  overflow-y: auto
+
 .research-card.compact
-  position: relative
-  overflow: hidden
-  width: 170px
-  min-height: 210px
-  font-size: 12px
+  flex: 1 1 11vw
+  min-width: 120px
+  max-width: 13vw
+  min-height: 14vh
+  max-height: 24vh
+  margin: 0
   display: flex
   flex-direction: column
-  justify-content: space-between
-  transition: box-shadow 0.2s, background 0.2s, opacity 0.2s
-
-.active-research
-  background: #2e3646 !important
-  box-shadow: 0 0 0 2px #1976d2 inset
-
-.inactive-research
-  opacity: 0.5
-  filter: grayscale(0.2)
+  position: relative
+  box-sizing: border-box
 
 .card-section-fixed
   display: flex
@@ -191,8 +216,8 @@ onMounted(() => {
   min-height: 40px
 
 .text-subtitle2
-  min-height: 32px
-  max-height: 62px
+  min-height: 24px
+  max-height: 48px
   overflow: hidden
   text-overflow: ellipsis
   white-space: normal
@@ -201,6 +226,10 @@ onMounted(() => {
   -webkit-box-orient: vertical
   font-weight: bold
   margin-bottom: 10px
+  line-height: 1.2
+
+.research-icon
+  flex: 0 0 18px
 
 .tooltip-desc
   max-width: 240px

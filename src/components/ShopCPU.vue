@@ -1,8 +1,8 @@
 <template>
-  <q-card flat bordered class="q-pa-lg">
-    <div class="text-h5 text-weight-bold q-mb-lg text-primary flex items-center">
-      <q-icon name="fa-duotone fa-microchip" class="q-mr-md" size="32px" />
-      Процессор
+  <q-card flat bordered class="card-main-custom q-pa-lg">
+    <div class="card-header-custom flex items-center q-mb-lg">
+      <q-icon name="fa-duotone fa-microchip" class="icon-hard-custom q-mr-md" size="32px" />
+      <span class="text-main-custom text-h5 text-weight-bold">Процессор</span>
     </div>
     <q-form>
       <div class="row q-col-gutter-lg">
@@ -13,13 +13,13 @@
             class="my-ipnut q-mb-md"
             :disable="true"
             dense
-            :label-class="'text-weight-bold text-body1'"
-            :input-class="'text-h6 text-primary'"
+            :label-class="'text-label-custom text-weight-bold text-body1'"
+            :input-class="'text-value-custom text-h6 text-main-custom'"
             color="primary"
             outlined
           >
             <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-gauge" />
+              <q-icon name="fa-duotone fa-gauge" class="icon-input-custom" />
             </template>
           </q-input>
         </div>
@@ -30,13 +30,13 @@
             class="my-ipnut q-mb-md"
             :disable="true"
             dense
-            :label-class="'text-weight-bold text-body1'"
-            :input-class="'text-h6 text-primary'"
+            :label-class="'text-label-custom text-weight-bold text-body1'"
+            :input-class="'text-value-custom text-h6 text-main-custom'"
             color="primary"
             outlined
           >
             <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-xmark" />
+              <q-icon name="fa-duotone fa-xmark" class="icon-input-custom" />
             </template>
           </q-input>
         </div>
@@ -47,13 +47,13 @@
             class="my-ipnut q-mb-md"
             :disable="true"
             dense
-            :label-class="'text-weight-bold text-body1'"
-            :input-class="'text-h6 text-primary'"
+            :label-class="'text-label-custom text-weight-bold text-body1'"
+            :input-class="'text-value-custom text-h6 text-main-custom'"
             color="primary"
             outlined
           >
             <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-coins" />
+              <q-icon name="fa-duotone fa-coins" class="icon-input-custom" />
             </template>
           </q-input>
         </div>
@@ -64,8 +64,8 @@
             class="my-ipnut q-mb-md"
             :disable="true"
             dense
-            :label-class="'text-weight-bold text-body1'"
-            :input-class="'text-h6 text-primary'"
+            :label-class="'text-label-custom text-weight-bold text-body1'"
+            :input-class="'text-value-custom text-h6 text-main-custom'"
             color="primary"
             outlined
           >
@@ -81,13 +81,13 @@
             class="my-ipnut q-mb-md"
             :disable="true"
             dense
-            :label-class="'text-weight-bold text-body1'"
-            :input-class="'text-h6 text-primary'"
+            :label-class="'text-label-custom text-weight-bold text-body1'"
+            :input-class="'text-value-custom text-h6 text-main-custom'"
             color="primary"
             outlined
           >
             <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-arrow-trend-up" />
+              <q-icon name="fa-duotone fa-arrow-trend-up" class="icon-input-custom" />
             </template>
           </q-input>
         </div>
@@ -98,7 +98,7 @@
             color="primary"
             outline
             label="Купить"
-            class="full-width"
+            class="full-width btn-main-custom"
             @click="onBuyMain"
             size="lg"
           />
@@ -108,7 +108,7 @@
             color="primary"
             outline
             label="Умножить"
-            class="full-width"
+            class="full-width btn-main-custom"
             @click="onBuyMultiply"
             size="lg"
           />
@@ -157,3 +157,42 @@ const onBuyMultiply = () => {
   cpu.multiply = cpu.multiply.plus(1);
 };
 </script>
+
+<style scoped>
+.card-main-custom {
+  background-color: var(--q-color-white);
+  border: 1px solid var(--q-color-primary);
+  border-radius: 8px;
+}
+
+.card-header-custom {
+  display: flex;
+  align-items: center;
+}
+
+.icon-hard-custom {
+  color: var(--q-color-primary);
+}
+
+.text-main-custom {
+  color: var(--q-color-primary);
+}
+
+.text-label-custom {
+  color: var(--q-color-primary);
+}
+
+.text-value-custom {
+  color: var(--q-color-primary);
+}
+
+.btn-main-custom {
+  background-color: var(--q-color-primary);
+  color: var(--q-color-white);
+  border-radius: 4px;
+}
+
+.btn-main-custom:hover {
+  background-color: var(--q-color-primary-darker);
+}
+</style>
