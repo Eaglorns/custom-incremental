@@ -143,7 +143,7 @@ function getResearchCost(key: string) {
   return computed(() =>
     research.level.eq(0)
       ? research.cost
-      : research.cost.mul(research.costMultiply.mul(research.level)),
+      : research.cost.mul(research.costMultiply.pow(research.level)),
   );
 }
 
@@ -153,7 +153,7 @@ function getResearchTime(key: string) {
   return computed(() =>
     research.level.eq(0)
       ? research.time
-      : research.time.mul(research.timeMultiply.mul(research.level)),
+      : research.time.mul(research.timeMultiply.pow(research.level)),
   );
 }
 

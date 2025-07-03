@@ -113,9 +113,11 @@
         </q-tab-panel>
         <q-tab-panel name="eternity" class="panel-flex"></q-tab-panel>
         <q-tab-panel name="infinity" class="panel-flex"></q-tab-panel>
-        <q-tab-panel name="achievement" class="panel-flex"></q-tab-panel>
+        <q-tab-panel name="achievement" class="panel-flex">
+          <Achievement />
+        </q-tab-panel>
         <q-tab-panel name="help" class="panel-flex">
-          <HelpPage />
+          <Help />
         </q-tab-panel>
         <q-tab-panel name="setting" class="panel-flex"></q-tab-panel>
       </q-tab-panels>
@@ -154,7 +156,8 @@ import ShopHard from 'src/components/shop/ShopHard.vue';
 import ShopRAM from 'src/components/shop/ShopRAM.vue';
 import ResearchBase from 'src/components/research/ResearchBase.vue';
 import AutomaticBuyer from 'src/components/automatic/AutomaticBuyer.vue';
-import HelpPage from 'src/pages/HelpPage.vue';
+import Help from 'src/pages/HelpPage.vue';
+import Achievement from 'src/pages/AchievementPage.vue';
 import { researchMeta } from 'src/constants/researchMeta';
 import Decimal from 'break_eternity.js';
 

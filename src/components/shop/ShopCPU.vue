@@ -47,7 +47,7 @@
         </div>
         <div class="col-12 col-md-6">
           <q-input
-            :model-value="formatNumber(costMain)"
+            :model-value="formatNumber(costValue)"
             label="Основная стоимость"
             class="q-mb-md"
             :disable="true"
@@ -104,9 +104,9 @@
             outline
             label="Купить"
             class="full-width"
-            @click="onBuyMain"
+            @click="onBuyValue"
             size="lg"
-            :disable="!canBuyMain"
+            :disable="!canBuyValue"
           />
         </div>
         <div class="col-6">
@@ -138,13 +138,13 @@ const costDecrease = storeGame.research.list.costDecrease;
 
 const value = computed(() => cpu.value);
 const multiply = computed(() => cpu.multiply);
-const costMain = computed(() => cpu.cost.main);
+const costValue = computed(() => cpu.cost.value);
 const decrease = computed(() =>
   costDecrease.level.gt(0) ? costDecrease.bonus.pow(costDecrease.level) : new Decimal(1),
 );
 const costMultiply = computed(() => cpu.cost.multiply.mul(cpu.multiply).div(decrease.value));
 
-const canBuyMain = computed(() => storeGame.epicNumber.gte(costMain.value));
+const canBuyValue = computed(() => storeGame.epicNumber.gte(costValue.value));
 const canBuyMultiply = computed(() => value.value.gte(costMultiply.value));
 
 const gainPerTick = computed(() => {
@@ -152,9 +152,9 @@ const gainPerTick = computed(() => {
   return value.value.pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1));
 });
 
-const onBuyMain = () => {
-  if (!canBuyMain.value) return;
-  storeGame.epicNumber = storeGame.epicNumber.minus(costMain.value);
+const onBuyValue = () => {
+  if (!canBuyValue.value) return;
+  storeGame.epicNumber = storeGame.epicNumber.minus(costValue.value);
   cpu.value = cpu.value.plus(cpu.multiply);
 };
 

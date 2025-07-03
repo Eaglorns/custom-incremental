@@ -194,7 +194,7 @@ export default defineConfig((ctx) => {
       // extendPackageJson (json) {},
 
       // Electron preload scripts (if any) from /src-electron, WITHOUT file extension
-      preloadScripts: ['electron-preload'],
+      preloadScripts: [],
 
       // specify the debugging port to use for the Electron app when running in development mode
       inspectPort: 5858,
@@ -214,27 +214,6 @@ export default defineConfig((ctx) => {
 
       builder: {
         // https://www.electron.build/configuration/configuration
-        appId: 'ru.eaglorn.customincremental',
-        productName: 'Custom Incremental',
-        buildVersion: '0.0.1',
-        compression: 'maximum',
-        asar: true,
-        electronLanguages: ['ru'],
-        win: {
-          target: 'nsis',
-        },
-        nsis: {
-          oneClick: true,
-          perMachine: false,
-          deleteAppDataOnUninstall: true,
-          runAfterFinish: false,
-        },
-        publish: [
-          {
-            provider: 'generic',
-            url: 'http://192.168.0.10:3001/update',
-          },
-        ],
       },
     },
 

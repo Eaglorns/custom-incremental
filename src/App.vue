@@ -44,7 +44,7 @@ function processHelpers() {
     if (storeGame.getHelperChance(helpers.cpu.percent).gte(rand)) {
       processHelperType(
         helpers.cpu.count.mul(storeGame.shop.cpu.multiply),
-        storeGame.shop.cpu.cost.main,
+        storeGame.shop.cpu.cost.value,
         'cpu',
       );
     }
@@ -52,7 +52,7 @@ function processHelpers() {
     if (storeGame.getHelperChance(helpers.hard.percent).gte(rand)) {
       processHelperType(
         helpers.hard.count.mul(storeGame.shop.hard.multiply),
-        storeGame.shop.hard.cost.main,
+        storeGame.shop.hard.cost.value,
         'hard',
       );
       storeGame.capacity = storeGame.capacity.plus(storeGame.shop.hard.multiply);
@@ -62,7 +62,7 @@ function processHelpers() {
       if (storeGame.getHelperChance(helpers.ram.percent).gte(rand)) {
         processHelperType(
           helpers.ram.count.mul(storeGame.shop.ram.multiply),
-          storeGame.shop.ram.cost.main,
+          storeGame.shop.ram.cost.value,
           'ram',
         );
       }
@@ -112,7 +112,7 @@ onMounted(() => {
   startTimer();
   autoSaveId.value = setInterval(() => {
     storeGame.saveGame();
-  }, 1000);
+  }, 60000);
 });
 
 watch(
