@@ -6,6 +6,7 @@
 import { ref, onMounted, watch, onBeforeUnmount, computed } from 'vue';
 import { useStoreGame } from 'src/stores/game';
 import type { Research } from 'src/constants/models';
+import type Decimal from 'break_eternity.js';
 
 const storeGame = useStoreGame();
 
@@ -28,6 +29,29 @@ const processResearch = () => {
   }
 };
 
+function processHelperType(count: Decimal, cost: Decimal, value: Decimal) {
+  if (count.gt(0)) {
+    const countValue = count.toNumber();
+    for (let i = 0; i < countValue; i++) {
+      value = value.plus(1);
+      storeGame.epicNumber = storeGame.epicNumber.minus(cost);
+    }
+  }
+}
+
+function processHelpers() {
+  const helpers = storeGame.helpers;
+  if (helpers.cpu.chance.gte(Math.random() * 100)) {
+    processHelperType(helpers.cpu.count, storeGame.shop.cpu.cost.main, storeGame.shop.cpu.value);
+  }
+  if (helpers.hdd.chance.gte(Math.random() * 100)) {
+    processHelperType(helpers.hdd.count, storeGame.shop.hard.cost.main, storeGame.shop.hard.value);
+  }
+  if (helpers.ram.chance.gte(Math.random() * 100)) {
+    processHelperType(helpers.ram.count, storeGame.shop.ram.cost.main, storeGame.shop.ram.value);
+  }
+}
+
 const giveEpicNumber = computed(() => {
   const parShopCPU = storeGame.shop.cpu.value;
   const parResearchCPU = storeGame.research.list.cpuPow;
@@ -48,7 +72,7 @@ const gameTick = () => {
   const steps = Math.floor(delta / storeGame.timer) || 1;
   for (let i = 0; i < steps; i++) {
     processResearch();
-
+    processHelpers();
     storeGame.epicNumber = storeGame.epicNumber.plus(giveEpicNumber.value);
     storeGame.capacity = storeGame.capacity.plus(giveCapacity.value);
 
