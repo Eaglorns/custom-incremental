@@ -96,7 +96,7 @@
         </ul>
       </div>
       <div class="q-mb-lg">
-        <div class="text-h6 text-bold q-mb-sm">Сохранение и автосохранение</div>
+        <div class="text-h6 text-bold q-mb-sm">Сохранение и загрузка</div>
         <ul>
           <li>
             <q-icon name="fa-duotone fa-floppy-disk" color="info" size="16px" class="q-mr-xs" />
@@ -110,6 +110,40 @@
               class="q-mr-xs"
             />
             Ваши достижения не потеряются при перезагрузке страницы.
+          </li>
+        </ul>
+      </div>
+      <div class="q-mb-lg">
+        <div class="text-h6 text-bold q-mb-sm">Вкладка «Достижения»</div>
+        <ul>
+          <li>
+            <q-icon name="fa-duotone fa-trophy" color="amber" size="16px" class="q-mr-xs" />
+            На отдельной вкладке отображаются все открытые и доступные достижения, их уровни и
+            условия получения.
+          </li>
+          <li>
+            <q-icon name="fa-duotone fa-eye" color="info" size="16px" class="q-mr-xs" />
+            Для каждого достижения показаны название, описание, иконка и (если есть) текущий
+            уровень.
+          </li>
+          <li>
+            <q-icon
+              name="fa-duotone fa-arrow-trend-up"
+              color="positive"
+              size="16px"
+              class="q-mr-xs"
+            />
+            Общий бонус к производству числа рассчитывается автоматически и отображается прямо на
+            вкладке.
+          </li>
+          <li>
+            <q-icon
+              name="fa-duotone fa-check-double"
+              color="secondary"
+              size="16px"
+              class="q-mr-xs"
+            />
+            Следите за прогрессом и стремитесь открыть все достижения для максимального эффекта!
           </li>
         </ul>
       </div>

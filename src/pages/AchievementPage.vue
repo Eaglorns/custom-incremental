@@ -1,6 +1,13 @@
 <template>
   <q-page class="q-pa-lg">
-    <div class="q-mb-md text-h6 text-bold">Выполнено достижений: {{ totalAchievements }}</div>
+    <div class="q-mb-md text-h6 text-bold row items-center">
+      <q-icon name="fa-duotone fa-sparkles" color="amber" size="28px" class="q-mr-sm" />
+      Выполнено достижений: {{ totalAchievements }}
+      <q-chip color="primary" text-color="white" class="q-ml-md">
+        <q-icon name="fa-duotone fa-arrow-trend-up" left size="18px" />
+        Бонус к производству: x{{ achievementProductionBonus.toFixed(2) }}
+      </q-chip>
+    </div>
     <div class="q-gutter-md" style="display: flex; flex-wrap: wrap; align-items: flex-start">
       <q-card
         v-for="ach in achievements"
@@ -85,7 +92,7 @@ watch(
 const achievements = computed(() => [
   {
     id: 'firstEpic',
-    title: 'Первое число',
+    title: 'Тысячник',
     description: 'Получите тысячу единиц основной валюты',
     icon: 'fa-solid fa-1',
     color: 'primary',
@@ -176,4 +183,6 @@ const totalAchievements = computed(() => {
     return sum + (ach.unlocked ? 1 : 0);
   }, 0);
 });
+
+const achievementProductionBonus = computed(() => 1 + 0.01 * totalAchievements.value);
 </script>
