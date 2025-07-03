@@ -79,7 +79,12 @@
                     />
                     <span class="text-caption q-mr-xs text-secondary-custom">Шанс покупки:</span>
                     <span class="text-body2 text-weight-bold text-blue-4"
-                      >{{ getHelper(key).value.chance.toFixed(1) }}%</span
+                      >{{
+                        getHelperChanceWithCount(
+                          getHelper(key).value.percent,
+                          getHelper(key).value.count,
+                        ).toFixed(1)
+                      }}%</span
                     >
                   </div>
                   <div class="row items-center q-gutter-xs">
@@ -133,19 +138,9 @@ const getHelper = (key: string) =>
   computed(() => {
     const meta = helpersMeta.find((m) => m.key === key)!;
     const state = storeGame.helpers[key as keyof typeof storeGame.helpers];
-    const k = 0.006;
-    const one = new Decimal(1);
-    const ninetyNine = new Decimal(99);
-    const percent = state.percent;
-    let chance = one;
-    if (percent && percent.gt(0)) {
-      const expPart = Decimal.exp(new Decimal(-k).mul(percent));
-      chance = one.add(ninetyNine.mul(one.minus(expPart)));
-    }
     return {
       ...meta,
       ...state,
-      chance: chance.gte(100) ? new Decimal(100) : chance,
     };
   });
 
@@ -185,6 +180,11 @@ function upgradeHelperChance(helper: HelperState) {
     const key = helper.key as keyof typeof storeGame.helpers;
     storeGame.helpers[key].percent = storeGame.helpers[key].percent.add(1);
   }
+}
+
+function getHelperChanceWithCount(percent: Decimal, count: Decimal): Decimal {
+  if (!count || count.lte(0)) return new Decimal(0);
+  return storeGame.getHelperChance(percent);
 }
 </script>
 

@@ -87,7 +87,6 @@ export const useStoreGame = defineStore('storeGame', {
       cpu: {
         count: new Decimal(0),
         percent: new Decimal(0),
-        chance: new Decimal(0),
         cost: {
           count: new Decimal(1000),
           countMultiply: new Decimal(10),
@@ -95,10 +94,9 @@ export const useStoreGame = defineStore('storeGame', {
           percentMultiply: new Decimal('1e3'),
         },
       },
-      hdd: {
+      hard: {
         count: new Decimal(0),
         percent: new Decimal(0),
-        chance: new Decimal(0),
         cost: {
           count: new Decimal(1000),
           countMultiply: new Decimal(10),
@@ -109,7 +107,6 @@ export const useStoreGame = defineStore('storeGame', {
       ram: {
         count: new Decimal(0),
         percent: new Decimal(0),
-        chance: new Decimal(0),
         cost: {
           count: new Decimal(1000),
           countMultiply: new Decimal(10),
@@ -125,6 +122,15 @@ export const useStoreGame = defineStore('storeGame', {
       if (n < 1e6) return num.toFixed(0);
       if (n < 1e9) return num.toExponential(2);
       return num.toExponential(3);
+    },
+    getHelperChance: () => (percent: Decimal) => {
+      const k = 0.006;
+      const one = new Decimal(1);
+      const ninetyNine = new Decimal(99);
+      if (!percent || percent.lte(0)) return one;
+      const expPart = Decimal.exp(new Decimal(-k).mul(percent));
+      const chance = one.add(ninetyNine.mul(one.minus(expPart)));
+      return chance.gte(100) ? new Decimal(100) : chance;
     },
   },
   actions: {

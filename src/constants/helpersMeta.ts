@@ -13,7 +13,7 @@ export const helpersMeta: HelperMeta[] = [
     description: 'Находит выгодные предложения и автоматически закупает процессоры.',
   },
   {
-    key: 'hdd',
+    key: 'hard',
     icon: 'fa-duotone fa-hard-drive',
     title: 'Скупщик жёстких дисков',
     description: 'Знает все тайные склады и всегда находит лучшие жёсткие диски для вашей системы.',

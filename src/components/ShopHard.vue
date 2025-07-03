@@ -82,7 +82,7 @@
         <div class="col-12 col-md-6">
           <q-input
             :model-value="formatNumber(gainPerBuy)"
-            label="Прирост хранилища за тик"
+            label="Прирост хранилища за покупку"
             class="q-mb-md"
             :disable="true"
             dense

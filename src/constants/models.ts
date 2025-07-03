@@ -18,7 +18,6 @@ export interface HelperState {
   description: string;
   count: Decimal;
   percent: Decimal;
-  chance: Decimal;
   cost: {
     count: Decimal;
     countMultiply: Decimal;

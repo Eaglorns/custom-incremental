@@ -29,27 +29,31 @@ const processResearch = () => {
   }
 };
 
-function processHelperType(count: Decimal, cost: Decimal, value: Decimal) {
-  if (count.gt(0)) {
-    const countValue = count.toNumber();
-    for (let i = 0; i < countValue; i++) {
-      value = value.plus(1);
-      storeGame.epicNumber = storeGame.epicNumber.minus(cost);
-    }
+function processHelperType(count: Decimal, cost: Decimal, key: keyof typeof storeGame.shop) {
+  const newCost = count.mul(cost);
+  if (newCost.lte(storeGame.epicNumber)) {
+    storeGame.shop[key].value = storeGame.shop[key].value.plus(count);
+    storeGame.epicNumber = storeGame.epicNumber.minus(newCost);
   }
 }
 
 function processHelpers() {
   const helpers = storeGame.helpers;
-  if (helpers.cpu.chance.gte(Math.random() * 100)) {
-    processHelperType(helpers.cpu.count, storeGame.shop.cpu.cost.main, storeGame.shop.cpu.value);
-  }
-  if (helpers.hdd.chance.gte(Math.random() * 100)) {
-    processHelperType(helpers.hdd.count, storeGame.shop.hard.cost.main, storeGame.shop.hard.value);
-  }
-  if (helpers.ram.chance.gte(Math.random() * 100)) {
-    processHelperType(helpers.ram.count, storeGame.shop.ram.cost.main, storeGame.shop.ram.value);
-  }
+  const rand = Math.random() * 100;
+  if (helpers.cpu.count.gt(0))
+    if (storeGame.getHelperChance(helpers.cpu.percent).gte(rand)) {
+      processHelperType(helpers.cpu.count, storeGame.shop.cpu.cost.main, 'cpu');
+    }
+  if (helpers.hard.count.gt(0))
+    if (storeGame.getHelperChance(helpers.hard.percent).gte(rand)) {
+      processHelperType(helpers.hard.count, storeGame.shop.hard.cost.main, 'hard');
+      storeGame.capacity = storeGame.capacity.plus(storeGame.shop.hard.multiply);
+    }
+  if (helpers.ram.count.gt(0))
+    if (helpers.ram.count.gt(0))
+      if (storeGame.getHelperChance(helpers.ram.percent).gte(rand)) {
+        processHelperType(helpers.ram.count, storeGame.shop.ram.cost.main, 'ram');
+      }
 }
 
 const giveEpicNumber = computed(() => {
