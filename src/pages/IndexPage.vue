@@ -114,7 +114,9 @@
         <q-tab-panel name="eternity" class="panel-flex"></q-tab-panel>
         <q-tab-panel name="infinity" class="panel-flex"></q-tab-panel>
         <q-tab-panel name="achievement" class="panel-flex"></q-tab-panel>
-        <q-tab-panel name="help" class="panel-flex"></q-tab-panel>
+        <q-tab-panel name="help" class="panel-flex">
+          <HelpPage />
+        </q-tab-panel>
         <q-tab-panel name="setting" class="panel-flex"></q-tab-panel>
       </q-tab-panels>
     </q-card>
@@ -147,11 +149,12 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useStoreGame } from 'src/stores/game';
-import ShopCPU from 'src/components/ShopCPU.vue';
-import ShopHard from 'src/components/ShopHard.vue';
-import ShopRAM from 'src/components/ShopRAM.vue';
-import ResearchBase from 'src/components/ResearchBase.vue';
-import AutomaticBuyer from 'src/components/AutomaticBuyer.vue';
+import ShopCPU from 'src/components/shop/ShopCPU.vue';
+import ShopHard from 'src/components/shop/ShopHard.vue';
+import ShopRAM from 'src/components/shop/ShopRAM.vue';
+import ResearchBase from 'src/components/research/ResearchBase.vue';
+import AutomaticBuyer from 'src/components/automatic/AutomaticBuyer.vue';
+import HelpPage from 'src/pages/HelpPage.vue';
 import { researchMeta } from 'src/constants/researchMeta';
 import Decimal from 'break_eternity.js';
 

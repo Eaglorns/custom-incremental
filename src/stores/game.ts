@@ -9,8 +9,8 @@ const SECRET = 'incremental';
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     lastTick: Date.now(),
-    epicNumber: new Decimal('1e500'),
-    capacity: new Decimal('1e1000'),
+    epicNumber: new Decimal(0),
+    capacity: new Decimal(1000),
     timer: 1000,
     shop: {
       cpu: {
@@ -33,7 +33,7 @@ export const useStoreGame = defineStore('storeGame', {
         value: new Decimal(1),
         multiply: new Decimal(1),
         cost: {
-          main: new Decimal('1e7'),
+          main: new Decimal(1000000),
           multiply: new Decimal(80),
         },
       },
@@ -62,7 +62,7 @@ export const useStoreGame = defineStore('storeGame', {
           maxLevel: new Decimal(100),
         },
         ramPow: {
-          cost: new Decimal('1e6'),
+          cost: new Decimal(1000000),
           currentTime: new Decimal(0),
           time: new Decimal(10),
           bonus: new Decimal(0.01),
@@ -76,7 +76,7 @@ export const useStoreGame = defineStore('storeGame', {
           currentTime: new Decimal(0),
           time: new Decimal(6),
           bonus: new Decimal(2),
-          level: new Decimal(100), //0
+          level: new Decimal(0),
           costMultiply: new Decimal(15),
           timeMultiply: new Decimal(2),
           maxLevel: new Decimal(100),
@@ -90,8 +90,8 @@ export const useStoreGame = defineStore('storeGame', {
         cost: {
           count: new Decimal(1000),
           countMultiply: new Decimal(10),
-          percent: new Decimal(1000),
-          percentMultiply: new Decimal('1e3'),
+          percent: new Decimal(2500),
+          percentMultiply: new Decimal(1000),
         },
       },
       hard: {
@@ -100,8 +100,8 @@ export const useStoreGame = defineStore('storeGame', {
         cost: {
           count: new Decimal(1000),
           countMultiply: new Decimal(10),
-          percent: new Decimal(1000),
-          percentMultiply: new Decimal('1e3'),
+          percent: new Decimal(2500),
+          percentMultiply: new Decimal(1000),
         },
       },
       ram: {
@@ -110,8 +110,8 @@ export const useStoreGame = defineStore('storeGame', {
         cost: {
           count: new Decimal(1000),
           countMultiply: new Decimal(10),
-          percent: new Decimal(1000),
-          percentMultiply: new Decimal('1e3'),
+          percent: new Decimal(2500),
+          percentMultiply: new Decimal(1000),
         },
       },
     },
@@ -174,6 +174,20 @@ export const useStoreGame = defineStore('storeGame', {
             },
           },
         },
+        helpers: {
+          cpu: {
+            count: this.helpers.cpu.count,
+            percent: this.helpers.cpu.percent,
+          },
+          hard: {
+            count: this.helpers.hard.count,
+            percent: this.helpers.hard.percent,
+          },
+          ram: {
+            count: this.helpers.ram.count,
+            percent: this.helpers.ram.percent,
+          },
+        },
       };
 
       const replacer = (key: string, value: unknown) => {
@@ -219,6 +233,12 @@ export const useStoreGame = defineStore('storeGame', {
         this.research.list.costDecrease.level = new Decimal(
           loaded.research.list.costDecrease.level,
         );
+        this.helpers.cpu.count = new Decimal(loaded.helpers.cpu.count);
+        this.helpers.cpu.percent = new Decimal(loaded.helpers.cpu.percent);
+        this.helpers.hard.count = new Decimal(loaded.helpers.hard.count);
+        this.helpers.hard.percent = new Decimal(loaded.helpers.hard.percent);
+        this.helpers.ram.count = new Decimal(loaded.helpers.ram.count);
+        this.helpers.ram.percent = new Decimal(loaded.helpers.ram.percent);
       } catch (e) {
         console.error('Ошибка загрузки сохранения:', e);
       }

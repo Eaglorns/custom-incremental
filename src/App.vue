@@ -6,7 +6,7 @@
 import { ref, onMounted, watch, onBeforeUnmount, computed } from 'vue';
 import { useStoreGame } from 'src/stores/game';
 import type { Research } from 'src/constants/models';
-import type Decimal from 'break_eternity.js';
+import Decimal from 'break_eternity.js';
 
 const storeGame = useStoreGame();
 
@@ -30,11 +30,11 @@ const processResearch = () => {
 };
 
 function processHelperType(count: Decimal, cost: Decimal, key: keyof typeof storeGame.shop) {
-  const newCost = count.mul(cost);
-  if (newCost.lte(storeGame.epicNumber)) {
-    storeGame.shop[key].value = storeGame.shop[key].value.plus(count);
-    storeGame.epicNumber = storeGame.epicNumber.minus(newCost);
-  }
+  if (count.lte(0)) return;
+  const maxBuy = Decimal.min(count, storeGame.epicNumber.div(cost).floor());
+  if (maxBuy.lte(0)) return;
+  storeGame.shop[key].value = storeGame.shop[key].value.plus(maxBuy);
+  storeGame.epicNumber = storeGame.epicNumber.minus(maxBuy.mul(cost));
 }
 
 function processHelpers() {
@@ -42,17 +42,29 @@ function processHelpers() {
   const rand = Math.random() * 100;
   if (helpers.cpu.count.gt(0))
     if (storeGame.getHelperChance(helpers.cpu.percent).gte(rand)) {
-      processHelperType(helpers.cpu.count, storeGame.shop.cpu.cost.main, 'cpu');
+      processHelperType(
+        helpers.cpu.count.mul(storeGame.shop.cpu.multiply),
+        storeGame.shop.cpu.cost.main,
+        'cpu',
+      );
     }
   if (helpers.hard.count.gt(0))
     if (storeGame.getHelperChance(helpers.hard.percent).gte(rand)) {
-      processHelperType(helpers.hard.count, storeGame.shop.hard.cost.main, 'hard');
+      processHelperType(
+        helpers.hard.count.mul(storeGame.shop.hard.multiply),
+        storeGame.shop.hard.cost.main,
+        'hard',
+      );
       storeGame.capacity = storeGame.capacity.plus(storeGame.shop.hard.multiply);
     }
   if (helpers.ram.count.gt(0))
     if (helpers.ram.count.gt(0))
       if (storeGame.getHelperChance(helpers.ram.percent).gte(rand)) {
-        processHelperType(helpers.ram.count, storeGame.shop.ram.cost.main, 'ram');
+        processHelperType(
+          helpers.ram.count.mul(storeGame.shop.ram.multiply),
+          storeGame.shop.ram.cost.main,
+          'ram',
+        );
       }
 }
 
