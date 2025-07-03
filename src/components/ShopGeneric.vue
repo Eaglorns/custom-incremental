@@ -126,10 +126,10 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from 'vue';
-import Decimal from 'break_eternity.js';
+import type { PropType } from 'vue';
+import type Decimal from 'break_eternity.js';
 
-const props = defineProps({
+defineProps({
   title: { type: String, required: true },
   icon: { type: String, required: true },
   value: { type: Object as PropType<Decimal>, required: true },

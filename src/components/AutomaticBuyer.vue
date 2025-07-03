@@ -2,24 +2,26 @@
   <q-card flat class="q-pa-lg">
     <div class="row q-col-gutter-lg q-gutter-y-md">
       <div
-        v-for="helper in helpers"
-        :key="helper.key"
+        v-for="key in helperKeys"
+        :key="key"
         class="col-12 col-sm-6 col-md-4 flex flex-center helper-wrapper"
       >
         <q-card flat bordered class="q-pa-sm helper-card-custom flex column helper-card">
           <div class="helper-header">
             <div class="row items-center q-mb-sm helper-title-row">
               <q-icon
-                :name="helper.icon"
+                :name="getHelper(key).value.icon"
                 size="20px"
                 class="q-mr-sm helper-icon icon-default-custom"
               />
               <span class="text-body1 text-weight-bold helper-title text-blue-4">
-                {{ helper.title }}
+                {{ getHelper(key).value.title }}
               </span>
             </div>
             <div class="q-mb-sm helper-description">
-              <span class="text-caption text-secondary-custom">{{ helper.description }}</span>
+              <span class="text-caption text-secondary-custom">{{
+                getHelper(key).value.description
+              }}</span>
             </div>
           </div>
           <div class="column justify-end helper-content">
@@ -34,7 +36,9 @@
                       class="q-mr-xs icon-default-custom"
                     />
                     <span class="text-caption q-mr-xs text-secondary-custom">Количество:</span>
-                    <span class="text-body2 text-weight-bold text-blue-4">{{ helper.count }}</span>
+                    <span class="text-body2 text-weight-bold text-blue-4">{{
+                      getHelper(key).value.count
+                    }}</span>
                   </div>
                   <div class="row items-center q-gutter-xs">
                     <q-chip
@@ -47,16 +51,17 @@
                         size="12px"
                         class="q-mr-xs icon-accent-custom"
                       />
-                      {{ formatNumber(helper.cost) }}
+                      {{ formatNumber(costCount(getHelper(key).value).value) }}
                     </q-chip>
                     <q-btn
                       label="Нанять"
-                      :disable="!helper.canHire"
                       size="sm"
                       dense
                       unelevated
                       class="upgrade-btn-narrow upgrade-btn-custom btn-equal-width"
                       style="min-width: 90px"
+                      @click="hireHelper(getHelper(key).value)"
+                      :disable="!canHireHelper(getHelper(key).value).value"
                     />
                   </div>
                 </div>
@@ -74,7 +79,7 @@
                     />
                     <span class="text-caption q-mr-xs text-secondary-custom">Шанс покупки:</span>
                     <span class="text-body2 text-weight-bold text-blue-4"
-                      >{{ calcChance(helper.count) }}%</span
+                      >{{ getHelper(key).value.chance.toFixed(1) }}%</span
                     >
                   </div>
                   <div class="row items-center q-gutter-xs">
@@ -88,16 +93,17 @@
                         size="12px"
                         class="q-mr-xs icon-accent-custom"
                       />
-                      {{ formatNumber(helper.upgradeCost) }}
+                      {{ formatNumber(costPercent(getHelper(key).value).value) }}
                     </q-chip>
                     <q-btn
                       label="Улучшить"
-                      :disable="!helper.canUpgrade"
                       size="sm"
                       dense
                       unelevated
                       class="upgrade-btn-narrow upgrade-btn-custom btn-equal-width"
                       style="min-width: 90px"
+                      @click="upgradeHelperChance(getHelper(key).value)"
+                      :disable="!canUpgradeHelperChance(getHelper(key).value).value"
                     />
                   </div>
                 </div>
@@ -115,32 +121,70 @@ import { computed } from 'vue';
 import { helpersMeta } from 'src/constants/helpersMeta';
 import type { HelperState } from 'src/constants/models';
 import { useStoreGame } from 'src/stores/game';
+import Decimal from 'break_eternity.js';
 
 const storeGame = useStoreGame();
 
-// Собираем массив карточек для cpu, hdd, ram
-const helpers = computed(() => {
-  return helpersMeta.map((meta) => {
-    // Данные из storeGame.helpers (cpu, hdd, ram)
-    const state = storeGame.helpers[meta.key as keyof typeof storeGame.helpers];
+const formatNumber = storeGame.formatNumber;
+
+const helperKeys = computed(() => Object.keys(storeGame.helpers));
+
+const getHelper = (key: string) =>
+  computed(() => {
+    const meta = helpersMeta.find((m) => m.key === key)!;
+    const state = storeGame.helpers[key as keyof typeof storeGame.helpers];
+    const k = 0.006;
+    const one = new Decimal(1);
+    const ninetyNine = new Decimal(99);
+    const percent = state.percent;
+    let chance = one;
+    if (percent && percent.gt(0)) {
+      const expPart = Decimal.exp(new Decimal(-k).mul(percent));
+      chance = one.add(ninetyNine.mul(one.minus(expPart)));
+    }
     return {
       ...meta,
       ...state,
+      chance: chance.gte(100) ? new Decimal(100) : chance,
     };
   });
-});
-function formatNumber(val: number) {
-  return val.toLocaleString();
+
+const costCount = (helper: HelperState) => {
+  return computed(() => {
+    return helper.cost.count.mul(helper.cost.countMultiply.pow(helper.count));
+  });
+};
+
+const costPercent = (helper: HelperState) => {
+  return computed(() => {
+    return helper.cost.percent.mul(helper.cost.percentMultiply.pow(helper.percent));
+  });
+};
+
+const canHireHelper = (helper: HelperState) => {
+  return computed(() => storeGame.epicNumber.gte(costCount(helper).value));
+};
+
+const canUpgradeHelperChance = (helper: HelperState) => {
+  return computed(() => helper.count.gt(0) && storeGame.epicNumber.gte(costPercent(helper).value));
+};
+
+function hireHelper(helper: HelperState) {
+  const cost = costCount(helper).value;
+  if (storeGame.epicNumber.gte(cost)) {
+    storeGame.epicNumber = storeGame.epicNumber.minus(cost);
+    const key = helper.key as keyof typeof storeGame.helpers;
+    storeGame.helpers[key].count = storeGame.helpers[key].count.add(1);
+  }
 }
 
-function calcChance(count: number) {
-  if (count <= 0) return 1;
-  const max = 100;
-  const base = 1;
-  const slow = 0.18;
-  let chance = base + Math.log10(count + 1) / slow;
-  if (chance > max) chance = max;
-  return chance.toFixed(1).replace('.0', '');
+function upgradeHelperChance(helper: HelperState) {
+  const cost = costPercent(helper).value;
+  if (storeGame.epicNumber.gte(cost)) {
+    storeGame.epicNumber = storeGame.epicNumber.minus(cost);
+    const key = helper.key as keyof typeof storeGame.helpers;
+    storeGame.helpers[key].percent = storeGame.helpers[key].percent.add(1);
+  }
 }
 </script>
 

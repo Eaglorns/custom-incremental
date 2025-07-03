@@ -9,7 +9,7 @@ const SECRET = 'incremental';
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     lastTick: Date.now(),
-    epicNumber: new Decimal('1e10'),
+    epicNumber: new Decimal('1e500'),
     capacity: new Decimal('1e1000'),
     timer: 1000,
     shop: {
@@ -87,37 +87,34 @@ export const useStoreGame = defineStore('storeGame', {
       cpu: {
         count: new Decimal(0),
         percent: new Decimal(0),
+        chance: new Decimal(0),
         cost: {
           count: new Decimal(1000),
-          percent: new Decimal('1e10'),
-        },
-        multiply: {
-          count: new Decimal(10),
-          percent: new Decimal('1e3'),
+          countMultiply: new Decimal(10),
+          percent: new Decimal(1000),
+          percentMultiply: new Decimal('1e3'),
         },
       },
       hdd: {
         count: new Decimal(0),
         percent: new Decimal(0),
+        chance: new Decimal(0),
         cost: {
           count: new Decimal(1000),
-          percent: new Decimal('1e10'),
-        },
-        multiply: {
-          count: new Decimal(10),
-          percent: new Decimal('1e3'),
+          countMultiply: new Decimal(10),
+          percent: new Decimal(1000),
+          percentMultiply: new Decimal('1e3'),
         },
       },
       ram: {
         count: new Decimal(0),
         percent: new Decimal(0),
+        chance: new Decimal(0),
         cost: {
           count: new Decimal(1000),
-          percent: new Decimal('1e10'),
-        },
-        multiply: {
-          count: new Decimal(10),
-          percent: new Decimal('1e3'),
+          countMultiply: new Decimal(10),
+          percent: new Decimal(1000),
+          percentMultiply: new Decimal('1e3'),
         },
       },
     },

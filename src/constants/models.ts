@@ -13,10 +13,16 @@ export interface Research {
 
 export interface HelperState {
   key: string;
-  count: number;
-  batch: number;
-  cost: number;
-  upgradeCost: number;
-  canHire: boolean;
-  canUpgrade: boolean;
+  icon: string;
+  title: string;
+  description: string;
+  count: Decimal;
+  percent: Decimal;
+  chance: Decimal;
+  cost: {
+    count: Decimal;
+    countMultiply: Decimal;
+    percent: Decimal;
+    percentMultiply: Decimal;
+  };
 }
