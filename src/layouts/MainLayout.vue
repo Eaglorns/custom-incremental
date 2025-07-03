@@ -2,7 +2,7 @@
   <q-layout view="lHh lpr lFf" class="shadow-2 rounded-borders">
     <q-header elevated>
       <q-bar class="q-electron-drag bg-grey-10">
-        <q-icon name="fa-duotone fa-microchip" size="14px" color="grey-4" />
+        <q-icon name="fa-duotone fa-arrow-trend-up" size="16px" color="grey-4" />
         <div class="text-h6 text-weight-bold q-ml-md">{{ storeGlobal.app.name }}</div>
         <span class="q-ml-sm text-caption text-grey-4" style="font-style: italic">
           v{{ storeGlobal.app.version }}
