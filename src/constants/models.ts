@@ -1,6 +1,7 @@
 import type Decimal from 'break_eternity.js';
 
 export interface Research {
+  isActive: boolean;
   cost: Decimal;
   currentTime: Decimal;
   time: Decimal;

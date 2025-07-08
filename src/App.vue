@@ -10,23 +10,18 @@ import Decimal from 'break_eternity.js';
 
 const storeGame = useStoreGame();
 
-const researchingKey = computed(() => storeGame.research.researchingKey);
 const researchList = storeGame.research.list as Record<string, Research>;
 
 const processResearch = () => {
-  const key = researchingKey;
-  if (key.value != '') {
-    const research = researchList[key.value];
-    if (research) {
-      if (research.currentTime.gt(0)) {
-        research.currentTime = research.currentTime.minus(1);
-      }
+  Object.values(researchList).forEach((research) => {
+    if (research.isActive && research.currentTime.gt(0)) {
+      research.currentTime = research.currentTime.minus(1);
       if (research.currentTime.lte(0)) {
         research.level = research.level.plus(1);
-        storeGame.research.researchingKey = '';
+        research.isActive = false;
       }
     }
-  }
+  });
 };
 
 function processHelperType(count: Decimal, cost: Decimal, key: keyof typeof storeGame.shop) {

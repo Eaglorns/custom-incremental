@@ -13,6 +13,7 @@ export const useStoreGame = defineStore('storeGame', {
     capacity: new Decimal(100000),
     timer: 1000,
     achievementBonus: new Decimal(1),
+    researchPoints: new Decimal(0),
     shop: {
       cpu: {
         value: new Decimal(1),
@@ -40,9 +41,9 @@ export const useStoreGame = defineStore('storeGame', {
       },
     },
     research: {
-      researchingKey: '',
       list: {
         cpuPow: {
+          isActive: false,
           cost: new Decimal(1000),
           currentTime: new Decimal(0),
           time: new Decimal(2),
@@ -53,6 +54,7 @@ export const useStoreGame = defineStore('storeGame', {
           maxLevel: new Decimal(1000),
         },
         hardPow: {
+          isActive: false,
           cost: new Decimal(1000),
           currentTime: new Decimal(0),
           time: new Decimal(2),
@@ -63,6 +65,7 @@ export const useStoreGame = defineStore('storeGame', {
           maxLevel: new Decimal(1000),
         },
         ramPow: {
+          isActive: false,
           cost: new Decimal(1000000),
           currentTime: new Decimal(0),
           time: new Decimal(4),
@@ -73,6 +76,7 @@ export const useStoreGame = defineStore('storeGame', {
           maxLevel: new Decimal(1000),
         },
         costDecrease: {
+          isActive: false,
           cost: new Decimal(1000),
           currentTime: new Decimal(0),
           time: new Decimal(6),
@@ -162,21 +166,24 @@ export const useStoreGame = defineStore('storeGame', {
           },
         },
         research: {
-          researchingKey: this.research.researchingKey,
           list: {
             cpuPow: {
+              isActive: this.research.list.cpuPow.isActive,
               currentTime: this.research.list.cpuPow.currentTime,
               level: this.research.list.cpuPow.level,
             },
             hardPow: {
+              isActive: this.research.list.hardPow.isActive,
               currentTime: this.research.list.hardPow.currentTime,
               level: this.research.list.hardPow.level,
             },
             ramPow: {
+              isActive: this.research.list.ramPow.isActive,
               currentTime: this.research.list.ramPow.currentTime,
               level: this.research.list.ramPow.level,
             },
             costDecrease: {
+              isActive: this.research.list.costDecrease.isActive,
               currentTime: this.research.list.costDecrease.currentTime,
               level: this.research.list.costDecrease.level,
             },
@@ -229,7 +236,6 @@ export const useStoreGame = defineStore('storeGame', {
         this.shop.hard.multiply = new Decimal(loaded.shop.hard.multiply);
         this.shop.ram.value = new Decimal(loaded.shop.ram.value);
         this.shop.ram.multiply = new Decimal(loaded.shop.ram.multiply);
-        this.research.researchingKey = loaded.research.researchingKey;
         this.research.list.cpuPow.currentTime = new Decimal(
           loaded.research.list.cpuPow.currentTime,
         );
@@ -258,6 +264,10 @@ export const useStoreGame = defineStore('storeGame', {
         this.achievements.cpuLevel = new Decimal(loaded.achievements.cpuLevel);
         this.achievements.hardLevel = new Decimal(loaded.achievements.hardLevel);
         this.achievements.ramLevel = new Decimal(loaded.achievements.ramLevel);
+        this.research.list.cpuPow.isActive = loaded.research.list.cpuPow.isActive;
+        this.research.list.hardPow.isActive = loaded.research.list.hardPow.isActive;
+        this.research.list.ramPow.isActive = loaded.research.list.ramPow.isActive;
+        this.research.list.costDecrease.isActive = loaded.research.list.costDecrease.isActive;
       } catch (e) {
         console.error('Ошибка загрузки сохранения:', e);
       }

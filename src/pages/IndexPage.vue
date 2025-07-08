@@ -2,7 +2,6 @@
   <q-page class="main-layout">
     <q-banner class="main-banner">
       <div class="banner-row">
-        <div class="banner-empty"></div>
         <div class="banner-main">
           <q-icon name="fa-duotone fa-gauge-high" size="24px" color="primary" />
           <span class="text-weight-bold text-h5 q-mx-xs">{{
@@ -13,6 +12,9 @@
           <span class="text-weight-bold text-h5 q-ml-xs">{{
             formatNumber(storeGame.capacity)
           }}</span>
+          <q-separator vertical class="q-mx-md" style="height: 32px" />
+          <q-icon name="fa-duotone fa-flask-vial" size="22px" color="secondary" />
+          <span class="text-weight-bold text-h6 q-ml-xs">{{ formatNumber(researchPoints) }}</span>
         </div>
       </div>
     </q-banner>
@@ -160,6 +162,10 @@ const innerResearch = ref('innerResearchBase');
 const innerAutomatic = ref('innerAutomaticBuyer');
 const splitterModel = ref(20);
 
+const researchPoints = computed(() => {
+  return storeGame.researchPoints;
+});
+
 const infinityProgress = computed(() => {
   const value = storeGame.epicNumber;
   if (value.lte(0)) return 0;
@@ -191,34 +197,12 @@ const infinityProgress = computed(() => {
   width: 100%
   height: 100%
 
-.banner-empty
-  flex: 1 1 0
-
 .banner-main
   flex: 2 2 0
   min-width: 0
   display: flex
   align-items: center
   justify-content: center
-
-.banner-research-status
-  flex: 1 1 0
-  display: flex
-  align-items: center
-  justify-content: flex-end
-  min-width: 220px
-  max-width: 400px
-  height: 36px
-  min-height: 36px
-  padding-right: 24px
-
-.banner-research-title
-  max-width: 300px
-  overflow: hidden
-  text-overflow: ellipsis
-  white-space: nowrap
-  display: inline-block
-  vertical-align: middle
 
 .main-card
   flex: 1 1 auto
@@ -265,16 +249,4 @@ const infinityProgress = computed(() => {
   color: #fff
   font-weight: bold
   font-size: 15px
-
-.q-tab-panels
-  flex: 1 1 auto
-  min-height: 0
-  display: flex
-  flex-direction: column
-
-.q-panel-parent
-  flex: 1 1 auto
-  min-height: 0
-  display: flex
-  flex-direction: column
 </style>

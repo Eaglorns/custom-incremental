@@ -73,16 +73,14 @@
         <q-btn
           :disable="
             isMaxLevel(meta.key).value ||
-            (researchingKey && researchingKey !== meta.key) ||
             (!storeGame.epicNumber.gte(getResearchCost(meta.key).value) &&
-              !(researchingKey === meta.key && getResearch(meta.key).currentTime.gt(0))) ||
-            (getResearchTime(meta.key).value.gt(1000) &&
-              !(researchingKey === meta.key && getResearch(meta.key).currentTime.gt(0)))
+              !getResearch(meta.key).currentTime.gt(0)) ||
+            (getResearchTime(meta.key).value.gt(1000) && !getResearch(meta.key).currentTime.gt(0))
           "
           size="sm"
           dense
           :label="
-            researchingKey === meta.key && getResearch(meta.key).currentTime.gt(0)
+            getResearch(meta.key).currentTime.gt(0)
               ? `Отменить (${formatNumber(getResearch(meta.key).currentTime)} сек.)`
               : 'Улучшить'
           "
@@ -91,7 +89,7 @@
           :color="
             isMaxLevel(meta.key).value
               ? 'grey-8'
-              : researchingKey === meta.key && getResearch(meta.key).currentTime.gt(0)
+              : getResearch(meta.key).currentTime.gt(0)
                 ? 'negative'
                 : 'primary'
           "
@@ -135,8 +133,6 @@ function isMaxLevel(metaKey: string) {
   });
 }
 
-const researchingKey = computed(() => storeGame.research.researchingKey);
-
 function getResearchCost(key: string) {
   const research = researchList[key];
   if (!research) return computed(() => new Decimal(0));
@@ -161,7 +157,7 @@ function startResearch(key: string, isLoad: boolean) {
   const research = researchList[key];
   if (!research) return;
 
-  if (!isLoad && researchingKey.value === key && research.currentTime.gt(0)) {
+  if (!isLoad && research.currentTime.gt(0)) {
     cancelResearch(key);
     return;
   }
@@ -177,24 +173,23 @@ function startResearch(key: string, isLoad: boolean) {
   if (!isLoad) {
     if (!storeGame.epicNumber.gte(cost)) return;
     storeGame.epicNumber = storeGame.epicNumber.minus(cost);
-    storeGame.research.researchingKey = key;
     research.currentTime = time;
+    research.isActive = true;
   }
 }
 
 function cancelResearch(key: string) {
   const research = researchList[key];
   if (!research) return;
-
   research.currentTime = new Decimal(0);
-  storeGame.research.researchingKey = '';
 }
 
 onMounted(() => {
-  if (storeGame.research.researchingKey != '') {
-    if (researchList[storeGame.research.researchingKey]?.currentTime.gt(0))
-      startResearch(storeGame.research.researchingKey, true);
-  }
+  Object.entries(researchList).forEach(([key, research]) => {
+    if (research.currentTime && research.currentTime.gt(0)) {
+      startResearch(key, true);
+    }
+  });
 });
 </script>
 
