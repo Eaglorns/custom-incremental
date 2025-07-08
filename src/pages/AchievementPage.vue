@@ -2,7 +2,7 @@
   <q-page class="q-pa-lg">
     <div class="q-mb-md text-h6 text-bold row items-center">
       <q-icon name="fa-duotone fa-sparkles" color="amber" size="28px" class="q-mr-sm" />
-      Выполнено достижений: {{ totalAchievements }}
+      Выполнено достижений: {{ formatNumber(totalAchievements) }}
       <q-chip color="primary" text-color="white" class="q-ml-md">
         <q-icon name="fa-duotone fa-arrow-trend-up" left size="18px" />
         Бонус к производству: x{{ achievementBonus.toFixed(2) }}
@@ -59,6 +59,7 @@
 import { computed, watch } from 'vue';
 import { useStoreGame } from 'src/stores/game';
 import Decimal from 'break_eternity.js';
+import { achievements } from 'src/constants/achievementMeta';
 
 const storeGame = useStoreGame();
 const formatNumber = storeGame.formatNumber;
@@ -74,8 +75,6 @@ interface Achievement {
   hint?: string;
   levelHint?: string;
 }
-
-const achievementLevels = computed(() => storeGame.achievements);
 
 function getLevel(current: Decimal): Decimal {
   if (current.lt(100)) return new Decimal(0);
@@ -116,49 +115,6 @@ watch(() => storeGame.shop.cpu.value, updateMaxCpuLevel, { immediate: true });
 watch(() => storeGame.shop.hard.value, updateMaxHardLevel, { immediate: true });
 watch(() => storeGame.shop.ram.value, updateMaxRamLevel, { immediate: true });
 watch(() => storeGame.epicNumber, updateMaxEpicLevel, { immediate: true });
-
-const achievements = computed(() => [
-  {
-    id: 'epicLevel',
-    title: 'Магнат',
-    description: 'Получайте новые уровни за экспоненциальный рост основной валюты',
-    icon: 'fa-solid fa-1',
-    color: 'primary',
-    level: achievementLevels.value.epicLevel,
-    unlocked: achievementLevels.value.epicLevel.gt(0),
-    hint: 'Копите число. Каждый новый уровень требует в 1 000 000 000 раз больше.',
-  },
-  {
-    id: 'cpuLevel',
-    title: 'Коллекционер CPU',
-    description: 'Получайте новые уровни за всё большее количество CPU',
-    icon: 'fa-duotone fa-microchip',
-    color: 'teal',
-    level: achievementLevels.value.cpuLevel,
-    unlocked: achievementLevels.value.cpuLevel.gt(0),
-    hint: 'Покупайте CPU, чтобы повышать уровень достижения. Каждый новый уровень требует в 100 раз больше CPU.',
-  },
-  {
-    id: 'hardLevel',
-    title: 'Коллекционер HDD',
-    description: 'Получайте новые уровни за всё большее количество HDD',
-    icon: 'fa-duotone fa-hard-drive',
-    color: 'blue-grey',
-    level: achievementLevels.value.hardLevel,
-    unlocked: achievementLevels.value.hardLevel.gt(0),
-    hint: 'Покупайте HDD, чтобы повышать уровень достижения. Каждый новый уровень требует в 100 раз больше HDD.',
-  },
-  {
-    id: 'ramLevel',
-    title: 'Коллекционер RAM',
-    description: 'Получайте новые уровни за всё большее количество RAM',
-    icon: 'fa-duotone fa-memory',
-    color: 'deep-orange',
-    level: achievementLevels.value.ramLevel,
-    unlocked: achievementLevels.value.ramLevel.gt(0),
-    hint: 'Покупайте RAM, чтобы повышать уровень достижения. Каждый новый уровень требует в 100 раз больше RAM.',
-  },
-]);
 
 function achievementCardClass(ach: Achievement) {
   if (ach.level !== undefined && ach.level.gt(0)) return 'bg-primary';

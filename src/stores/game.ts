@@ -65,10 +65,10 @@ export const useStoreGame = defineStore('storeGame', {
         ramPow: {
           cost: new Decimal(1000000),
           currentTime: new Decimal(0),
-          time: new Decimal(10),
+          time: new Decimal(4),
           bonus: new Decimal(0.001),
           level: new Decimal(0),
-          costMultiply: new Decimal(2),
+          costMultiply: new Decimal(1.6),
           timeMultiply: new Decimal(1.3),
           maxLevel: new Decimal(1000),
         },
@@ -76,7 +76,7 @@ export const useStoreGame = defineStore('storeGame', {
           cost: new Decimal(1000),
           currentTime: new Decimal(0),
           time: new Decimal(6),
-          bonus: new Decimal(2),
+          bonus: new Decimal(1.05),
           level: new Decimal(0),
           costMultiply: new Decimal(100),
           timeMultiply: new Decimal(2),
@@ -196,6 +196,12 @@ export const useStoreGame = defineStore('storeGame', {
             percent: this.helpers.ram.percent,
           },
         },
+        achievements: {
+          epicLevel: this.achievements.epicLevel,
+          cpuLevel: this.achievements.cpuLevel,
+          hardLevel: this.achievements.hardLevel,
+          ramLevel: this.achievements.ramLevel,
+        },
       };
 
       const replacer = (key: string, value: unknown) => {
@@ -248,6 +254,10 @@ export const useStoreGame = defineStore('storeGame', {
         this.helpers.hard.percent = new Decimal(loaded.helpers.hard.percent);
         this.helpers.ram.count = new Decimal(loaded.helpers.ram.count);
         this.helpers.ram.percent = new Decimal(loaded.helpers.ram.percent);
+        this.achievements.epicLevel = new Decimal(loaded.achievements.epicLevel);
+        this.achievements.cpuLevel = new Decimal(loaded.achievements.cpuLevel);
+        this.achievements.hardLevel = new Decimal(loaded.achievements.hardLevel);
+        this.achievements.ramLevel = new Decimal(loaded.achievements.ramLevel);
       } catch (e) {
         console.error('Ошибка загрузки сохранения:', e);
       }
