@@ -5,7 +5,7 @@
       Выполнено достижений: {{ totalAchievements }}
       <q-chip color="primary" text-color="white" class="q-ml-md">
         <q-icon name="fa-duotone fa-arrow-trend-up" left size="18px" />
-        Бонус к производству: x{{ achievementProductionBonus.toFixed(2) }}
+        Бонус к производству: x{{ achievementBonus.toFixed(2) }}
       </q-chip>
     </div>
     <div class="q-gutter-md" style="display: flex; flex-wrap: wrap; align-items: flex-start">
@@ -23,7 +23,19 @@
         "
         flat
         bordered
+        v-ripple
       >
+        <q-tooltip
+          v-if="ach.level !== undefined && ach.hint"
+          class="bg-dark text-white tooltip-bordered"
+          anchor="center middle"
+          self="center middle"
+          :offset="[0, 12]"
+          style="max-width: 220px; min-width: 160px; padding: 10px; text-align: left"
+        >
+          <div class="text-subtitle2 text-bold q-mb-xs">{{ ach.title }}</div>
+          <div class="text-caption q-mb-xs">{{ ach.hint }}</div>
+        </q-tooltip>
         <div class="flex flex-center q-mb-xs">
           <q-icon :name="ach.icon" :color="iconColor(ach)" size="32px" />
         </div>
@@ -35,7 +47,7 @@
         </div>
         <div v-if="ach.level !== undefined" class="text-center q-mt-xs">
           <q-badge :color="badgeColor(ach)" :text-color="badgeTextColor(ach)">
-            Уровень: {{ ach.level }}
+            Уровень: {{ formatNumber(ach.level) }}
           </q-badge>
         </div>
       </q-card>
@@ -44,10 +56,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { computed, watch } from 'vue';
 import { useStoreGame } from 'src/stores/game';
+import Decimal from 'break_eternity.js';
 
 const storeGame = useStoreGame();
+const formatNumber = storeGame.formatNumber;
 
 interface Achievement {
   id: string;
@@ -56,48 +70,63 @@ interface Achievement {
   icon: string;
   color: string;
   unlocked: boolean;
-  level?: number | undefined;
+  level?: Decimal | undefined;
+  hint?: string;
+  levelHint?: string;
 }
 
-const maxLevels = ref<{ [key: string]: number }>({
-  cpuLevel: 0,
-  hardLevel: 0,
-  ramLevel: 0,
-});
+const achievementLevels = computed(() => storeGame.achievements);
 
-function getLevel(current: number): number {
-  if (current < 1) return 0;
-  return Math.floor(Math.log10(current) / 2) + 1;
+function getLevel(current: Decimal): Decimal {
+  if (current.lt(100)) return new Decimal(0);
+  return current.log10().div(2).floor();
 }
 
-function updateMaxLevels() {
-  const cpu = getLevel(storeGame.shop.cpu.value.toNumber());
-  const hard = getLevel(storeGame.shop.hard.value.toNumber());
-  const ram = getLevel(storeGame.shop.ram.value.toNumber());
-  if (cpu > (maxLevels.value.cpuLevel ?? 0)) maxLevels.value.cpuLevel = cpu;
-  if (hard > (maxLevels.value.hardLevel ?? 0)) maxLevels.value.hardLevel = hard;
-  if (ram > (maxLevels.value.ramLevel ?? 0)) maxLevels.value.ramLevel = ram;
+function getEpicLevel(current: Decimal): Decimal {
+  if (current.lt(1000000000)) return new Decimal(0);
+  return current.div(1000).log10().div(9).floor();
 }
 
-watch(
-  () => [
-    storeGame.shop.cpu.value.toNumber(),
-    storeGame.shop.hard.value.toNumber(),
-    storeGame.shop.ram.value.toNumber(),
-  ],
-  updateMaxLevels,
-  { immediate: true },
-);
+function updateMaxCpuLevel() {
+  const cpu = getLevel(storeGame.shop.cpu.value);
+  if (cpu.gt(storeGame.achievements.cpuLevel)) {
+    storeGame.achievements.cpuLevel = cpu;
+  }
+}
+function updateMaxHardLevel() {
+  const hard = getLevel(storeGame.shop.hard.value);
+  if (hard.gt(storeGame.achievements.hardLevel)) {
+    storeGame.achievements.hardLevel = hard;
+  }
+}
+function updateMaxRamLevel() {
+  const ram = getLevel(storeGame.shop.ram.value);
+  if (ram.gt(storeGame.achievements.ramLevel)) {
+    storeGame.achievements.ramLevel = ram;
+  }
+}
+function updateMaxEpicLevel() {
+  const epic = getEpicLevel(storeGame.epicNumber);
+  if (epic.gt(storeGame.achievements.epicLevel)) {
+    storeGame.achievements.epicLevel = epic;
+  }
+}
+
+watch(() => storeGame.shop.cpu.value, updateMaxCpuLevel, { immediate: true });
+watch(() => storeGame.shop.hard.value, updateMaxHardLevel, { immediate: true });
+watch(() => storeGame.shop.ram.value, updateMaxRamLevel, { immediate: true });
+watch(() => storeGame.epicNumber, updateMaxEpicLevel, { immediate: true });
 
 const achievements = computed(() => [
   {
-    id: 'firstEpic',
-    title: 'Тысячник',
-    description: 'Получите тысячу единиц основной валюты',
+    id: 'epicLevel',
+    title: 'Магнат',
+    description: 'Получайте новые уровни за экспоненциальный рост основной валюты',
     icon: 'fa-solid fa-1',
     color: 'primary',
-    unlocked: storeGame.epicNumber.gte(1000),
-    level: undefined,
+    level: achievementLevels.value.epicLevel,
+    unlocked: achievementLevels.value.epicLevel.gt(0),
+    hint: 'Копите число. Каждый новый уровень требует в 1 000 000 000 раз больше.',
   },
   {
     id: 'cpuLevel',
@@ -105,8 +134,9 @@ const achievements = computed(() => [
     description: 'Получайте новые уровни за всё большее количество CPU',
     icon: 'fa-duotone fa-microchip',
     color: 'teal',
-    level: maxLevels.value.cpuLevel ?? 0,
-    unlocked: (maxLevels.value.cpuLevel ?? 0) > 0,
+    level: achievementLevels.value.cpuLevel,
+    unlocked: achievementLevels.value.cpuLevel.gt(0),
+    hint: 'Покупайте CPU, чтобы повышать уровень достижения. Каждый новый уровень требует в 100 раз больше CPU.',
   },
   {
     id: 'hardLevel',
@@ -114,8 +144,9 @@ const achievements = computed(() => [
     description: 'Получайте новые уровни за всё большее количество HDD',
     icon: 'fa-duotone fa-hard-drive',
     color: 'blue-grey',
-    level: maxLevels.value.hardLevel ?? 0,
-    unlocked: (maxLevels.value.hardLevel ?? 0) > 0,
+    level: achievementLevels.value.hardLevel,
+    unlocked: achievementLevels.value.hardLevel.gt(0),
+    hint: 'Покупайте HDD, чтобы повышать уровень достижения. Каждый новый уровень требует в 100 раз больше HDD.',
   },
   {
     id: 'ramLevel',
@@ -123,54 +154,34 @@ const achievements = computed(() => [
     description: 'Получайте новые уровни за всё большее количество RAM',
     icon: 'fa-duotone fa-memory',
     color: 'deep-orange',
-    level: maxLevels.value.ramLevel ?? 0,
-    unlocked: (maxLevels.value.ramLevel ?? 0) > 0,
-  },
-  {
-    id: 'helper1',
-    title: 'Первый помощник',
-    description: 'Нанять первого помощника любого типа',
-    icon: 'fa-duotone fa-user-robot',
-    color: 'amber',
-    unlocked:
-      storeGame.helpers.cpu.count.gte(1) ||
-      storeGame.helpers.hard.count.gte(1) ||
-      storeGame.helpers.ram.count.gte(1),
-    level: undefined,
-  },
-  {
-    id: 'research1',
-    title: 'Учёный',
-    description: 'Проведите первое исследование',
-    icon: 'fa-duotone fa-flask',
-    color: 'secondary',
-    unlocked: Object.values(storeGame.research.list).some((r) => r.level.gte(1)),
-    level: undefined,
+    level: achievementLevels.value.ramLevel,
+    unlocked: achievementLevels.value.ramLevel.gt(0),
+    hint: 'Покупайте RAM, чтобы повышать уровень достижения. Каждый новый уровень требует в 100 раз больше RAM.',
   },
 ]);
 
 function achievementCardClass(ach: Achievement) {
-  if (ach.level !== undefined && ach.level > 0) return 'bg-primary';
+  if (ach.level !== undefined && ach.level.gt(0)) return 'bg-primary';
   if (ach.unlocked) return 'bg-positive';
   return 'bg-grey-3';
 }
 function iconColor(ach: Achievement) {
-  if (ach.level !== undefined && ach.level > 0) return 'white';
+  if (ach.level !== undefined && ach.level.gt(0)) return 'white';
   if (ach.unlocked) return 'white';
   return 'grey-5';
 }
 function textColor(ach: Achievement, isDesc = false) {
-  if (ach.level !== undefined && ach.level > 0) return 'text-white';
+  if (ach.level !== undefined && ach.level.gt(0)) return 'text-white';
   if (ach.unlocked) return isDesc ? 'text-grey-4' : 'text-white';
   return isDesc ? 'text-grey-6' : 'text-grey-7';
 }
 function badgeColor(ach: Achievement) {
-  if (ach.level !== undefined && ach.level > 0) return 'white';
+  if (ach.level !== undefined && ach.level.gt(0)) return 'white';
   if (ach.unlocked) return ach.color || 'white';
   return 'grey-5';
 }
 function badgeTextColor(ach: Achievement) {
-  if (ach.level !== undefined && ach.level > 0) return 'primary';
+  if (ach.level !== undefined && ach.level.gt(0)) return 'primary';
   if (ach.unlocked) return 'positive';
   return 'grey-7';
 }
@@ -178,11 +189,41 @@ function badgeTextColor(ach: Achievement) {
 const totalAchievements = computed(() => {
   return achievements.value.reduce((sum, ach) => {
     if (ach.level !== undefined) {
-      return sum + ach.level;
+      return sum.plus(ach.level);
     }
-    return sum + (ach.unlocked ? 1 : 0);
-  }, 0);
+    return sum.plus(ach.unlocked ? 1 : 0);
+  }, new Decimal(0));
 });
 
-const achievementProductionBonus = computed(() => 1 + 0.01 * totalAchievements.value);
+function recalcAchievementBonus() {
+  const sum = storeGame.achievements.epicLevel
+    .plus(storeGame.achievements.cpuLevel)
+    .plus(storeGame.achievements.hardLevel)
+    .plus(storeGame.achievements.ramLevel);
+  storeGame.achievementBonus = sum.mul(0.01).plus(1);
+}
+
+watch(
+  () => [
+    storeGame.achievements.epicLevel.toString(),
+    storeGame.achievements.cpuLevel.toString(),
+    storeGame.achievements.hardLevel.toString(),
+    storeGame.achievements.ramLevel.toString(),
+  ],
+  recalcAchievementBonus,
+  { immediate: true },
+);
+
+const achievementBonus = computed(() => storeGame.achievementBonus);
 </script>
+
+<style lang="sass">
+.tooltip-bordered
+  border: 2px solid $primary
+  border-radius: 8px
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18)
+  padding: 10px
+  max-width: 220px
+  min-width: 160px
+  text-align: left
+</style>

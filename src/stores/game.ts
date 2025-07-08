@@ -9,9 +9,10 @@ const SECRET = 'incremental';
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     lastTick: Date.now(),
-    epicNumber: new Decimal(1000000000),
-    capacity: new Decimal(10000000000),
+    epicNumber: new Decimal(50000),
+    capacity: new Decimal(100000),
     timer: 1000,
+    achievementBonus: new Decimal(1),
     shop: {
       cpu: {
         value: new Decimal(1),
@@ -115,6 +116,12 @@ export const useStoreGame = defineStore('storeGame', {
         },
       },
     },
+    achievements: {
+      epicLevel: new Decimal(0),
+      cpuLevel: new Decimal(0),
+      hardLevel: new Decimal(0),
+      ramLevel: new Decimal(0),
+    },
   }),
   getters: {
     formatNumber: () => (num: Decimal) => {
@@ -139,6 +146,7 @@ export const useStoreGame = defineStore('storeGame', {
         epicNumber: this.epicNumber,
         capacity: this.capacity,
         timer: this.timer,
+        achievementProductionBonus: this.achievementBonus,
         shop: {
           cpu: {
             value: this.shop.cpu.value,
@@ -208,6 +216,7 @@ export const useStoreGame = defineStore('storeGame', {
         this.epicNumber = new Decimal(loaded.epicNumber);
         this.capacity = new Decimal(loaded.capacity);
         this.timer = loaded.timer;
+        this.achievementBonus = new Decimal(loaded.achievementBonus);
         this.shop.cpu.value = new Decimal(loaded.shop.cpu.value);
         this.shop.cpu.multiply = new Decimal(loaded.shop.cpu.multiply);
         this.shop.hard.value = new Decimal(loaded.shop.hard.value);

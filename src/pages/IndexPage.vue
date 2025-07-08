@@ -14,15 +14,6 @@
             formatNumber(storeGame.capacity)
           }}</span>
         </div>
-        <div class="banner-research-status">
-          <div v-if="currentResearch" class="row items-center">
-            <span class="banner-research-title">
-              {{ currentResearchTime }} сек.
-              <q-icon name="fa-duotone fa-flask" color="secondary" size="20px" class="q-ml-xs" />
-              {{ currentResearch.title }}
-            </span>
-          </div>
-        </div>
       </div>
     </q-banner>
     <q-card class="main-card">
@@ -158,7 +149,6 @@ import ResearchBase from 'src/components/research/ResearchBase.vue';
 import AutomaticBuyer from 'src/components/automatic/AutomaticBuyer.vue';
 import Help from 'src/pages/HelpPage.vue';
 import Achievement from 'src/pages/AchievementPage.vue';
-import { researchMeta } from 'src/constants/researchMeta';
 import Decimal from 'break_eternity.js';
 
 const storeGame = useStoreGame();
@@ -169,23 +159,6 @@ const innerShop = ref('innerShopCPU');
 const innerResearch = ref('innerResearchBase');
 const innerAutomatic = ref('innerAutomaticBuyer');
 const splitterModel = ref(20);
-
-const researchingKey = computed(() => storeGame.research.researchingKey);
-const researchList = computed(() => storeGame.research.list);
-
-type ResearchKey = keyof typeof storeGame.research.list;
-
-const currentResearch = computed(() => {
-  if (!researchingKey.value) return null;
-  const meta = researchMeta.find((m) => m.key === researchingKey.value);
-  return meta || null;
-});
-
-const currentResearchTime = computed(() => {
-  if (!researchingKey.value) return '';
-  const research = researchList.value[researchingKey.value as ResearchKey];
-  return research?.currentTime?.toFixed?.(0) ?? '';
-});
 
 const infinityProgress = computed(() => {
   const value = storeGame.epicNumber;
