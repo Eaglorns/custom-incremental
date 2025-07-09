@@ -129,26 +129,35 @@ export const useStoreGame = defineStore('storeGame', {
   }),
   getters: {
     formatNumber: () => (num: Decimal) => {
-      const n = num.toNumber();
-      if (n < 1e6) return num.toFixed(0);
-      if (n < 1e9) return num.toExponential(2);
-      return num.toExponential(3);
+      if (num.lt(1e6)) return num.toFixed(0);
+      const expStr = num.toExponential(2);
+      const regex = /^([0-9.]+)e([+-]?\d+)$/;
+      const match = regex.exec(expStr);
+      if (match) {
+        const mantissa = match[1];
+        let exp = match[2];
+        if (exp && exp.length > 4) exp = exp.slice(0, 4) + '…';
+        return `${mantissa}e${exp}`;
+      }
+      return num.toFixed(2);
     },
-    getHelperChance: () => (percent: Decimal) => {
-      const k = 0.006;
-      const one = new Decimal(1);
-      const ninetyNine = new Decimal(99);
-      if (!percent || percent.lte(0)) return one;
-      const expPart = Decimal.exp(new Decimal(-k).mul(percent));
-      const chance = one.add(ninetyNine.mul(one.minus(expPart)));
-      return chance.gte(100) ? new Decimal(100) : chance;
-    },
-    giveEpicNumber: (state) => {
+    getHelperChance:
+      () =>
+      (percent: Decimal): Decimal => {
+        const k = 0.006;
+        const one = new Decimal(1);
+        const ninetyNine = new Decimal(99);
+        if (!percent || percent.lte(0)) return one;
+        const expPart = Decimal.exp(new Decimal(-k).mul(percent));
+        const chance = one.add(ninetyNine.mul(one.minus(expPart)));
+        return chance.gte(100) ? new Decimal(100) : chance;
+      },
+    giveEpicNumber: (state): Decimal => {
       const parShopCPU = state.shop.cpu.value;
       const parResearchCPU = state.research.list.cpuPow;
       return parShopCPU.pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1));
     },
-    giveCapacity: (state) => {
+    giveCapacity: (state): Decimal => {
       const parRAM = state.shop.ram.value;
       const parResearchRam = state.research.list.ramPow;
       return parRAM.pow(parResearchRam.bonus.mul(parResearchRam.level).plus(1));
@@ -162,60 +171,62 @@ export const useStoreGame = defineStore('storeGame', {
 
       const steps = Math.floor(delta / this.timer) || 1;
       for (let i = 0; i < steps; i++) {
-        const researchList = this.research.list;
-        Object.values(researchList).forEach((research) => {
-          if (research.isActive && research.currentTime.gt(0)) {
-            research.currentTime = research.currentTime.minus(1);
-            if (research.currentTime.lte(0)) {
-              research.level = research.level.plus(1);
-              research.isActive = false;
-            }
-          }
-        });
-
-        const processHelperType = (count: Decimal, cost: Decimal, key: keyof typeof this.shop) => {
-          if (count.lte(0)) return;
-          const maxBuy = Decimal.min(count, this.epicNumber.div(cost).floor());
-          if (maxBuy.lte(0)) return;
-          this.shop[key].value = this.shop[key].value.plus(maxBuy);
-          this.epicNumber = this.epicNumber.minus(maxBuy.mul(cost));
-        };
-
-        const helpers = this.helpers;
-        const rand = Math.random() * 100;
-        if (helpers.cpu.count.gt(0))
-          if (this.getHelperChance(helpers.cpu.percent).gte(rand)) {
-            processHelperType(
-              helpers.cpu.count.mul(this.shop.cpu.multiply),
-              this.shop.cpu.cost.value,
-              'cpu',
-            );
-          }
-        if (helpers.hard.count.gt(0))
-          if (this.getHelperChance(helpers.hard.percent).gte(rand)) {
-            processHelperType(
-              helpers.hard.count.mul(this.shop.hard.multiply),
-              this.shop.hard.cost.value,
-              'hard',
-            );
-            this.capacity = this.capacity.plus(this.shop.hard.multiply);
-          }
-        if (helpers.ram.count.gt(0))
-          if (helpers.ram.count.gt(0))
-            if (this.getHelperChance(helpers.ram.percent).gte(rand)) {
-              processHelperType(
-                helpers.ram.count.mul(this.shop.ram.multiply),
-                this.shop.ram.cost.value,
-                'ram',
-              );
-            }
-
+        this.processResearch();
+        this.processHelpers();
         this.epicNumber = this.epicNumber.plus(this.giveEpicNumber);
         this.capacity = this.capacity.plus(this.giveCapacity);
 
         if (this.epicNumber.gt(this.capacity)) {
           this.epicNumber = this.capacity;
         }
+      }
+    },
+
+    processResearch() {
+      const researchList = this.research.list;
+      Object.values(researchList).forEach((research) => {
+        if (research.isActive && research.currentTime.gt(0)) {
+          research.currentTime = research.currentTime.minus(1);
+          if (research.currentTime.lte(0)) {
+            research.level = research.level.plus(1);
+            research.isActive = false;
+          }
+        }
+      });
+    },
+
+    processHelperType(count: Decimal, cost: Decimal, key: keyof typeof this.shop) {
+      if (count.lte(0)) return;
+      const maxBuy = Decimal.min(count, this.epicNumber.div(cost).floor());
+      if (maxBuy.lte(0)) return;
+      this.shop[key].value = this.shop[key].value.plus(maxBuy);
+      this.epicNumber = this.epicNumber.minus(maxBuy.mul(cost));
+    },
+
+    processHelpers() {
+      const helpers = this.helpers;
+      const rand = Math.random() * 100;
+      if (helpers.cpu.count.gt(0) && this.getHelperChance(helpers.cpu.percent).gte(rand)) {
+        this.processHelperType(
+          helpers.cpu.count.mul(this.shop.cpu.multiply),
+          this.shop.cpu.cost.value,
+          'cpu',
+        );
+      }
+      if (helpers.hard.count.gt(0) && this.getHelperChance(helpers.hard.percent).gte(rand)) {
+        this.processHelperType(
+          helpers.hard.count.mul(this.shop.hard.multiply),
+          this.shop.hard.cost.value,
+          'hard',
+        );
+        this.capacity = this.capacity.plus(this.shop.hard.multiply);
+      }
+      if (helpers.ram.count.gt(0) && this.getHelperChance(helpers.ram.percent).gte(rand)) {
+        this.processHelperType(
+          helpers.ram.count.mul(this.shop.ram.multiply),
+          this.shop.ram.cost.value,
+          'ram',
+        );
       }
     },
     saveGame() {

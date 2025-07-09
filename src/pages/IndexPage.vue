@@ -64,6 +64,7 @@
           <q-splitter v-model="splitterModel">
             <template v-slot:before>
               <q-tabs v-model="innerResearch" vertical class="text-teal">
+                <q-tab name="innerScientist" icon="fa-duotone fa-user-astronaut" label="Учёные" />
                 <q-tab
                   name="innerResearchBase"
                   icon="fa-duotone fa-flask"
@@ -77,6 +78,7 @@
                 transition-prev="slide-down"
                 transition-next="slide-up"
               >
+                <q-tab-panel name="innerScientist"><ResearchScientist /></q-tab-panel>
                 <q-tab-panel name="innerResearchBase"><ResearchBase /></q-tab-panel>
               </q-tab-panels>
             </template>
@@ -148,6 +150,7 @@ import ShopCPU from 'src/components/shop/ShopCPU.vue';
 import ShopHard from 'src/components/shop/ShopHard.vue';
 import ShopRAM from 'src/components/shop/ShopRAM.vue';
 import ResearchBase from 'src/components/research/ResearchBase.vue';
+import ResearchScientist from 'src/components/research/ResearchScientist.vue';
 import AutomaticBuyer from 'src/components/automatic/AutomaticBuyer.vue';
 import Help from 'src/pages/HelpPage.vue';
 import Achievement from 'src/pages/AchievementPage.vue';
@@ -158,7 +161,7 @@ const formatNumber = storeGame.formatNumber;
 
 const tab = ref('shop');
 const innerShop = ref('innerShopCPU');
-const innerResearch = ref('innerResearchBase');
+const innerResearch = ref('innerScientist');
 const innerAutomatic = ref('innerAutomaticBuyer');
 const splitterModel = ref(20);
 
