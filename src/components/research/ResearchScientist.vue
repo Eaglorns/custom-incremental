@@ -6,8 +6,8 @@
       class="q-pa-md flex column items-center bg-blue-grey-9 text-white justify-between"
       style="
         width: 200px;
-        min-height: 240px;
-        height: 260px;
+        min-height: 200px;
+        height: 220px;
         display: flex;
         flex-direction: column;
         overflow: hidden;
@@ -19,7 +19,7 @@
         style="
           position: relative;
           width: 100%;
-          height: 32px;
+          height: 20px;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -127,24 +127,42 @@
       class="q-pa-md flex column items-center bg-blue-grey-9 text-white justify-between q-hoverable"
       style="
         width: 200px;
-        min-height: 240px;
-        height: 260px;
+        min-height: 200px;
+        height: 220px;
         display: flex;
         flex-direction: column;
         overflow: hidden;
         border: 2px dashed var(--q-primary);
         cursor: pointer;
+        align-items: center;
+        justify-content: flex-start;
       "
       flat
       bordered
       @click="hireScientist"
     >
-      <q-avatar size="56px" class="q-mb-sm" color="blue-grey-7">
+      <q-avatar
+        size="56px"
+        class="q-mb-sm"
+        color="blue-grey-7"
+        style="margin-top: 24px; margin-bottom: 8px; display: flex; align-self: center"
+      >
         <q-icon name="fa-duotone fa-user-plus" size="40px" color="white" />
       </q-avatar>
-      <div class="text-h6 text-bold text-center q-mb-xs">Нанять</div>
-      <div class="text-subtitle2 text-center q-mb-xs">
-        Стоимость: {{ formatNumber(hireCost) }} EP
+      <div style="flex: 1 1 auto"></div>
+      <div
+        class="text-subtitle2 text-center q-mb-xs"
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          margin-bottom: 12px;
+          margin-top: auto;
+        "
+      >
+        <q-icon name="fa-solid fa-coins" color="amber-6" size="18px" />
+        <span>{{ formatNumber(hireCost) }}</span>
       </div>
     </q-card>
   </div>

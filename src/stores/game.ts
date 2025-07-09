@@ -131,17 +131,36 @@ export const useStoreGame = defineStore('storeGame', {
   }),
   getters: {
     formatNumber: () => (num: Decimal) => {
-      if (num.lt(1e6)) return num.toFixed(0);
-      const expStr = num.toExponential(2);
-      const regex = /^([0-9.]+)e([+-]?\d+)$/;
-      const match = regex.exec(expStr);
-      if (match) {
-        const mantissa = match[1];
-        let exp = match[2];
-        if (exp && exp.length > 4) exp = exp.slice(0, 4) + '…';
-        return `${mantissa}e${exp}`;
+      if (num.lt(1e6)) {
+        if (num.gte(1e9)) return num.div(1e9).toFixed(2) + 'B';
+        if (num.gte(1e6)) return num.div(1e6).toFixed(2) + 'M';
+        if (num.gte(1e3)) return num.div(1e3).toFixed(2) + 'K';
+        return num.toFixed(0);
       }
-      return num.toFixed(2);
+      let value = num,
+        tetration = 0;
+      while (value.gte(1e6)) {
+        value = value.log10();
+        tetration++;
+      }
+      if (tetration === 0) {
+        const exp = num.log10().floor();
+        return `${num.div(Decimal.pow(10, exp)).toFixed(3)}e${exp.toFixed(0)}`;
+      }
+      if (tetration === 1) {
+        const exp = value.floor();
+        const mantissa10 = Math.pow(10, num.log10().minus(exp).toNumber());
+        if (Math.abs(mantissa10 - 1) < 1e-6) return `e${exp.toFixed(0)}`;
+        return `${mantissa10.toFixed(3)}e${exp.toFixed(0)}`;
+      }
+      if (tetration < 10) return `${value.toFixed(4)}[↑↑${tetration + 1}]`;
+      let superTetration = 0,
+        t = tetration;
+      while (t >= 6) {
+        t = Math.log10(t);
+        superTetration++;
+      }
+      return `${t.toFixed(4)}[↑↑↑${superTetration + 1}]`;
     },
     getHelperChance:
       () =>
@@ -167,6 +186,7 @@ export const useStoreGame = defineStore('storeGame', {
   },
   actions: {
     gameTick() {
+      console.time('gameTick');
       const now = Date.now();
       const delta = now - this.lastTick;
       this.lastTick = now;
@@ -183,6 +203,7 @@ export const useStoreGame = defineStore('storeGame', {
           this.epicNumber = this.capacity;
         }
       }
+      console.timeEnd('gameTick');
     },
 
     processResearch() {

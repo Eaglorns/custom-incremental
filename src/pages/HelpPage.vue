@@ -61,8 +61,37 @@
           </li>
           <li>
             <q-icon name="fa-duotone fa-bolt" color="positive" size="16px" class="q-mr-xs" />
-            Исследования ускоряют прогресс, повышают эффективность ресурсов и открывают новые
-            механики.
+            Исследования ускоряют прогресс и повышают эффективность ресурсов.
+          </li>
+        </ul>
+      </div>
+      <div class="q-mb-lg">
+        <div class="text-h6 text-bold q-mb-sm">Учёные</div>
+        <ul>
+          <li>
+            <q-icon
+              name="fa-duotone fa-user-astronaut"
+              color="blue-grey-4"
+              size="16px"
+              class="q-mr-xs"
+            />
+            Учёные — особые помощники, которых можно нанимать за
+            <span class="text-amber-7 text-bold">ЧИСЛО</span>.
+          </li>
+          <li>
+            <q-icon name="fa-solid fa-brain" color="blue-4" size="16px" class="q-mr-xs" />
+            Каждый учёный обладает параметрами <span class="text-bold">интеллект</span> и
+            <span class="text-bold">эффективность</span>, которые влияют выработку очков
+            исследований и получение опыта учёными.
+          </li>
+          <li>
+            <q-icon name="fa-solid fa-bolt" color="teal-5" size="16px" class="q-mr-xs" />
+            Чем выше уровень учёного и эффективность, тем больше производится очков исследований.
+            Чем выше интеллект учёного, тем больше он получает опыта.
+          </li>
+          <li>
+            <q-icon name="fa-duotone fa-user-plus" color="primary" size="16px" class="q-mr-xs" />
+            Новых учёных можно нанимать, но стоимость каждого следующего растёт экспоненциально.
           </li>
         </ul>
       </div>
@@ -118,13 +147,12 @@
         <ul>
           <li>
             <q-icon name="fa-duotone fa-trophy" color="amber" size="16px" class="q-mr-xs" />
-            На отдельной вкладке отображаются все открытые и доступные достижения, их уровни и
-            условия получения.
+            На отдельной вкладке отображаются все доступные достижения, их уровни и условия
+            получения.
           </li>
           <li>
             <q-icon name="fa-duotone fa-eye" color="info" size="16px" class="q-mr-xs" />
-            Для каждого достижения показаны название, описание, иконка и (если есть) текущий
-            уровень.
+            Для каждого достижения показаны название, описание, иконка и текущий уровень.
           </li>
           <li>
             <q-icon
