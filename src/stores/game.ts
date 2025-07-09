@@ -2,6 +2,7 @@ import { defineStore, acceptHMRUpdate } from 'pinia';
 import Decimal from 'break_eternity.js';
 import CryptoJS from 'crypto-js';
 import { LocalStorage } from 'quasar';
+import type { Scientist } from 'src/constants/models';
 
 const STORAGE_KEY = 'save';
 const SECRET = 'incremental';
@@ -126,6 +127,7 @@ export const useStoreGame = defineStore('storeGame', {
       hardLevel: new Decimal(0),
       ramLevel: new Decimal(0),
     },
+    scientists: [] as Scientist[],
   }),
   getters: {
     formatNumber: () => (num: Decimal) => {
@@ -173,6 +175,7 @@ export const useStoreGame = defineStore('storeGame', {
       for (let i = 0; i < steps; i++) {
         this.processResearch();
         this.processHelpers();
+        this.processScientists();
         this.epicNumber = this.epicNumber.plus(this.giveEpicNumber);
         this.capacity = this.capacity.plus(this.giveCapacity);
 
@@ -229,12 +232,50 @@ export const useStoreGame = defineStore('storeGame', {
         );
       }
     },
+    processScientists() {
+      this.scientists.forEach((s) => {
+        if (Math.random() < 0.01) {
+          this.randomUpgrade(s);
+        }
+      });
+      let totalResearch = new Decimal(0);
+      this.scientists.forEach((s) => {
+        s.exp = s.exp.add(s.intellect);
+        if (s.exp.gte(this.expToLevel(s.level))) {
+          s.exp = s.exp.sub(this.expToLevel(s.level));
+          s.level = s.level.add(1);
+        }
+        totalResearch = totalResearch.add(s.level.mul(s.efficiency.div(100).add(1)));
+      });
+      this.researchPoints = this.researchPoints.add(totalResearch);
+    },
+    expToLevel(level: Decimal) {
+      return level.pow(2).mul(100).plus(50);
+    },
+    randomUpgrade(scientist: Scientist) {
+      const roll = Math.random();
+      if (roll < 0.1) {
+        if (Math.random() < 0.5) {
+          scientist.intellect = scientist.intellect.add(Math.floor(2 + Math.random() * 9));
+        } else {
+          scientist.efficiency = scientist.efficiency.add(Math.floor(2 + Math.random() * 9));
+        }
+      } else if (roll < 0.2) {
+        scientist.intellect = scientist.intellect.add(1);
+        scientist.efficiency = scientist.efficiency.add(1);
+      } else if (Math.random() < 0.5) {
+        scientist.intellect = scientist.intellect.add(1);
+      } else {
+        scientist.efficiency = scientist.efficiency.add(1);
+      }
+    },
     saveGame() {
       const saveData = {
         epicNumber: this.epicNumber,
         capacity: this.capacity,
         timer: this.timer,
         achievementProductionBonus: this.achievementBonus,
+        researchPoints: this.researchPoints,
         shop: {
           cpu: {
             value: this.shop.cpu.value,
@@ -293,6 +334,13 @@ export const useStoreGame = defineStore('storeGame', {
           hardLevel: this.achievements.hardLevel,
           ramLevel: this.achievements.ramLevel,
         },
+        scientists: this.scientists.map((s) => ({
+          id: s.id,
+          level: s.level,
+          exp: s.exp,
+          intellect: s.intellect,
+          efficiency: s.efficiency,
+        })),
       };
 
       const replacer = (key: string, value: unknown) => {
@@ -314,6 +362,7 @@ export const useStoreGame = defineStore('storeGame', {
         this.capacity = new Decimal(loaded.capacity);
         this.timer = loaded.timer;
         this.achievementBonus = new Decimal(loaded.achievementBonus);
+        this.researchPoints = new Decimal(loaded.researchPoints);
         this.shop.cpu.value = new Decimal(loaded.shop.cpu.value);
         this.shop.cpu.multiply = new Decimal(loaded.shop.cpu.multiply);
         this.shop.hard.value = new Decimal(loaded.shop.hard.value);
@@ -352,6 +401,13 @@ export const useStoreGame = defineStore('storeGame', {
         this.research.list.hardPow.isActive = loaded.research.list.hardPow.isActive;
         this.research.list.ramPow.isActive = loaded.research.list.ramPow.isActive;
         this.research.list.costDecrease.isActive = loaded.research.list.costDecrease.isActive;
+        this.scientists = loaded.scientists.map((s: Scientist) => ({
+          id: s.id,
+          level: new Decimal(s.level),
+          exp: new Decimal(s.exp),
+          intellect: new Decimal(s.intellect),
+          efficiency: new Decimal(s.efficiency),
+        }));
       } catch (e) {
         console.error('Ошибка загрузки сохранения:', e);
       }

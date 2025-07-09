@@ -1,7 +1,7 @@
 <template>
   <div class="row q-gutter-md">
     <q-card
-      v-for="scientist in scientists"
+      v-for="scientist in storeGame.scientists"
       :key="scientist.id"
       class="q-pa-md flex column items-center bg-blue-grey-9 text-white justify-between"
       style="
@@ -151,40 +151,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { computed } from 'vue';
 import Decimal from 'break_eternity.js';
+import { uuidv7 } from 'src/boot/uuid';
 import { useStoreGame } from 'src/stores/game';
 
 const storeGame = useStoreGame();
 const formatNumber = storeGame.formatNumber;
-
-interface Scientist {
-  id: number;
-  level: Decimal;
-  exp: Decimal;
-  intellect: Decimal;
-  efficiency: Decimal;
-}
-
-const scientists = ref<Scientist[]>([]);
+const expToLevel = (...args: Parameters<typeof storeGame.expToLevel>) =>
+  storeGame.expToLevel(...args);
 
 const base = new Decimal(1000);
 const baseSoftCap = new Decimal(2);
 
 const hireCost = computed(() => {
-  const n = scientists.value.length;
+  const n = storeGame.scientists.length;
   if (n === 0) return base;
   const dynamicSoftCap = baseSoftCap.mul(new Decimal(1.2).pow(Math.floor(n / 3)));
   return base.mul(dynamicSoftCap.pow(n * n * n));
 });
 
-function expToLevel(level: Decimal) {
-  return level.pow(2).mul(100).plus(50);
-}
-
 function hireScientist() {
-  const id = Date.now();
-  scientists.value.push({
+  const id = uuidv7();
+  storeGame.scientists.push({
     id,
     level: new Decimal(1),
     exp: new Decimal(0),
@@ -192,51 +181,4 @@ function hireScientist() {
     efficiency: new Decimal(1),
   });
 }
-
-function randomUpgrade(scientist: Scientist) {
-  const roll = Math.random();
-  if (roll < 0.1) {
-    if (Math.random() < 0.5) {
-      scientist.intellect = scientist.intellect.add(Math.floor(2 + Math.random() * 9));
-    } else {
-      scientist.efficiency = scientist.efficiency.add(Math.floor(2 + Math.random() * 9));
-    }
-  } else if (roll < 0.2) {
-    scientist.intellect = scientist.intellect.add(1);
-    scientist.efficiency = scientist.efficiency.add(1);
-  } else if (Math.random() < 0.5) {
-    scientist.intellect = scientist.intellect.add(1);
-  } else {
-    scientist.efficiency = scientist.efficiency.add(1);
-  }
-}
-
-let interval: number | undefined;
-let researchInterval: number | undefined;
-onMounted(() => {
-  interval = window.setInterval(() => {
-    scientists.value.forEach((s) => {
-      if (Math.random() < 0.01) {
-        randomUpgrade(s);
-      }
-    });
-  }, 1);
-
-  researchInterval = window.setInterval(() => {
-    let totalResearch = new Decimal(0);
-    scientists.value.forEach((s) => {
-      s.exp = s.exp.add(s.intellect);
-      if (s.exp.gte(expToLevel(s.level))) {
-        s.exp = s.exp.sub(expToLevel(s.level));
-        s.level = s.level.add(1);
-      }
-      totalResearch = totalResearch.add(s.level.add(1).mul(s.efficiency.div(100)));
-    });
-    storeGame.researchPoints = storeGame.researchPoints.add(totalResearch);
-  }, 1000);
-});
-onUnmounted(() => {
-  if (interval) clearInterval(interval);
-  if (researchInterval) clearInterval(researchInterval);
-});
 </script>

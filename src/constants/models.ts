@@ -12,6 +12,14 @@ export interface Research {
   maxLevel: Decimal;
 }
 
+export interface Scientist {
+  id: string;
+  level: Decimal;
+  exp: Decimal;
+  intellect: Decimal;
+  efficiency: Decimal;
+}
+
 export interface HelperState {
   key: string;
   icon: string;
