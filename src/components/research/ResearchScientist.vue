@@ -69,11 +69,30 @@
           <q-icon name="fa-duotone fa-user-astronaut" size="40px" color="white" />
         </q-avatar>
       </div>
-      <div class="text-h6 text-bold text-center q-mb-xs">
-        {{ scientist.name }}
-      </div>
-      <div class="text-subtitle2 text-center q-mb-xs">
-        Уровень: {{ formatNumber(scientist.level) }}
+      <div
+        style="
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-bottom: 4px;
+        "
+      >
+        <q-icon name="fa-solid fa-medal" color="blue-grey-3" size="22px" class="q-mr-xs" />
+        <span
+          style="
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 2px 14px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.08);
+          "
+        >
+          {{ formatNumber(scientist.level) }}
+        </span>
       </div>
       <q-linear-progress
         :value="scientist.exp.div(expToLevel(scientist.level)).toNumber()"
@@ -81,14 +100,22 @@
         class="q-mb-xs"
         style="height: 8px"
       />
-      <div style="width: 100%; display: flex; justify-content: center">
+      <div
+        style="
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-top: 2px;
+        "
+      >
+        <q-icon name="fa-solid fa-circle-dot" color="deep-orange-4" size="15px" class="q-mr-xs" />
         <span
           style="
             font-size: 12px;
             background: rgba(255, 255, 255, 0.07);
             border-radius: 6px;
             padding: 2px 8px;
-            margin-top: 2px;
             letter-spacing: 0.5px;
           "
         >
@@ -133,7 +160,6 @@ const formatNumber = storeGame.formatNumber;
 
 interface Scientist {
   id: number;
-  name: string;
   level: Decimal;
   exp: Decimal;
   intellect: Decimal;
@@ -156,15 +182,10 @@ function expToLevel(level: Decimal) {
   return level.pow(2).mul(100).plus(50);
 }
 
-function getScientistName(): string {
-  return `Учёный #${scientists.value.length + 1}`;
-}
-
 function hireScientist() {
   const id = Date.now();
   scientists.value.push({
     id,
-    name: getScientistName(),
     level: new Decimal(1),
     exp: new Decimal(0),
     intellect: new Decimal(1),
