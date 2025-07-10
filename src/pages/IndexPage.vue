@@ -7,13 +7,23 @@
           <span class="text-weight-bold text-h5 q-mx-xs">{{
             formatNumber(storeGame.epicNumber)
           }}</span>
-          <q-icon name="fa-solid fa-xmark" size="18px" color="grey-5" />
-          <q-icon name="fa-duotone fa-database" size="24px" color="secondary" class="q-ml-xs" />
+          <q-separator vertical class="q-mx-md" style="height: 32px" />
+          <q-icon name="fa-solid fa-arrow-trend-up" size="22px" color="secondary" class="q-ml-md" />
           <span class="text-weight-bold text-h5 q-ml-xs">{{
-            formatNumber(storeGame.multiplierEpicNumber)
+            formatNumber(multiplierEpicNumber, true)
           }}</span>
           <q-separator vertical class="q-mx-md" style="height: 32px" />
-          <q-icon name="fa-duotone fa-flask-vial" size="22px" color="secondary" />
+          <q-icon
+            name="fa-duotone fa-hourglass-end"
+            size="22px"
+            color="secondary"
+            class="q-ml-md"
+          />
+          <span class="text-weight-bold text-h6 q-ml-xs">{{
+            formatNumber(researchSpeed, true)
+          }}</span>
+          <q-separator vertical class="q-mx-md" style="height: 32px" />
+          <q-icon name="fa-duotone fa-flask-vial" size="22px" color="secondary" class="q-ml-md" />
           <span class="text-weight-bold text-h6 q-ml-xs">{{ formatNumber(researchPoints) }}</span>
         </div>
       </div>
@@ -165,8 +175,16 @@ const innerResearch = ref('innerScientist');
 const innerAutomatic = ref('innerAutomaticBuyer');
 const splitterModel = ref(20);
 
+const multiplierEpicNumber = computed(() => {
+  return storeGame.getMultiplierEpicNumber;
+});
+
+const researchSpeed = computed(() => {
+  return storeGame.getResearchSpeed;
+});
+
 const researchPoints = computed(() => {
-  return storeGame.researchPoints;
+  return storeGame.researchPoint;
 });
 
 const infinityProgress = computed(() => {

@@ -48,7 +48,10 @@
           <div class="row items-center">
             <q-icon name="fa-duotone fa-clock" size="15px" class="q-mr-xs text-grey-7" />
             <q-badge class="q-pa-xs text-bold bg-grey-3 text-primary" style="font-size: 11px"
-              >{{ formatNumber(getResearchTime(meta.key).value) }} сек</q-badge
+              >{{
+                formatNumber(getResearchTime(meta.key).value.div(storeGame.getResearchSpeed))
+              }}
+              сек</q-badge
             >
           </div>
         </div>
@@ -73,7 +76,7 @@
         <q-btn
           :disable="
             isMaxLevel(meta.key).value ||
-            (!storeGame.epicNumber.gte(getResearchCost(meta.key).value) &&
+            (!storeGame.researchPoint.gte(getResearchCost(meta.key).value) &&
               !getResearch(meta.key).currentTime.gt(0)) ||
             (getResearchTime(meta.key).value.gt(1000) && !getResearch(meta.key).currentTime.gt(0))
           "
@@ -171,8 +174,8 @@ function startResearch(key: string, isLoad: boolean) {
   const time = getResearchTime(key).value;
 
   if (!isLoad) {
-    if (!storeGame.epicNumber.gte(cost)) return;
-    storeGame.epicNumber = storeGame.epicNumber.minus(cost);
+    if (!storeGame.researchPoint.gte(cost)) return;
+    storeGame.researchPoint = storeGame.researchPoint.minus(cost);
     research.currentTime = time;
     research.isActive = true;
   }
@@ -181,6 +184,7 @@ function startResearch(key: string, isLoad: boolean) {
 function cancelResearch(key: string) {
   const research = researchList[key];
   if (!research) return;
+  storeGame.researchPoint = storeGame.researchPoint.plus(getResearchCost(key).value);
   research.currentTime = new Decimal(0);
 }
 
@@ -204,7 +208,7 @@ onMounted(() => {
   position: relative
   box-sizing: border-box
   flex: 0 0 260px
-  background-color: #181a1b !important // почти чёрный фон
+  background-color: #181a1b !important
 
 .research-inactive
   opacity: 0.55

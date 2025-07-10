@@ -151,26 +151,9 @@ const totalAchievements = computed(() => {
   }, new Decimal(0));
 });
 
-function recalcAchievementBonus() {
-  const sum = storeGame.achievements.epicLevel
-    .plus(storeGame.achievements.cpuLevel)
-    .plus(storeGame.achievements.hardLevel)
-    .plus(storeGame.achievements.ramLevel);
-  storeGame.achievementBonus = sum.mul(0.01).plus(1);
-}
-
-watch(
-  () => [
-    storeGame.achievements.epicLevel.toString(),
-    storeGame.achievements.cpuLevel.toString(),
-    storeGame.achievements.hardLevel.toString(),
-    storeGame.achievements.ramLevel.toString(),
-  ],
-  recalcAchievementBonus,
-  { immediate: true },
-);
-
-const achievementBonus = computed(() => storeGame.achievementBonus);
+const achievementBonus = computed(() => {
+  return storeGame.achievementBonus;
+});
 </script>
 
 <style lang="sass">

@@ -190,13 +190,18 @@ const hireCost = computed(() => {
 });
 
 function hireScientist() {
-  const id = uuidv7();
-  storeGame.scientists.push({
-    id,
-    level: new Decimal(1),
-    exp: new Decimal(0),
-    intellect: new Decimal(1),
-    efficiency: new Decimal(1),
-  });
+  const epicNumber = storeGame.epicNumber;
+  const cost = hireCost.value;
+  if (epicNumber.gte(cost)) {
+    storeGame.epicNumber = epicNumber.minus(cost);
+    const id = uuidv7();
+    storeGame.scientists.push({
+      id,
+      level: new Decimal(1),
+      exp: new Decimal(0),
+      intellect: new Decimal(1),
+      efficiency: new Decimal(1),
+    });
+  }
 }
 </script>

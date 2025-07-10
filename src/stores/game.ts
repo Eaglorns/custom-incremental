@@ -10,31 +10,30 @@ const SECRET = 'incremental';
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     lastTick: Date.now(),
-    epicNumber: new Decimal(0),
+    epicNumber: new Decimal(500),
     multiplierEpicNumber: new Decimal(0),
     researchSpeed: new Decimal(0),
     timer: 1000,
-    achievementBonus: new Decimal(1),
-    researchPoints: new Decimal(0),
+    researchPoint: new Decimal(0),
     shop: {
       cpu: {
         value: new Decimal(1),
         multiply: new Decimal(1),
         cost: {
-          value: new Decimal(50),
+          value: new Decimal(100),
           multiply: new Decimal(5),
         },
       },
       hard: {
-        value: new Decimal(1),
+        value: new Decimal(0),
         multiply: new Decimal(1),
         cost: {
-          value: new Decimal(50),
+          value: new Decimal(3000),
           multiply: new Decimal(5),
         },
       },
       ram: {
-        value: new Decimal(1),
+        value: new Decimal(0),
         multiply: new Decimal(1),
         cost: {
           value: new Decimal(1000000),
@@ -84,7 +83,7 @@ export const useStoreGame = defineStore('storeGame', {
           time: new Decimal(6),
           bonus: new Decimal(1.05),
           level: new Decimal(0),
-          costMultiply: new Decimal(100),
+          costMultiply: new Decimal(3),
           timeMultiply: new Decimal(2),
           maxLevel: new Decimal(100),
         },
@@ -131,11 +130,9 @@ export const useStoreGame = defineStore('storeGame', {
     scientists: [] as Scientist[],
   }),
   getters: {
-    formatNumber: () => (num: Decimal) => {
+    formatNumber: () => (num: Decimal, fixed?: boolean) => {
       if (num.lt(1e6)) {
-        if (num.gte(1e9)) return num.div(1e9).toFixed(2) + 'B';
-        if (num.gte(1e6)) return num.div(1e6).toFixed(2) + 'M';
-        if (num.gte(1e3)) return num.div(1e3).toFixed(2) + 'K';
+        if (fixed) return num.toFixed(3);
         return num.toFixed(0);
       }
       let value = num,
@@ -174,20 +171,26 @@ export const useStoreGame = defineStore('storeGame', {
         const chance = one.add(ninetyNine.mul(one.minus(expPart)));
         return chance.gte(100) ? new Decimal(100) : chance;
       },
-    giveEpicNumber: (state): Decimal => {
-      const parShopCPU = state.shop.cpu.value;
-      const parResearchCPU = state.research.list.cpuPow;
-      return parShopCPU.pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1));
+    getMultiplierEpicNumber: (state): Decimal => {
+      const base = state.multiplierEpicNumber;
+      if (base.lt(1)) return new Decimal(1);
+      const reduced = base.log10().div(100);
+      return new Decimal(1).add(reduced);
     },
-    giveMultiplierEpicNumber: (state): Decimal => {
-      const parHard = state.shop.ram.value;
-      const parResearchHard = state.research.list.hardPow;
-      return parHard.pow(parResearchHard.bonus.mul(parResearchHard.level).plus(1));
+    getResearchSpeed: (state): Decimal => {
+      const base = state.researchSpeed;
+      if (base.lt(1)) return new Decimal(1);
+      const reduced = base.log10().div(20);
+      console.log(reduced.toString());
+      return new Decimal(1).add(reduced);
     },
-    giveResearchSpeed: (state): Decimal => {
-      const parRAM = state.shop.ram.value;
-      const parResearchRam = state.research.list.ramPow;
-      return parRAM.pow(parResearchRam.bonus.mul(parResearchRam.level).plus(1));
+    achievementBonus: (state): Decimal => {
+      return state.achievements.epicLevel
+        .plus(state.achievements.cpuLevel)
+        .plus(state.achievements.hardLevel)
+        .plus(state.achievements.ramLevel)
+        .mul(0.01)
+        .plus(1);
     },
   },
   actions: {
@@ -199,12 +202,12 @@ export const useStoreGame = defineStore('storeGame', {
 
       const steps = Math.floor(delta / this.timer) || 1;
       for (let i = 0; i < steps; i++) {
+        this.processGiveMultiplierEpicNumber();
+        this.processGiveResearchSpeed();
         this.processResearch();
         this.processHelpers();
         this.processScientists();
-        this.epicNumber = this.epicNumber.plus(this.giveEpicNumber);
-        this.multiplierEpicNumber = this.multiplierEpicNumber.plus(this.giveMultiplierEpicNumber);
-        this.researchSpeed = this.researchSpeed.plus(this.giveResearchSpeed);
+        this.processGiveEpicNumber();
       }
       console.timeEnd('gameTick');
     },
@@ -270,7 +273,27 @@ export const useStoreGame = defineStore('storeGame', {
         }
         totalResearch = totalResearch.add(s.level.mul(s.efficiency.div(100).add(1)));
       });
-      this.researchPoints = this.researchPoints.add(totalResearch);
+      this.researchPoint = this.researchPoint.add(totalResearch);
+    },
+    processGiveEpicNumber() {
+      const parShopCPU = this.shop.cpu.value;
+      const parResearchCPU = this.research.list.cpuPow;
+      const result = parShopCPU
+        .pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1))
+        .mul(this.achievementBonus);
+      this.epicNumber = this.epicNumber.plus(result);
+    },
+    processGiveMultiplierEpicNumber() {
+      const parHard = this.shop.hard.value;
+      const parResearchHard = this.research.list.hardPow;
+      const result = parHard.pow(parResearchHard.bonus.mul(parResearchHard.level).plus(1));
+      this.multiplierEpicNumber = this.multiplierEpicNumber.plus(result);
+    },
+    processGiveResearchSpeed() {
+      const parRAM = this.shop.ram.value;
+      const parResearchRam = this.research.list.ramPow;
+      const result = parRAM.pow(parResearchRam.bonus.mul(parResearchRam.level).plus(1));
+      this.researchSpeed = this.researchSpeed.plus(result);
     },
     expToLevel(level: Decimal) {
       return level.pow(2).mul(100).plus(50);
@@ -298,8 +321,7 @@ export const useStoreGame = defineStore('storeGame', {
         multiplierEpicNumber: this.multiplierEpicNumber,
         researchSpeed: this.researchSpeed,
         timer: this.timer,
-        achievementProductionBonus: this.achievementBonus,
-        researchPoints: this.researchPoints,
+        researchPoint: this.researchPoint,
         shop: {
           cpu: {
             value: this.shop.cpu.value,
@@ -386,8 +408,7 @@ export const useStoreGame = defineStore('storeGame', {
         this.multiplierEpicNumber = new Decimal(loaded.multiplierEpicNumber);
         this.researchSpeed = new Decimal(loaded.researchSpeed);
         this.timer = loaded.timer;
-        this.achievementBonus = new Decimal(loaded.achievementBonus);
-        this.researchPoints = new Decimal(loaded.researchPoints);
+        this.researchPoint = new Decimal(loaded.researchPoint);
         this.shop.cpu.value = new Decimal(loaded.shop.cpu.value);
         this.shop.cpu.multiply = new Decimal(loaded.shop.cpu.multiply);
         this.shop.hard.value = new Decimal(loaded.shop.hard.value);

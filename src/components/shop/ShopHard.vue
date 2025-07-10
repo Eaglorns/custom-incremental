@@ -81,8 +81,8 @@
         </div>
         <div class="col-12 col-md-6">
           <q-input
-            :model-value="formatNumber(gainPerBuy)"
-            label="Прирост множитель числа за тик"
+            :model-value="formatNumber(gainPerTick)"
+            label="Прирост множителя числа за тик"
             class="q-mb-md"
             :disable="true"
             dense
@@ -147,9 +147,9 @@ const costMultiply = computed(() => hard.cost.multiply.mul(hard.multiply).div(de
 const canBuyValue = computed(() => storeGame.epicNumber.gte(costValue.value));
 const canBuyMultiply = computed(() => value.value.gte(costMultiply.value));
 
-const gainPerBuy = computed(() => {
+const gainPerTick = computed(() => {
   const parResearchHard = storeGame.research.list.hardPow;
-  return multiply.value.pow(parResearchHard.bonus.mul(parResearchHard.level).plus(1));
+  return value.value.pow(parResearchHard.bonus.mul(parResearchHard.level).plus(1));
 });
 
 const onBuyValue = () => {

@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useStoreGame } from 'src/stores/game';
 
 const storeGame = useStoreGame();
@@ -26,15 +26,8 @@ onMounted(() => {
   startTimer();
   autoSaveId.value = setInterval(() => {
     storeGame.saveGame();
-  }, 60000);
+  }, 5000);
 });
-
-watch(
-  () => storeGame.timer,
-  () => {
-    startTimer();
-  },
-);
 
 onBeforeUnmount(() => {
   if (timerId) clearInterval(timerId);
