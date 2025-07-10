@@ -82,7 +82,7 @@
         <div class="col-12 col-md-6">
           <q-input
             :model-value="formatNumber(gainPerTick)"
-            label="Прирост числа за тик"
+            label="Прирост ускорения исследований"
             class="q-mb-md"
             :disable="true"
             dense
@@ -156,7 +156,6 @@ const onBuyValue = () => {
   if (!canBuyValue.value) return;
   storeGame.epicNumber = storeGame.epicNumber.minus(costValue.value);
   ram.value = ram.value.plus(ram.multiply);
-  storeGame.capacity = storeGame.capacity.plus(ram.value);
 };
 
 const onBuyMultiply = () => {

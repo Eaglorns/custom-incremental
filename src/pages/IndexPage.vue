@@ -7,10 +7,10 @@
           <span class="text-weight-bold text-h5 q-mx-xs">{{
             formatNumber(storeGame.epicNumber)
           }}</span>
-          <q-icon name="fa-solid fa-arrow-right" size="18px" color="grey-5" />
+          <q-icon name="fa-solid fa-xmark" size="18px" color="grey-5" />
           <q-icon name="fa-duotone fa-database" size="24px" color="secondary" class="q-ml-xs" />
           <span class="text-weight-bold text-h5 q-ml-xs">{{
-            formatNumber(storeGame.capacity)
+            formatNumber(storeGame.multiplierEpicNumber)
           }}</span>
           <q-separator vertical class="q-mx-md" style="height: 32px" />
           <q-icon name="fa-duotone fa-flask-vial" size="22px" color="secondary" />

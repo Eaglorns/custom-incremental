@@ -10,8 +10,9 @@ const SECRET = 'incremental';
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     lastTick: Date.now(),
-    epicNumber: new Decimal(50000),
-    capacity: new Decimal(100000),
+    epicNumber: new Decimal(0),
+    multiplierEpicNumber: new Decimal(0),
+    researchSpeed: new Decimal(0),
     timer: 1000,
     achievementBonus: new Decimal(1),
     researchPoints: new Decimal(0),
@@ -178,7 +179,12 @@ export const useStoreGame = defineStore('storeGame', {
       const parResearchCPU = state.research.list.cpuPow;
       return parShopCPU.pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1));
     },
-    giveCapacity: (state): Decimal => {
+    giveMultiplierEpicNumber: (state): Decimal => {
+      const parHard = state.shop.ram.value;
+      const parResearchHard = state.research.list.hardPow;
+      return parHard.pow(parResearchHard.bonus.mul(parResearchHard.level).plus(1));
+    },
+    giveResearchSpeed: (state): Decimal => {
       const parRAM = state.shop.ram.value;
       const parResearchRam = state.research.list.ramPow;
       return parRAM.pow(parResearchRam.bonus.mul(parResearchRam.level).plus(1));
@@ -197,11 +203,8 @@ export const useStoreGame = defineStore('storeGame', {
         this.processHelpers();
         this.processScientists();
         this.epicNumber = this.epicNumber.plus(this.giveEpicNumber);
-        this.capacity = this.capacity.plus(this.giveCapacity);
-
-        if (this.epicNumber.gt(this.capacity)) {
-          this.epicNumber = this.capacity;
-        }
+        this.multiplierEpicNumber = this.multiplierEpicNumber.plus(this.giveMultiplierEpicNumber);
+        this.researchSpeed = this.researchSpeed.plus(this.giveResearchSpeed);
       }
       console.timeEnd('gameTick');
     },
@@ -243,7 +246,6 @@ export const useStoreGame = defineStore('storeGame', {
           this.shop.hard.cost.value,
           'hard',
         );
-        this.capacity = this.capacity.plus(this.shop.hard.multiply);
       }
       if (helpers.ram.count.gt(0) && this.getHelperChance(helpers.ram.percent).gte(rand)) {
         this.processHelperType(
@@ -293,7 +295,8 @@ export const useStoreGame = defineStore('storeGame', {
     saveGame() {
       const saveData = {
         epicNumber: this.epicNumber,
-        capacity: this.capacity,
+        multiplierEpicNumber: this.multiplierEpicNumber,
+        researchSpeed: this.researchSpeed,
         timer: this.timer,
         achievementProductionBonus: this.achievementBonus,
         researchPoints: this.researchPoints,
@@ -380,7 +383,8 @@ export const useStoreGame = defineStore('storeGame', {
         const decrypted = bytes.toString(CryptoJS.enc.Utf8);
         const loaded = JSON.parse(decrypted);
         this.epicNumber = new Decimal(loaded.epicNumber);
-        this.capacity = new Decimal(loaded.capacity);
+        this.multiplierEpicNumber = new Decimal(loaded.multiplierEpicNumber);
+        this.researchSpeed = new Decimal(loaded.researchSpeed);
         this.timer = loaded.timer;
         this.achievementBonus = new Decimal(loaded.achievementBonus);
         this.researchPoints = new Decimal(loaded.researchPoints);
