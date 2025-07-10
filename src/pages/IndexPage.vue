@@ -3,28 +3,34 @@
     <q-banner class="main-banner">
       <div class="banner-row">
         <div class="banner-main">
-          <q-icon name="fa-duotone fa-gauge-high" size="24px" color="primary" />
-          <span class="text-weight-bold text-h5 q-mx-xs">{{
-            formatNumber(storeGame.epicNumber)
-          }}</span>
-          <q-separator vertical class="q-mx-md" style="height: 32px" />
-          <q-icon name="fa-solid fa-arrow-trend-up" size="22px" color="secondary" class="q-ml-md" />
-          <span class="text-weight-bold text-h5 q-ml-xs">{{
-            formatNumber(multiplierEpicNumber, true)
-          }}</span>
-          <q-separator vertical class="q-mx-md" style="height: 32px" />
-          <q-icon
-            name="fa-duotone fa-hourglass-end"
-            size="22px"
-            color="secondary"
-            class="q-ml-md"
-          />
-          <span class="text-weight-bold text-h6 q-ml-xs">{{
-            formatNumber(researchSpeed, true)
-          }}</span>
-          <q-separator vertical class="q-mx-md" style="height: 32px" />
-          <q-icon name="fa-duotone fa-flask-vial" size="22px" color="secondary" class="q-ml-md" />
-          <span class="text-weight-bold text-h6 q-ml-xs">{{ formatNumber(researchPoints) }}</span>
+          <div
+            class="flex items-center q-pa-sm q-mr-xl"
+            style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
+          >
+            <q-icon name="fa-duotone fa-gauge-high" size="24px" color="primary" />
+            <span class="text-weight-bold text-h5 q-mx-xs">
+              {{ formatNumber(storeGame.epicNumber) }}
+            </span>
+            <q-separator vertical class="q-mx-md" style="height: 32px" />
+            <q-icon name="fa-solid fa-arrow-trend-up" size="22px" color="secondary" />
+            <span class="text-weight-bold text-h5 q-ml-xs">
+              {{ formatNumber(multiplierEpicNumber, true) }}
+            </span>
+          </div>
+          <div
+            class="flex items-center q-pa-sm q-mr-xl"
+            style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
+          >
+            <q-icon name="fa-duotone fa-flask-vial" size="22px" color="secondary" />
+            <span class="text-weight-bold text-h5 q-ml-xs">
+              {{ formatNumber(researchPoints) }}
+            </span>
+            <q-separator vertical class="q-mx-md" style="height: 32px" />
+            <q-icon name="fa-duotone fa-hourglass-end" size="22px" color="secondary" />
+            <span class="text-weight-bold text-h5 q-ml-xs">
+              {{ formatNumber(researchSpeed, true) }}
+            </span>
+          </div>
         </div>
       </div>
     </q-banner>
