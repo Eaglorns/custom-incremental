@@ -10,7 +10,7 @@ const SECRET = 'incremental';
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     lastTick: Date.now(),
-    epicNumber: new Decimal(500),
+    epicNumber: new Decimal('500'),
     multiplierEpicNumber: new Decimal(0),
     researchSpeed: new Decimal(0),
     timer: 1000,
@@ -56,13 +56,13 @@ export const useStoreGame = defineStore('storeGame', {
         },
         hardPow: {
           isActive: false,
-          cost: new Decimal(1000),
+          cost: new Decimal(5000),
           currentTime: new Decimal(0),
-          time: new Decimal(2),
+          time: new Decimal(3),
           bonus: new Decimal(0.001),
           level: new Decimal(0),
-          costMultiply: new Decimal(1.4),
-          timeMultiply: new Decimal(1.3),
+          costMultiply: new Decimal(1.7),
+          timeMultiply: new Decimal(1.6),
           maxLevel: new Decimal(1000),
         },
         ramPow: {
@@ -76,7 +76,7 @@ export const useStoreGame = defineStore('storeGame', {
           timeMultiply: new Decimal(1.3),
           maxLevel: new Decimal(1000),
         },
-        costDecrease: {
+        shopCostMultiplierDecrease: {
           isActive: false,
           cost: new Decimal(1000),
           currentTime: new Decimal(0),
@@ -87,6 +87,28 @@ export const useStoreGame = defineStore('storeGame', {
           timeMultiply: new Decimal(2),
           maxLevel: new Decimal(100),
         },
+        epicNumberMultiplierDecrease: {
+          isActive: false,
+          cost: new Decimal(20000),
+          currentTime: new Decimal(0),
+          time: new Decimal(25),
+          bonus: new Decimal(1.1),
+          level: new Decimal(0),
+          costMultiply: new Decimal(5),
+          timeMultiply: new Decimal(3),
+          maxLevel: new Decimal(1000),
+        },
+        researchTimeMultiplierDecrease: {
+          isActive: false,
+          cost: new Decimal(15000),
+          currentTime: new Decimal(0),
+          time: new Decimal(15),
+          bonus: new Decimal(1.1),
+          level: new Decimal(0),
+          costMultiply: new Decimal(4),
+          timeMultiply: new Decimal(2.4),
+          maxLevel: new Decimal(1000),
+        },
       },
     },
     helpers: {
@@ -95,29 +117,29 @@ export const useStoreGame = defineStore('storeGame', {
         percent: new Decimal(0),
         cost: {
           count: new Decimal(1000),
-          countMultiply: new Decimal(10),
+          countMultiply: new Decimal(5),
           percent: new Decimal(2500),
-          percentMultiply: new Decimal(1000),
+          percentMultiply: new Decimal(150),
         },
       },
       hard: {
         count: new Decimal(0),
         percent: new Decimal(0),
         cost: {
-          count: new Decimal(1000),
-          countMultiply: new Decimal(10),
-          percent: new Decimal(2500),
-          percentMultiply: new Decimal(1000),
+          count: new Decimal(27000),
+          countMultiply: new Decimal(12),
+          percent: new Decimal(106000),
+          percentMultiply: new Decimal(230),
         },
       },
       ram: {
         count: new Decimal(0),
         percent: new Decimal(0),
         cost: {
-          count: new Decimal(1000),
-          countMultiply: new Decimal(10),
-          percent: new Decimal(2500),
-          percentMultiply: new Decimal(1000),
+          count: new Decimal(18000),
+          countMultiply: new Decimal(9),
+          percent: new Decimal(38000),
+          percentMultiply: new Decimal(340),
         },
       },
     },
@@ -131,16 +153,15 @@ export const useStoreGame = defineStore('storeGame', {
   }),
   getters: {
     formatNumber: () => (num: Decimal, fixed?: boolean) => {
-      if (num.lt(1e6)) {
-        if (fixed) return num.toFixed(3);
-        return num.toFixed(0);
-      }
-      let value = num,
-        tetration = 0;
+      if (num.lt(1e6)) return fixed ? num.toFixed(3) : num.toFixed(0);
+
+      let value = num;
+      let tetration = 0;
       while (value.gte(1e6)) {
         value = value.log10();
         tetration++;
       }
+
       if (tetration === 0) {
         const exp = num.log10().floor();
         return `${num.div(Decimal.pow(10, exp)).toFixed(3)}e${exp.toFixed(0)}`;
@@ -148,49 +169,52 @@ export const useStoreGame = defineStore('storeGame', {
       if (tetration === 1) {
         const exp = value.floor();
         const mantissa10 = Math.pow(10, num.log10().minus(exp).toNumber());
-        if (Math.abs(mantissa10 - 1) < 1e-6) return `e${exp.toFixed(0)}`;
-        return `${mantissa10.toFixed(3)}e${exp.toFixed(0)}`;
+        return Math.abs(mantissa10 - 1) < 1e-6
+          ? `e${exp.toFixed(0)}`
+          : `${mantissa10.toFixed(3)}e${exp.toFixed(0)}`;
       }
       if (tetration < 10) return `${value.toFixed(4)}[↑↑${tetration + 1}]`;
-      let superTetration = 0,
-        t = tetration;
+
+      let superTetration = 0;
+      let t = tetration;
       while (t >= 6) {
         t = Math.log10(t);
         superTetration++;
       }
       return `${t.toFixed(4)}[↑↑↑${superTetration + 1}]`;
     },
+
     getHelperChance:
       () =>
       (percent: Decimal): Decimal => {
-        const k = 0.006;
-        const one = new Decimal(1);
-        const ninetyNine = new Decimal(99);
-        if (!percent || percent.lte(0)) return one;
-        const expPart = Decimal.exp(new Decimal(-k).mul(percent));
-        const chance = one.add(ninetyNine.mul(one.minus(expPart)));
+        if (!percent || percent.lte(0)) return new Decimal(1);
+        const chance = new Decimal(1).add(
+          new Decimal(99).mul(new Decimal(1).minus(Decimal.exp(new Decimal(-0.006).mul(percent)))),
+        );
         return chance.gte(100) ? new Decimal(100) : chance;
       },
+
     getMultiplierEpicNumber: (state): Decimal => {
       const base = state.multiplierEpicNumber;
       if (base.lt(1)) return new Decimal(1);
-      const reduced = base.log10().div(100);
-      return new Decimal(1).add(reduced);
+      const research = state.research.list.epicNumberMultiplierDecrease;
+      const bonus = research.level.gt(0) ? research.bonus.pow(research.level) : new Decimal(1);
+      const reduced = base.div(new Decimal(100).div(bonus)).log(3);
+      return Decimal.max(new Decimal(1), new Decimal(1).add(reduced));
     },
+
     getResearchSpeed: (state): Decimal => {
       const base = state.researchSpeed;
       if (base.lt(1)) return new Decimal(1);
-      const reduced = base.log10().div(20);
-      console.log(reduced.toString());
-      return new Decimal(1).add(reduced);
+      const research = state.research.list.researchTimeMultiplierDecrease;
+      const bonus = research.level.gt(0) ? research.bonus.pow(research.level) : new Decimal(1);
+      const reduced = base.div(new Decimal(100).div(bonus)).log(3);
+      return Decimal.max(new Decimal(1), new Decimal(1).add(reduced));
     },
+
     achievementBonus: (state): Decimal => {
-      return state.achievements.epicLevel
-        .plus(state.achievements.cpuLevel)
-        .plus(state.achievements.hardLevel)
-        .plus(state.achievements.ramLevel)
-        .mul(0.01)
-        .plus(1);
+      const { epicLevel, cpuLevel, hardLevel, ramLevel } = state.achievements;
+      return epicLevel.plus(cpuLevel).plus(hardLevel).plus(ramLevel).mul(0.01).plus(1);
     },
   },
   actions: {
@@ -353,10 +377,20 @@ export const useStoreGame = defineStore('storeGame', {
               currentTime: this.research.list.ramPow.currentTime,
               level: this.research.list.ramPow.level,
             },
-            costDecrease: {
-              isActive: this.research.list.costDecrease.isActive,
-              currentTime: this.research.list.costDecrease.currentTime,
-              level: this.research.list.costDecrease.level,
+            shopCostMultiplierDecrease: {
+              isActive: this.research.list.shopCostMultiplierDecrease.isActive,
+              currentTime: this.research.list.shopCostMultiplierDecrease.currentTime,
+              level: this.research.list.shopCostMultiplierDecrease.level,
+            },
+            epicNumberMultiplierDecrease: {
+              isActive: this.research.list.epicNumberMultiplierDecrease.isActive,
+              currentTime: this.research.list.epicNumberMultiplierDecrease.currentTime,
+              level: this.research.list.epicNumberMultiplierDecrease.level,
+            },
+            researchTimeMultiplierDecrease: {
+              isActive: this.research.list.researchTimeMultiplierDecrease.isActive,
+              currentTime: this.research.list.researchTimeMultiplierDecrease.currentTime,
+              level: this.research.list.researchTimeMultiplierDecrease.level,
             },
           },
         },
@@ -415,23 +449,44 @@ export const useStoreGame = defineStore('storeGame', {
         this.shop.hard.multiply = new Decimal(loaded.shop.hard.multiply);
         this.shop.ram.value = new Decimal(loaded.shop.ram.value);
         this.shop.ram.multiply = new Decimal(loaded.shop.ram.multiply);
+        this.research.list.cpuPow.isActive = loaded.research.list.cpuPow.isActive;
         this.research.list.cpuPow.currentTime = new Decimal(
           loaded.research.list.cpuPow.currentTime,
         );
         this.research.list.cpuPow.level = new Decimal(loaded.research.list.cpuPow.level);
+        this.research.list.hardPow.isActive = loaded.research.list.hardPow.isActive;
         this.research.list.hardPow.currentTime = new Decimal(
           loaded.research.list.hardPow.currentTime,
         );
         this.research.list.hardPow.level = new Decimal(loaded.research.list.hardPow.level);
+        this.research.list.ramPow.isActive = loaded.research.list.ramPow.isActive;
         this.research.list.ramPow.currentTime = new Decimal(
           loaded.research.list.ramPow.currentTime,
         );
         this.research.list.ramPow.level = new Decimal(loaded.research.list.ramPow.level);
-        this.research.list.costDecrease.currentTime = new Decimal(
-          loaded.research.list.costDecrease.currentTime,
+        this.research.list.shopCostMultiplierDecrease.isActive =
+          loaded.research.list.shopCostMultiplierDecrease.isActive;
+        this.research.list.shopCostMultiplierDecrease.currentTime = new Decimal(
+          loaded.research.list.shopCostMultiplierDecrease.currentTime,
         );
-        this.research.list.costDecrease.level = new Decimal(
-          loaded.research.list.costDecrease.level,
+        this.research.list.shopCostMultiplierDecrease.level = new Decimal(
+          loaded.research.list.shopCostMultiplierDecrease.level,
+        );
+        this.research.list.epicNumberMultiplierDecrease.currentTime = new Decimal(
+          loaded.research.list.epicNumberMultiplierDecrease.currentTime,
+        );
+        this.research.list.epicNumberMultiplierDecrease.isActive =
+          loaded.research.list.epicNumberMultiplierDecrease.isActive;
+        this.research.list.epicNumberMultiplierDecrease.level = new Decimal(
+          loaded.research.list.epicNumberMultiplierDecrease.level,
+        );
+        this.research.list.researchTimeMultiplierDecrease.isActive =
+          loaded.research.list.researchTimeMultiplierDecrease.isActive;
+        this.research.list.researchTimeMultiplierDecrease.currentTime = new Decimal(
+          loaded.research.list.researchTimeMultiplierDecrease.currentTime,
+        );
+        this.research.list.researchTimeMultiplierDecrease.level = new Decimal(
+          loaded.research.list.researchTimeMultiplierDecrease.level,
         );
         this.helpers.cpu.count = new Decimal(loaded.helpers.cpu.count);
         this.helpers.cpu.percent = new Decimal(loaded.helpers.cpu.percent);
@@ -443,10 +498,6 @@ export const useStoreGame = defineStore('storeGame', {
         this.achievements.cpuLevel = new Decimal(loaded.achievements.cpuLevel);
         this.achievements.hardLevel = new Decimal(loaded.achievements.hardLevel);
         this.achievements.ramLevel = new Decimal(loaded.achievements.ramLevel);
-        this.research.list.cpuPow.isActive = loaded.research.list.cpuPow.isActive;
-        this.research.list.hardPow.isActive = loaded.research.list.hardPow.isActive;
-        this.research.list.ramPow.isActive = loaded.research.list.ramPow.isActive;
-        this.research.list.costDecrease.isActive = loaded.research.list.costDecrease.isActive;
         this.scientists = loaded.scientists.map((s: Scientist) => ({
           id: s.id,
           level: new Decimal(s.level),

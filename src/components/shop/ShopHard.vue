@@ -134,13 +134,15 @@ const storeGame = useStoreGame();
 const formatNumber = storeGame.formatNumber;
 
 const hard = storeGame.shop.hard;
-const costDecrease = storeGame.research.list.costDecrease;
+const costMultiplierDecrease = storeGame.research.list.shopCostMultiplierDecrease;
 
 const value = computed(() => hard.value);
 const multiply = computed(() => hard.multiply);
 const costValue = computed(() => hard.cost.value);
 const decrease = computed(() =>
-  costDecrease.level.gt(0) ? costDecrease.bonus.pow(costDecrease.level) : new Decimal(1),
+  costMultiplierDecrease.level.gt(0)
+    ? costMultiplierDecrease.bonus.mul(costMultiplierDecrease.level)
+    : new Decimal(1),
 );
 const costMultiply = computed(() => hard.cost.multiply.mul(hard.multiply).div(decrease.value));
 

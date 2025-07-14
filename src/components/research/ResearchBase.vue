@@ -149,11 +149,12 @@ function getResearchCost(key: string) {
 function getResearchTime(key: string) {
   const research = researchList[key];
   if (!research) return computed(() => new Decimal(0));
-  return computed(() =>
-    research.level.eq(0)
-      ? research.time
-      : research.time.mul(research.timeMultiply.pow(research.level)),
-  );
+  return computed(() => {
+    const divTime = storeGame.getResearchSpeed;
+    return research.level.eq(0)
+      ? research.time.div(divTime)
+      : research.time.mul(research.timeMultiply.pow(research.level)).div(divTime);
+  });
 }
 
 function startResearch(key: string, isLoad: boolean) {
