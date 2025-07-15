@@ -162,7 +162,9 @@ const onBuyValue = () => {
 
 const onBuyMultiply = () => {
   if (!canBuyMultiply.value) return;
-  hard.value = hard.value.minus(costMultiply.value);
+  const researchMultiplierChance = storeGame.research.list.shopMultiplierChanceReturn;
+  if (researchMultiplierChance.level.mul(researchMultiplierChance.bonus).lt(Math.random()))
+    hard.value = hard.value.minus(costMultiply.value);
   hard.multiply = hard.multiply.plus(1);
 };
 </script>

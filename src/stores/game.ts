@@ -17,7 +17,7 @@ export const useStoreGame = defineStore('storeGame', {
     researchPoint: new Decimal(0),
     shop: {
       cpu: {
-        value: new Decimal(1),
+        value: new Decimal(20),
         multiply: new Decimal(1),
         cost: {
           value: new Decimal(100),
@@ -109,6 +109,50 @@ export const useStoreGame = defineStore('storeGame', {
           timeMultiply: new Decimal(2.4),
           maxLevel: new Decimal(1000),
         },
+        researchScientistsChance: {
+          isActive: false,
+          cost: new Decimal(5000),
+          currentTime: new Decimal(0),
+          time: new Decimal(8),
+          bonus: new Decimal(1),
+          level: new Decimal(0),
+          costMultiply: new Decimal(2),
+          timeMultiply: new Decimal(1.6),
+          maxLevel: new Decimal(99),
+        },
+        researchScientistsMultiplierStats: {
+          isActive: false,
+          cost: new Decimal(5000),
+          currentTime: new Decimal(0),
+          time: new Decimal(8),
+          bonus: new Decimal(0.1),
+          level: new Decimal(0),
+          costMultiply: new Decimal(2.0),
+          timeMultiply: new Decimal(2.2),
+          maxLevel: new Decimal(1000),
+        },
+        researchScientistsMultiplierExperience: {
+          isActive: false,
+          cost: new Decimal(5000),
+          currentTime: new Decimal(0),
+          time: new Decimal(8),
+          bonus: new Decimal(0.1),
+          level: new Decimal(0),
+          costMultiply: new Decimal(2.0),
+          timeMultiply: new Decimal(2.2),
+          maxLevel: new Decimal(1000),
+        },
+        shopMultiplierChanceReturn: {
+          isActive: false,
+          cost: new Decimal(500),
+          currentTime: new Decimal(0),
+          time: new Decimal(8),
+          bonus: new Decimal(0.01),
+          level: new Decimal(0),
+          costMultiply: new Decimal(3.5),
+          timeMultiply: new Decimal(4.0),
+          maxLevel: new Decimal(100),
+        },
       },
     },
     helpers: {
@@ -136,9 +180,9 @@ export const useStoreGame = defineStore('storeGame', {
         count: new Decimal(0),
         percent: new Decimal(0),
         cost: {
-          count: new Decimal(18000),
+          count: new Decimal(1200000),
           countMultiply: new Decimal(9),
-          percent: new Decimal(38000),
+          percent: new Decimal(2500000),
           percentMultiply: new Decimal(340),
         },
       },
@@ -237,8 +281,7 @@ export const useStoreGame = defineStore('storeGame', {
     },
 
     processResearch() {
-      const researchList = this.research.list;
-      Object.values(researchList).forEach((research) => {
+      Object.values(this.research.list).forEach((research) => {
         if (research.isActive && research.currentTime.gt(0)) {
           research.currentTime = research.currentTime.minus(1);
           if (research.currentTime.lte(0)) {
@@ -249,56 +292,42 @@ export const useStoreGame = defineStore('storeGame', {
       });
     },
 
-    processHelperType(count: Decimal, cost: Decimal, key: keyof typeof this.shop) {
+    processHelperType(count: Decimal, key: 'cpu' | 'hard' | 'ram') {
       if (count.lte(0)) return;
-      const maxBuy = Decimal.min(count, this.epicNumber.div(cost).floor());
-      if (maxBuy.lte(0)) return;
-      this.shop[key].value = this.shop[key].value.plus(maxBuy);
-      this.epicNumber = this.epicNumber.minus(maxBuy.mul(cost));
+      this.shop[key].value = this.shop[key].value.plus(count);
     },
 
     processHelpers() {
-      const helpers = this.helpers;
       const rand = Math.random() * 100;
-      if (helpers.cpu.count.gt(0) && this.getHelperChance(helpers.cpu.percent).gte(rand)) {
-        this.processHelperType(
-          helpers.cpu.count.mul(this.shop.cpu.multiply),
-          this.shop.cpu.cost.value,
-          'cpu',
-        );
-      }
-      if (helpers.hard.count.gt(0) && this.getHelperChance(helpers.hard.percent).gte(rand)) {
-        this.processHelperType(
-          helpers.hard.count.mul(this.shop.hard.multiply),
-          this.shop.hard.cost.value,
-          'hard',
-        );
-      }
-      if (helpers.ram.count.gt(0) && this.getHelperChance(helpers.ram.percent).gte(rand)) {
-        this.processHelperType(
-          helpers.ram.count.mul(this.shop.ram.multiply),
-          this.shop.ram.cost.value,
-          'ram',
-        );
-      }
-    },
-    processScientists() {
-      this.scientists.forEach((s) => {
-        if (Math.random() < 0.01) {
-          this.randomUpgrade(s);
+      (['cpu', 'hard', 'ram'] as const).forEach((key) => {
+        const helper = this.helpers[key];
+        if (helper.count.gt(0) && this.getHelperChance(helper.percent).gte(rand)) {
+          this.processHelperType(helper.count.mul(this.shop[key].multiply), key);
         }
       });
+    },
+
+    processScientists() {
+      this.scientists.forEach((s) => {
+        if (Math.random() < 0.01) this.randomUpgrade(s);
+      });
+
+      const { level, bonus } = this.research.list.researchScientistsMultiplierExperience;
+      const expMultiplier = level.gte(1) ? level.mul(bonus).plus(1) : new Decimal(1);
+
       let totalResearch = new Decimal(0);
       this.scientists.forEach((s) => {
-        s.exp = s.exp.add(s.intellect);
-        if (s.exp.gte(this.expToLevel(s.level))) {
+        s.exp = s.exp.add(s.intellect.mul(expMultiplier));
+        while (s.exp.gte(this.expToLevel(s.level))) {
           s.exp = s.exp.sub(this.expToLevel(s.level));
           s.level = s.level.add(1);
         }
         totalResearch = totalResearch.add(s.level.mul(s.efficiency.div(100).add(1)));
       });
+
       this.researchPoint = this.researchPoint.add(totalResearch);
     },
+
     processGiveEpicNumber() {
       const parShopCPU = this.shop.cpu.value;
       const parResearchCPU = this.research.list.cpuPow;
@@ -307,38 +336,52 @@ export const useStoreGame = defineStore('storeGame', {
         .mul(this.achievementBonus);
       this.epicNumber = this.epicNumber.plus(result);
     },
+
     processGiveMultiplierEpicNumber() {
       const parHard = this.shop.hard.value;
       const parResearchHard = this.research.list.hardPow;
       const result = parHard.pow(parResearchHard.bonus.mul(parResearchHard.level).plus(1));
       this.multiplierEpicNumber = this.multiplierEpicNumber.plus(result);
     },
+
     processGiveResearchSpeed() {
       const parRAM = this.shop.ram.value;
       const parResearchRam = this.research.list.ramPow;
       const result = parRAM.pow(parResearchRam.bonus.mul(parResearchRam.level).plus(1));
       this.researchSpeed = this.researchSpeed.plus(result);
     },
+
     expToLevel(level: Decimal) {
       return level.pow(2).mul(100).plus(50);
     },
+
     randomUpgrade(scientist: Scientist) {
-      const roll = Math.random();
-      if (roll < 0.1) {
+      const statsResearch = this.research.list.researchScientistsMultiplierStats;
+      const chanceResearch = this.research.list.researchScientistsChance;
+
+      const addNew = statsResearch.level.mul(statsResearch.bonus).plus(1);
+      const chance = chanceResearch.level.plus(1).mul(0.01);
+
+      if (chance.gt(Math.random())) {
+        const addMax = addNew.mul(2).plus(Math.random() * 9);
         if (Math.random() < 0.5) {
-          scientist.intellect = scientist.intellect.add(Math.floor(2 + Math.random() * 9));
+          scientist.intellect = scientist.intellect.add(addMax);
         } else {
-          scientist.efficiency = scientist.efficiency.add(Math.floor(2 + Math.random() * 9));
+          scientist.efficiency = scientist.efficiency.add(addMax);
         }
-      } else if (roll < 0.2) {
-        scientist.intellect = scientist.intellect.add(1);
-        scientist.efficiency = scientist.efficiency.add(1);
+        return;
+      }
+
+      if (Math.random() < 0.2) {
+        scientist.intellect = scientist.intellect.add(addNew);
+        scientist.efficiency = scientist.efficiency.add(addNew);
       } else if (Math.random() < 0.5) {
-        scientist.intellect = scientist.intellect.add(1);
+        scientist.intellect = scientist.intellect.add(addNew);
       } else {
-        scientist.efficiency = scientist.efficiency.add(1);
+        scientist.efficiency = scientist.efficiency.add(addNew);
       }
     },
+
     saveGame() {
       const saveData = {
         epicNumber: this.epicNumber,
@@ -359,6 +402,33 @@ export const useStoreGame = defineStore('storeGame', {
             value: this.shop.ram.value,
             multiply: this.shop.ram.multiply,
           },
+        },
+        scientists: this.scientists.map((s) => ({
+          id: s.id,
+          level: s.level,
+          exp: s.exp,
+          intellect: s.intellect,
+          efficiency: s.efficiency,
+        })),
+        helpers: {
+          cpu: {
+            count: this.helpers.cpu.count,
+            percent: this.helpers.cpu.percent,
+          },
+          hard: {
+            count: this.helpers.hard.count,
+            percent: this.helpers.hard.percent,
+          },
+          ram: {
+            count: this.helpers.ram.count,
+            percent: this.helpers.ram.percent,
+          },
+        },
+        achievements: {
+          epicLevel: this.achievements.epicLevel,
+          cpuLevel: this.achievements.cpuLevel,
+          hardLevel: this.achievements.hardLevel,
+          ramLevel: this.achievements.ramLevel,
         },
         research: {
           list: {
@@ -392,35 +462,28 @@ export const useStoreGame = defineStore('storeGame', {
               currentTime: this.research.list.researchTimeMultiplierDecrease.currentTime,
               level: this.research.list.researchTimeMultiplierDecrease.level,
             },
+            researchScientistsChance: {
+              isActive: this.research.list.researchScientistsChance.isActive,
+              currentTime: this.research.list.researchScientistsChance.currentTime,
+              level: this.research.list.researchScientistsChance.level,
+            },
+            researchScientistsMultiplierStats: {
+              isActive: this.research.list.researchScientistsMultiplierStats.isActive,
+              currentTime: this.research.list.researchScientistsMultiplierStats.currentTime,
+              level: this.research.list.researchScientistsMultiplierStats.level,
+            },
+            researchScientistsMultiplierExperience: {
+              isActive: this.research.list.researchScientistsMultiplierExperience.isActive,
+              currentTime: this.research.list.researchScientistsMultiplierExperience.currentTime,
+              level: this.research.list.researchScientistsMultiplierExperience.level,
+            },
+            shopMultiplierChanceReturn: {
+              isActive: this.research.list.shopMultiplierChanceReturn.isActive,
+              currentTime: this.research.list.shopMultiplierChanceReturn.currentTime,
+              level: this.research.list.shopMultiplierChanceReturn.level,
+            },
           },
         },
-        helpers: {
-          cpu: {
-            count: this.helpers.cpu.count,
-            percent: this.helpers.cpu.percent,
-          },
-          hard: {
-            count: this.helpers.hard.count,
-            percent: this.helpers.hard.percent,
-          },
-          ram: {
-            count: this.helpers.ram.count,
-            percent: this.helpers.ram.percent,
-          },
-        },
-        achievements: {
-          epicLevel: this.achievements.epicLevel,
-          cpuLevel: this.achievements.cpuLevel,
-          hardLevel: this.achievements.hardLevel,
-          ramLevel: this.achievements.ramLevel,
-        },
-        scientists: this.scientists.map((s) => ({
-          id: s.id,
-          level: s.level,
-          exp: s.exp,
-          intellect: s.intellect,
-          efficiency: s.efficiency,
-        })),
       };
 
       const replacer = (key: string, value: unknown) => {
@@ -431,6 +494,7 @@ export const useStoreGame = defineStore('storeGame', {
       const encrypted = CryptoJS.AES.encrypt(plainState, SECRET).toString();
       LocalStorage.setItem(STORAGE_KEY, encrypted);
     },
+
     loadGame() {
       const encrypted = LocalStorage.getItem(STORAGE_KEY);
       if (typeof encrypted !== 'string') return;
@@ -449,6 +513,23 @@ export const useStoreGame = defineStore('storeGame', {
         this.shop.hard.multiply = new Decimal(loaded.shop.hard.multiply);
         this.shop.ram.value = new Decimal(loaded.shop.ram.value);
         this.shop.ram.multiply = new Decimal(loaded.shop.ram.multiply);
+        this.scientists = loaded.scientists.map((s: Scientist) => ({
+          id: s.id,
+          level: new Decimal(s.level),
+          exp: new Decimal(s.exp),
+          intellect: new Decimal(s.intellect),
+          efficiency: new Decimal(s.efficiency),
+        }));
+        this.helpers.cpu.count = new Decimal(loaded.helpers.cpu.count);
+        this.helpers.cpu.percent = new Decimal(loaded.helpers.cpu.percent);
+        this.helpers.hard.count = new Decimal(loaded.helpers.hard.count);
+        this.helpers.hard.percent = new Decimal(loaded.helpers.hard.percent);
+        this.helpers.ram.count = new Decimal(loaded.helpers.ram.count);
+        this.helpers.ram.percent = new Decimal(loaded.helpers.ram.percent);
+        this.achievements.epicLevel = new Decimal(loaded.achievements.epicLevel);
+        this.achievements.cpuLevel = new Decimal(loaded.achievements.cpuLevel);
+        this.achievements.hardLevel = new Decimal(loaded.achievements.hardLevel);
+        this.achievements.ramLevel = new Decimal(loaded.achievements.ramLevel);
         this.research.list.cpuPow.isActive = loaded.research.list.cpuPow.isActive;
         this.research.list.cpuPow.currentTime = new Decimal(
           loaded.research.list.cpuPow.currentTime,
@@ -488,23 +569,38 @@ export const useStoreGame = defineStore('storeGame', {
         this.research.list.researchTimeMultiplierDecrease.level = new Decimal(
           loaded.research.list.researchTimeMultiplierDecrease.level,
         );
-        this.helpers.cpu.count = new Decimal(loaded.helpers.cpu.count);
-        this.helpers.cpu.percent = new Decimal(loaded.helpers.cpu.percent);
-        this.helpers.hard.count = new Decimal(loaded.helpers.hard.count);
-        this.helpers.hard.percent = new Decimal(loaded.helpers.hard.percent);
-        this.helpers.ram.count = new Decimal(loaded.helpers.ram.count);
-        this.helpers.ram.percent = new Decimal(loaded.helpers.ram.percent);
-        this.achievements.epicLevel = new Decimal(loaded.achievements.epicLevel);
-        this.achievements.cpuLevel = new Decimal(loaded.achievements.cpuLevel);
-        this.achievements.hardLevel = new Decimal(loaded.achievements.hardLevel);
-        this.achievements.ramLevel = new Decimal(loaded.achievements.ramLevel);
-        this.scientists = loaded.scientists.map((s: Scientist) => ({
-          id: s.id,
-          level: new Decimal(s.level),
-          exp: new Decimal(s.exp),
-          intellect: new Decimal(s.intellect),
-          efficiency: new Decimal(s.efficiency),
-        }));
+        this.research.list.researchScientistsChance.isActive =
+          loaded.research.list.researchScientistsChance.isActive;
+        this.research.list.researchScientistsChance.currentTime = new Decimal(
+          loaded.research.list.researchScientistsChance.currentTime,
+        );
+        this.research.list.researchScientistsChance.level = new Decimal(
+          loaded.research.list.researchScientistsChance.level,
+        );
+        this.research.list.researchScientistsMultiplierStats.isActive =
+          loaded.research.list.researchScientistsMultiplierStats.isActive;
+        this.research.list.researchScientistsMultiplierStats.currentTime = new Decimal(
+          loaded.research.list.researchScientistsMultiplierStats.currentTime,
+        );
+        this.research.list.researchScientistsMultiplierStats.level = new Decimal(
+          loaded.research.list.researchScientistsMultiplierStats.level,
+        );
+        this.research.list.researchScientistsMultiplierExperience.isActive =
+          loaded.research.list.researchScientistsMultiplierExperience.isActive;
+        this.research.list.researchScientistsMultiplierExperience.currentTime = new Decimal(
+          loaded.research.list.researchScientistsMultiplierExperience.currentTime,
+        );
+        this.research.list.researchScientistsMultiplierExperience.level = new Decimal(
+          loaded.research.list.researchScientistsMultiplierExperience.level,
+        );
+        this.research.list.shopMultiplierChanceReturn.isActive =
+          loaded.research.list.shopMultiplierChanceReturn.isActive;
+        this.research.list.shopMultiplierChanceReturn.currentTime = new Decimal(
+          loaded.research.list.shopMultiplierChanceReturn.currentTime,
+        );
+        this.research.list.shopMultiplierChanceReturn.level = new Decimal(
+          loaded.research.list.shopMultiplierChanceReturn.level,
+        );
       } catch (e) {
         console.error('Ошибка загрузки сохранения:', e);
       }

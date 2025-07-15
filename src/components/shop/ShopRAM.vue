@@ -162,7 +162,9 @@ const onBuyValue = () => {
 
 const onBuyMultiply = () => {
   if (!canBuyMultiply.value) return;
-  ram.value = ram.value.minus(costMultiply.value);
+  const researchMultiplierChance = storeGame.research.list.shopMultiplierChanceReturn;
+  if (researchMultiplierChance.level.mul(researchMultiplierChance.bonus).lt(Math.random()))
+    ram.value = ram.value.minus(costMultiply.value);
   ram.multiply = ram.multiply.plus(1);
 };
 </script>

@@ -162,7 +162,9 @@ const onBuyValue = () => {
 
 const onBuyMultiply = () => {
   if (!canBuyMultiply.value) return;
-  cpu.value = cpu.value.minus(costMultiply.value);
+  const researchMultiplierChance = storeGame.research.list.shopMultiplierChanceReturn;
+  if (researchMultiplierChance.level.mul(researchMultiplierChance.bonus).lt(Math.random()))
+    cpu.value = cpu.value.minus(costMultiply.value);
   cpu.multiply = cpu.multiply.plus(1);
 };
 </script>
