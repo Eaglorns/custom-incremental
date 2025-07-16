@@ -48,10 +48,7 @@
           <div class="row items-center">
             <q-icon name="fa-duotone fa-clock" size="15px" class="q-mr-xs text-grey-7" />
             <q-badge class="q-pa-xs text-bold bg-grey-3 text-primary" style="font-size: 11px"
-              >{{
-                formatNumber(getResearchTime(meta.key).value.div(storeGame.getResearchSpeed))
-              }}
-              сек</q-badge
+              >{{ formatNumber(getResearchTime(meta.key).value) }} сек</q-badge
             >
           </div>
         </div>

@@ -82,7 +82,7 @@
         <div class="col-12 col-md-6">
           <q-input
             :model-value="formatNumber(gainPerTick)"
-            label="Прирост ускорения исследований"
+            label="Прирост ускорения исследований за тик"
             class="q-mb-md"
             :disable="true"
             dense

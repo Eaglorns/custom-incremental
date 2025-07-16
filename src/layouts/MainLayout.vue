@@ -8,6 +8,17 @@
           v{{ storeGlobal.app.version }}
         </span>
         <q-space />
+        <q-select
+          v-model="locale"
+          :options="localeOptions"
+          label="Quasar Language"
+          dense
+          borderless
+          emit-value
+          map-options
+          options-dense
+          style="min-width: 150px"
+        />
       </q-bar>
     </q-header>
 
@@ -19,6 +30,14 @@
 
 <script setup lang="ts">
 import { useStoreGlobal } from 'src/stores/global';
+import { useI18n } from 'vue-i18n';
 
 const storeGlobal = useStoreGlobal();
+
+const { locale } = useI18n({ useScope: 'global' });
+
+const localeOptions = [
+  { value: 'ru', label: 'Русский' },
+  { value: 'en', label: 'English' },
+];
 </script>

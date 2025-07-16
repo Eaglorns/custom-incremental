@@ -24,7 +24,6 @@ export interface HelperState {
   key: string;
   icon: string;
   title: string;
-  description: string;
   count: Decimal;
   percent: Decimal;
   cost: {

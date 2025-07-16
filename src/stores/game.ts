@@ -10,7 +10,7 @@ const SECRET = 'incremental';
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     lastTick: Date.now(),
-    epicNumber: new Decimal('500'),
+    epicNumber: new Decimal('1e9999999'),
     multiplierEpicNumber: new Decimal(0),
     researchSpeed: new Decimal(0),
     timer: 1000,
@@ -122,24 +122,24 @@ export const useStoreGame = defineStore('storeGame', {
         },
         researchScientistsMultiplierStats: {
           isActive: false,
-          cost: new Decimal(5000),
+          cost: new Decimal(2000),
           currentTime: new Decimal(0),
           time: new Decimal(8),
           bonus: new Decimal(0.1),
           level: new Decimal(0),
-          costMultiply: new Decimal(2.0),
-          timeMultiply: new Decimal(2.2),
+          costMultiply: new Decimal(1.4),
+          timeMultiply: new Decimal(1.6),
           maxLevel: new Decimal(1000),
         },
         researchScientistsMultiplierExperience: {
           isActive: false,
-          cost: new Decimal(5000),
+          cost: new Decimal(2000),
           currentTime: new Decimal(0),
           time: new Decimal(8),
           bonus: new Decimal(0.1),
           level: new Decimal(0),
-          costMultiply: new Decimal(2.0),
-          timeMultiply: new Decimal(2.2),
+          costMultiply: new Decimal(1.4),
+          timeMultiply: new Decimal(1.6),
           maxLevel: new Decimal(1000),
         },
         shopMultiplierChanceReturn: {
@@ -184,6 +184,36 @@ export const useStoreGame = defineStore('storeGame', {
           countMultiply: new Decimal(9),
           percent: new Decimal(2500000),
           percentMultiply: new Decimal(340),
+        },
+      },
+      cpuMultiplier: {
+        count: new Decimal(0),
+        percent: new Decimal(0),
+        cost: {
+          count: new Decimal(10000),
+          countMultiply: new Decimal(50),
+          percent: new Decimal(25000),
+          percentMultiply: new Decimal(1500),
+        },
+      },
+      hardMultiplier: {
+        count: new Decimal(0),
+        percent: new Decimal(0),
+        cost: {
+          count: new Decimal(270000),
+          countMultiply: new Decimal(120),
+          percent: new Decimal(1060000),
+          percentMultiply: new Decimal(2300),
+        },
+      },
+      ramMultiplier: {
+        count: new Decimal(0),
+        percent: new Decimal(0),
+        cost: {
+          count: new Decimal(12000000),
+          countMultiply: new Decimal(90),
+          percent: new Decimal(25000000),
+          percentMultiply: new Decimal(3400),
         },
       },
     },
@@ -292,17 +322,25 @@ export const useStoreGame = defineStore('storeGame', {
       });
     },
 
-    processHelperType(count: Decimal, key: 'cpu' | 'hard' | 'ram') {
-      if (count.lte(0)) return;
-      this.shop[key].value = this.shop[key].value.plus(count);
-    },
-
     processHelpers() {
       const rand = Math.random() * 100;
-      (['cpu', 'hard', 'ram'] as const).forEach((key) => {
+      const valueKeys = ['cpu', 'hard', 'ram'] as const;
+      const multiplierKeys = ['cpuMultiplier', 'hardMultiplier', 'ramMultiplier'] as const;
+
+      valueKeys.forEach((key) => {
         const helper = this.helpers[key];
         if (helper.count.gt(0) && this.getHelperChance(helper.percent).gte(rand)) {
-          this.processHelperType(helper.count.mul(this.shop[key].multiply), key);
+          this.shop[key].value = this.shop[key].value.plus(
+            helper.count.mul(this.shop[key].multiply),
+          );
+        }
+      });
+
+      multiplierKeys.forEach((key) => {
+        const baseKey = key.replace('Multiplier', '') as keyof typeof this.shop;
+        const helper = this.helpers[key];
+        if (helper.count.gt(0) && this.getHelperChance(helper.percent).gte(rand)) {
+          this.shop[baseKey].multiply = this.shop[baseKey].multiply.plus(helper.count);
         }
       });
     },
@@ -423,6 +461,18 @@ export const useStoreGame = defineStore('storeGame', {
             count: this.helpers.ram.count,
             percent: this.helpers.ram.percent,
           },
+          cpuMultiplier: {
+            count: this.helpers.cpuMultiplier.count,
+            percent: this.helpers.cpuMultiplier.percent,
+          },
+          hardMultiplier: {
+            count: this.helpers.hardMultiplier.count,
+            percent: this.helpers.hardMultiplier.percent,
+          },
+          ramMultiplier: {
+            count: this.helpers.ramMultiplier.count,
+            percent: this.helpers.ramMultiplier.percent,
+          },
         },
         achievements: {
           epicLevel: this.achievements.epicLevel,
@@ -526,6 +576,12 @@ export const useStoreGame = defineStore('storeGame', {
         this.helpers.hard.percent = new Decimal(loaded.helpers.hard.percent);
         this.helpers.ram.count = new Decimal(loaded.helpers.ram.count);
         this.helpers.ram.percent = new Decimal(loaded.helpers.ram.percent);
+        this.helpers.cpuMultiplier.count = new Decimal(loaded.helpers.cpuMultiplier.count);
+        this.helpers.cpuMultiplier.percent = new Decimal(loaded.helpers.cpuMultiplier.percent);
+        this.helpers.hardMultiplier.count = new Decimal(loaded.helpers.hardMultiplier.count);
+        this.helpers.hardMultiplier.percent = new Decimal(loaded.helpers.hardMultiplier.percent);
+        this.helpers.ramMultiplier.count = new Decimal(loaded.helpers.ramMultiplier.count);
+        this.helpers.ramMultiplier.percent = new Decimal(loaded.helpers.ramMultiplier.percent);
         this.achievements.epicLevel = new Decimal(loaded.achievements.epicLevel);
         this.achievements.cpuLevel = new Decimal(loaded.achievements.cpuLevel);
         this.achievements.hardLevel = new Decimal(loaded.achievements.hardLevel);

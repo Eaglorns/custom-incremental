@@ -18,11 +18,6 @@
                 {{ getHelper(key).value.title }}
               </span>
             </div>
-            <div class="q-mb-sm helper-description">
-              <span class="text-caption text-secondary-custom">{{
-                getHelper(key).value.description
-              }}</span>
-            </div>
           </div>
           <div class="column justify-end helper-content">
             <div class="q-mb-sm">
@@ -35,7 +30,9 @@
                       size="16px"
                       class="q-mr-xs icon-default-custom"
                     />
-                    <span class="text-caption q-mr-xs text-secondary-custom">Количество:</span>
+                    <span class="text-caption q-mr-xs text-secondary-custom"
+                      >{{ $t('components.automatic.automaticBuyers.quantity') }}:</span
+                    >
                     <span class="text-body2 text-weight-bold text-blue-4">{{
                       getHelper(key).value.count
                     }}</span>
@@ -195,7 +192,7 @@ function getHelperChanceWithCount(percent: Decimal, count: Decimal): Decimal {
   flex: 0 0 260px
 
 .helper-card
-  min-height: 342px
+  min-height: 250px
   display: flex
   flex-direction: column
   width: 100%
@@ -216,11 +213,13 @@ function getHelperChanceWithCount(percent: Decimal, count: Decimal): Decimal {
 .helper-title
   overflow: hidden
   text-overflow: ellipsis
-  white-space: nowrap
+  word-break: break-word
+  white-space: normal
   flex: 1 1 0
   min-width: 0
   font-size: 14px
   line-height: 1.2
+  max-height: 2.4em
 
 .helper-description
   min-height: 42px
