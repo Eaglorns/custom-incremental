@@ -127,7 +127,16 @@
           <q-splitter v-model="splitterModel">
             <template v-slot:before>
               <q-tabs v-model="innerPrestige" vertical class="text-teal">
-                <q-tab name="innerPrestigeBase" icon="fa-duotone fa-flask" label="Основа" />
+                <q-tab
+                  name="innerPrestigeBase"
+                  icon="fa-duotone fa-arrow-up-from-dotted-line"
+                  label="Основа"
+                />
+                <q-tab
+                  name="innerPrestigeUpgrade"
+                  icon="fa-duotone fa-sparkles"
+                  label="Улучшения"
+                />
               </q-tabs>
             </template>
             <template v-slot:after>
@@ -137,6 +146,7 @@
                 transition-next="slide-up"
               >
                 <q-tab-panel name="innerPrestigeBase"><PrestigeBase /></q-tab-panel>
+                <q-tab-panel name="innerPrestigeUpgrade"><PrestigeUpgrade /></q-tab-panel>
               </q-tab-panels>
             </template>
           </q-splitter>
@@ -188,6 +198,7 @@ import ResearchBase from 'src/components/research/ResearchBase.vue';
 import ResearchScientist from 'src/components/research/ResearchScientist.vue';
 import AutomaticBuyer from 'src/components/automatic/AutomaticBuyer.vue';
 import PrestigeBase from 'src/components/prestige/PrestigeBase.vue';
+import PrestigeUpgrade from 'src/components/prestige/PrestigeUpgrade.vue';
 import Help from 'src/pages/HelpPage.vue';
 import Achievement from 'src/pages/AchievementPage.vue';
 import Decimal from 'break_eternity.js';
