@@ -1,11 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import Decimal from 'break_eternity.js';
-import CryptoJS from 'crypto-js';
-import { LocalStorage } from 'quasar';
 import type { Scientist } from 'src/constants/models';
-
-const STORAGE_KEY = 'save';
-const SECRET = 'incremental';
 
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
@@ -15,6 +10,7 @@ export const useStoreGame = defineStore('storeGame', {
     researchSpeed: new Decimal(0),
     timer: 1000,
     researchPoint: new Decimal(0),
+    prestige: new Decimal(0),
     shop: {
       cpu: {
         value: new Decimal(20),
@@ -290,6 +286,11 @@ export const useStoreGame = defineStore('storeGame', {
       const { epicLevel, cpuLevel, hardLevel, ramLevel } = state.achievements;
       return epicLevel.plus(cpuLevel).plus(hardLevel).plus(ramLevel).mul(0.01).plus(1);
     },
+
+    prestigeGain: (state): Decimal => {
+      if (!state.epicNumber || state.epicNumber.lte(0)) return new Decimal(0);
+      return state.epicNumber.log10();
+    },
   },
   actions: {
     gameTick() {
@@ -420,246 +421,15 @@ export const useStoreGame = defineStore('storeGame', {
       }
     },
 
-    saveGame() {
-      const saveData = {
-        epicNumber: this.epicNumber,
-        multiplierEpicNumber: this.multiplierEpicNumber,
-        researchSpeed: this.researchSpeed,
-        timer: this.timer,
-        researchPoint: this.researchPoint,
-        shop: {
-          cpu: {
-            value: this.shop.cpu.value,
-            multiply: this.shop.cpu.multiply,
-          },
-          hard: {
-            value: this.shop.hard.value,
-            multiply: this.shop.hard.multiply,
-          },
-          ram: {
-            value: this.shop.ram.value,
-            multiply: this.shop.ram.multiply,
-          },
-        },
-        scientists: this.scientists.map((s) => ({
-          id: s.id,
-          level: s.level,
-          exp: s.exp,
-          intellect: s.intellect,
-          efficiency: s.efficiency,
-        })),
-        helpers: {
-          cpu: {
-            count: this.helpers.cpu.count,
-            percent: this.helpers.cpu.percent,
-          },
-          hard: {
-            count: this.helpers.hard.count,
-            percent: this.helpers.hard.percent,
-          },
-          ram: {
-            count: this.helpers.ram.count,
-            percent: this.helpers.ram.percent,
-          },
-          cpuMultiplier: {
-            count: this.helpers.cpuMultiplier.count,
-            percent: this.helpers.cpuMultiplier.percent,
-          },
-          hardMultiplier: {
-            count: this.helpers.hardMultiplier.count,
-            percent: this.helpers.hardMultiplier.percent,
-          },
-          ramMultiplier: {
-            count: this.helpers.ramMultiplier.count,
-            percent: this.helpers.ramMultiplier.percent,
-          },
-        },
-        achievements: {
-          epicLevel: this.achievements.epicLevel,
-          cpuLevel: this.achievements.cpuLevel,
-          hardLevel: this.achievements.hardLevel,
-          ramLevel: this.achievements.ramLevel,
-        },
-        research: {
-          list: {
-            cpuPow: {
-              isActive: this.research.list.cpuPow.isActive,
-              currentTime: this.research.list.cpuPow.currentTime,
-              level: this.research.list.cpuPow.level,
-            },
-            hardPow: {
-              isActive: this.research.list.hardPow.isActive,
-              currentTime: this.research.list.hardPow.currentTime,
-              level: this.research.list.hardPow.level,
-            },
-            ramPow: {
-              isActive: this.research.list.ramPow.isActive,
-              currentTime: this.research.list.ramPow.currentTime,
-              level: this.research.list.ramPow.level,
-            },
-            shopCostMultiplierDecrease: {
-              isActive: this.research.list.shopCostMultiplierDecrease.isActive,
-              currentTime: this.research.list.shopCostMultiplierDecrease.currentTime,
-              level: this.research.list.shopCostMultiplierDecrease.level,
-            },
-            epicNumberMultiplierDecrease: {
-              isActive: this.research.list.epicNumberMultiplierDecrease.isActive,
-              currentTime: this.research.list.epicNumberMultiplierDecrease.currentTime,
-              level: this.research.list.epicNumberMultiplierDecrease.level,
-            },
-            researchTimeMultiplierDecrease: {
-              isActive: this.research.list.researchTimeMultiplierDecrease.isActive,
-              currentTime: this.research.list.researchTimeMultiplierDecrease.currentTime,
-              level: this.research.list.researchTimeMultiplierDecrease.level,
-            },
-            researchScientistsChance: {
-              isActive: this.research.list.researchScientistsChance.isActive,
-              currentTime: this.research.list.researchScientistsChance.currentTime,
-              level: this.research.list.researchScientistsChance.level,
-            },
-            researchScientistsMultiplierStats: {
-              isActive: this.research.list.researchScientistsMultiplierStats.isActive,
-              currentTime: this.research.list.researchScientistsMultiplierStats.currentTime,
-              level: this.research.list.researchScientistsMultiplierStats.level,
-            },
-            researchScientistsMultiplierExperience: {
-              isActive: this.research.list.researchScientistsMultiplierExperience.isActive,
-              currentTime: this.research.list.researchScientistsMultiplierExperience.currentTime,
-              level: this.research.list.researchScientistsMultiplierExperience.level,
-            },
-            shopMultiplierChanceReturn: {
-              isActive: this.research.list.shopMultiplierChanceReturn.isActive,
-              currentTime: this.research.list.shopMultiplierChanceReturn.currentTime,
-              level: this.research.list.shopMultiplierChanceReturn.level,
-            },
-          },
-        },
-      };
-
-      const replacer = (key: string, value: unknown) => {
-        if (value instanceof Decimal) return { __decimal__: value.toString() };
-        return value;
-      };
-      const plainState = JSON.stringify(saveData, replacer);
-      const encrypted = CryptoJS.AES.encrypt(plainState, SECRET).toString();
-      LocalStorage.setItem(STORAGE_KEY, encrypted);
-    },
-
-    loadGame() {
-      const encrypted = LocalStorage.getItem(STORAGE_KEY);
-      if (typeof encrypted !== 'string') return;
-      try {
-        const bytes = CryptoJS.AES.decrypt(encrypted, SECRET);
-        const decrypted = bytes.toString(CryptoJS.enc.Utf8);
-        const loaded = JSON.parse(decrypted);
-        this.epicNumber = new Decimal(loaded.epicNumber);
-        this.multiplierEpicNumber = new Decimal(loaded.multiplierEpicNumber);
-        this.researchSpeed = new Decimal(loaded.researchSpeed);
-        this.timer = loaded.timer;
-        this.researchPoint = new Decimal(loaded.researchPoint);
-        this.shop.cpu.value = new Decimal(loaded.shop.cpu.value);
-        this.shop.cpu.multiply = new Decimal(loaded.shop.cpu.multiply);
-        this.shop.hard.value = new Decimal(loaded.shop.hard.value);
-        this.shop.hard.multiply = new Decimal(loaded.shop.hard.multiply);
-        this.shop.ram.value = new Decimal(loaded.shop.ram.value);
-        this.shop.ram.multiply = new Decimal(loaded.shop.ram.multiply);
-        this.scientists = loaded.scientists.map((s: Scientist) => ({
-          id: s.id,
-          level: new Decimal(s.level),
-          exp: new Decimal(s.exp),
-          intellect: new Decimal(s.intellect),
-          efficiency: new Decimal(s.efficiency),
-        }));
-        this.helpers.cpu.count = new Decimal(loaded.helpers.cpu.count);
-        this.helpers.cpu.percent = new Decimal(loaded.helpers.cpu.percent);
-        this.helpers.hard.count = new Decimal(loaded.helpers.hard.count);
-        this.helpers.hard.percent = new Decimal(loaded.helpers.hard.percent);
-        this.helpers.ram.count = new Decimal(loaded.helpers.ram.count);
-        this.helpers.ram.percent = new Decimal(loaded.helpers.ram.percent);
-        this.helpers.cpuMultiplier.count = new Decimal(loaded.helpers.cpuMultiplier.count);
-        this.helpers.cpuMultiplier.percent = new Decimal(loaded.helpers.cpuMultiplier.percent);
-        this.helpers.hardMultiplier.count = new Decimal(loaded.helpers.hardMultiplier.count);
-        this.helpers.hardMultiplier.percent = new Decimal(loaded.helpers.hardMultiplier.percent);
-        this.helpers.ramMultiplier.count = new Decimal(loaded.helpers.ramMultiplier.count);
-        this.helpers.ramMultiplier.percent = new Decimal(loaded.helpers.ramMultiplier.percent);
-        this.achievements.epicLevel = new Decimal(loaded.achievements.epicLevel);
-        this.achievements.cpuLevel = new Decimal(loaded.achievements.cpuLevel);
-        this.achievements.hardLevel = new Decimal(loaded.achievements.hardLevel);
-        this.achievements.ramLevel = new Decimal(loaded.achievements.ramLevel);
-        this.research.list.cpuPow.isActive = loaded.research.list.cpuPow.isActive;
-        this.research.list.cpuPow.currentTime = new Decimal(
-          loaded.research.list.cpuPow.currentTime,
-        );
-        this.research.list.cpuPow.level = new Decimal(loaded.research.list.cpuPow.level);
-        this.research.list.hardPow.isActive = loaded.research.list.hardPow.isActive;
-        this.research.list.hardPow.currentTime = new Decimal(
-          loaded.research.list.hardPow.currentTime,
-        );
-        this.research.list.hardPow.level = new Decimal(loaded.research.list.hardPow.level);
-        this.research.list.ramPow.isActive = loaded.research.list.ramPow.isActive;
-        this.research.list.ramPow.currentTime = new Decimal(
-          loaded.research.list.ramPow.currentTime,
-        );
-        this.research.list.ramPow.level = new Decimal(loaded.research.list.ramPow.level);
-        this.research.list.shopCostMultiplierDecrease.isActive =
-          loaded.research.list.shopCostMultiplierDecrease.isActive;
-        this.research.list.shopCostMultiplierDecrease.currentTime = new Decimal(
-          loaded.research.list.shopCostMultiplierDecrease.currentTime,
-        );
-        this.research.list.shopCostMultiplierDecrease.level = new Decimal(
-          loaded.research.list.shopCostMultiplierDecrease.level,
-        );
-        this.research.list.epicNumberMultiplierDecrease.currentTime = new Decimal(
-          loaded.research.list.epicNumberMultiplierDecrease.currentTime,
-        );
-        this.research.list.epicNumberMultiplierDecrease.isActive =
-          loaded.research.list.epicNumberMultiplierDecrease.isActive;
-        this.research.list.epicNumberMultiplierDecrease.level = new Decimal(
-          loaded.research.list.epicNumberMultiplierDecrease.level,
-        );
-        this.research.list.researchTimeMultiplierDecrease.isActive =
-          loaded.research.list.researchTimeMultiplierDecrease.isActive;
-        this.research.list.researchTimeMultiplierDecrease.currentTime = new Decimal(
-          loaded.research.list.researchTimeMultiplierDecrease.currentTime,
-        );
-        this.research.list.researchTimeMultiplierDecrease.level = new Decimal(
-          loaded.research.list.researchTimeMultiplierDecrease.level,
-        );
-        this.research.list.researchScientistsChance.isActive =
-          loaded.research.list.researchScientistsChance.isActive;
-        this.research.list.researchScientistsChance.currentTime = new Decimal(
-          loaded.research.list.researchScientistsChance.currentTime,
-        );
-        this.research.list.researchScientistsChance.level = new Decimal(
-          loaded.research.list.researchScientistsChance.level,
-        );
-        this.research.list.researchScientistsMultiplierStats.isActive =
-          loaded.research.list.researchScientistsMultiplierStats.isActive;
-        this.research.list.researchScientistsMultiplierStats.currentTime = new Decimal(
-          loaded.research.list.researchScientistsMultiplierStats.currentTime,
-        );
-        this.research.list.researchScientistsMultiplierStats.level = new Decimal(
-          loaded.research.list.researchScientistsMultiplierStats.level,
-        );
-        this.research.list.researchScientistsMultiplierExperience.isActive =
-          loaded.research.list.researchScientistsMultiplierExperience.isActive;
-        this.research.list.researchScientistsMultiplierExperience.currentTime = new Decimal(
-          loaded.research.list.researchScientistsMultiplierExperience.currentTime,
-        );
-        this.research.list.researchScientistsMultiplierExperience.level = new Decimal(
-          loaded.research.list.researchScientistsMultiplierExperience.level,
-        );
-        this.research.list.shopMultiplierChanceReturn.isActive =
-          loaded.research.list.shopMultiplierChanceReturn.isActive;
-        this.research.list.shopMultiplierChanceReturn.currentTime = new Decimal(
-          loaded.research.list.shopMultiplierChanceReturn.currentTime,
-        );
-        this.research.list.shopMultiplierChanceReturn.level = new Decimal(
-          loaded.research.list.shopMultiplierChanceReturn.level,
-        );
-      } catch (e) {
-        console.error('Ошибка загрузки сохранения:', e);
-      }
+    onPrestige() {
+      this.prestige = this.prestige.add(this.prestigeGain);
+      this.epicNumber = new Decimal(1);
+      this.shop.cpu.value = new Decimal(1);
+      this.shop.cpu.multiply = new Decimal(1);
+      this.shop.hard.value = new Decimal(1);
+      this.shop.hard.multiply = new Decimal(1);
+      this.shop.ram.value = new Decimal(1);
+      this.shop.ram.multiply = new Decimal(1);
     },
   },
 });

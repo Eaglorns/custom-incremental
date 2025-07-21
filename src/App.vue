@@ -5,8 +5,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useStoreGame } from 'src/stores/game';
+import { useStoreSaveLoad } from 'src/stores/saveLoad';
 
 const storeGame = useStoreGame();
+const storeSaveLoad = useStoreSaveLoad();
 
 const gameTick = () => {
   storeGame.gameTick();
@@ -22,10 +24,10 @@ const startTimer = () => {
 };
 
 onMounted(() => {
-  storeGame.loadGame();
+  storeSaveLoad.loadGame();
   startTimer();
   autoSaveId.value = setInterval(() => {
-    storeGame.saveGame();
+    storeSaveLoad.saveGame();
   }, 5000);
 });
 
