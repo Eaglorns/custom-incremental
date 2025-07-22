@@ -58,10 +58,10 @@
         <q-tab-panel name="shop" class="panel-flex">
           <q-splitter v-model="splitterModel">
             <template v-slot:before>
-              <q-tabs v-model="innerShop" vertical class="text-teal">
-                <q-tab name="innerShopCPU" icon="fa-duotone fa-microchip" label="Процессор" />
-                <q-tab name="innerShopHard" icon="fa-duotone fa-hard-drive" label="Жёсткий диск" />
-                <q-tab name="innerShopRAM" icon="fa-duotone fa-memory" label="Оперативная память" />
+              <q-tabs v-model="innerShop" vertical class="text-teal" align="left">
+                <q-tab name="innerShopCPU" icon="fa-duotone fa-microchip" label="CPU" />
+                <q-tab name="innerShopHard" icon="fa-duotone fa-hard-drive" label="RAM" />
+                <q-tab name="innerShopRAM" icon="fa-duotone fa-memory" label="HDD" />
               </q-tabs>
             </template>
             <template v-slot:after>
@@ -82,11 +82,7 @@
             <template v-slot:before>
               <q-tabs v-model="innerResearch" vertical class="text-teal">
                 <q-tab name="innerScientist" icon="fa-duotone fa-user-astronaut" label="Учёные" />
-                <q-tab
-                  name="innerResearchBase"
-                  icon="fa-duotone fa-flask"
-                  label="Базовые исследования"
-                />
+                <q-tab name="innerResearchBase" icon="fa-duotone fa-flask" label="Базовые" />
               </q-tabs>
             </template>
             <template v-slot:after>
@@ -323,6 +319,46 @@ const infinityProgress = computed(() => {
   align-items: center
   justify-content: center
 
+  .q-tabs.vertical
+    .q-tab__label
+      font-size: 11px !important
+      max-width: 80px
+    .q-tab__icon
+      font-size: 16px !important
+  .q-tab__label, .q-tab-panel .q-tab__label
+    font-size: 11px !important
+  .q-tab__icon, .q-tab-panel .q-tab__icon
+    font-size: 16px !important
+  .q-tabs.vertical
+    .q-tab__label
+      font-size: 13px !important
+      max-width: 100px
+    .q-tab__icon
+      font-size: 18px !important
+  .q-tab__label, .q-tab-panel .q-tab__label
+    font-size: 13px !important
+  .q-tab__icon, .q-tab-panel .q-tab__icon
+    font-size: 18px !important
+  .q-tabs.vertical
+    .q-tab__label
+      font-size: 15px !important
+      max-width: 120px
+    .q-tab__icon
+      font-size: 20px !important
+  .q-tab__label, .q-tab-panel .q-tab__label
+    font-size: 15px !important
+  .q-tab__icon, .q-tab-panel .q-tab__icon
+    font-size: 20px !important
+  .q-tabs.vertical
+    .q-tab__label
+      font-size: 17px !important
+      max-width: 160px
+    .q-tab__icon
+      font-size: 22px !important
+  .q-tab__label, .q-tab-panel .q-tab__label
+    font-size: 17px !important
+  .q-tab__icon, .q-tab-panel .q-tab__icon
+    font-size: 22px !important
 .footer-row
   display: flex
   align-items: center
@@ -339,4 +375,171 @@ const infinityProgress = computed(() => {
   color: #fff
   font-weight: bold
   font-size: 15px
+
+@media (max-width: 600px)
+  .q-tabs.vertical .q-tab__content
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    gap: 2px
+  .q-tabs.vertical .q-tab__icon
+    margin-bottom: 4px
+    display: block
+    align-self: center
+  .q-tabs.vertical .q-tab__label
+    display: block
+    text-align: center
+    white-space: normal
+    word-break: break-word
+    max-width: 120px
+    padding: 0
+    flex-shrink: 1
+  .q-tabs.vertical .q-tab__content
+    flex-direction: column
+    align-items: center
+    justify-content: flex-start
+    gap: 2px
+  .q-tabs.vertical .q-tab__icon
+    margin-right: 0
+    margin-bottom: 4px
+    display: block
+    align-self: center
+  .q-tabs.vertical .q-tab__label
+    display: block
+    text-align: center
+    white-space: normal
+    word-break: break-word
+    max-width: 120px
+    padding: 0
+    flex-shrink: 1
+  .q-tab, .q-tab__content
+    align-items: center
+    justify-content: center
+    gap: 2px
+  .q-tab__icon, .q-tab-panel .q-tab__icon
+    padding: 0
+    flex-shrink: 0
+    margin-right: 2px
+    .q-tabs:not(.vertical) .q-tab__label, .q-tab-panel .q-tab__label
+      padding: 0
+      flex-shrink: 1
+      max-width: 120px
+      overflow: visible
+      text-overflow: unset
+      white-space: normal
+    .q-tabs.vertical .q-tab__label
+      display: block
+      padding: 0
+      flex-shrink: 1
+    max-width: 120px
+      white-space: normal
+      word-break: break-word
+  .q-tab__label, .q-tab-panel .q-tab__label
+    font-size: 12px !important
+    padding: 0 2px
+  .q-tab__icon, .q-tab-panel .q-tab__icon
+    font-size: 18px !important
+    min-width: 0
+    padding: 0 2px
+  .main-banner
+    flex-direction: row
+    min-height: 6vh
+    max-height: 10vh
+    margin-top: 2px
+    padding: 2px
+  .banner-row
+    flex-direction: row
+    align-items: center
+    height: auto
+  .banner-main
+    flex-direction: row
+    align-items: center
+    padding: 0
+    flex-wrap: wrap
+    div
+      padding: 2px 6px
+      display: flex
+      align-items: center
+      justify-content: center
+      width: auto
+      box-sizing: border-box
+      .q-separator
+        align-self: stretch
+        height: auto !important
+        min-height: 0 !important
+        max-height: none !important
+  .on-color-epic-number,
+  .on-color-multiplier-epic-number,
+  .on-color-research-point,
+  .on-color-research-speed
+    font-size: 15px !important
+    min-width: 0
+    padding: 0 2px
+  .q-icon
+    font-size: 14px !important
+    min-width: 0
+    padding: 0 2px
+    flex-direction: column
+    align-items: stretch
+    padding: 0
+  .main-card
+    width: 100vw
+    padding: 2px
+    box-shadow: none
+  .panel-flex
+    padding: 2px
+  .main-footer
+    min-height: 6vh
+    max-height: 8vh
+    padding: 2px
+    font-size: 15px
+  .footer-label, .footer-progress
+    font-size: 17px
+
+@media (max-width: 900px) and (min-width: 601px)
+  .main-layout
+    min-width: 100vw
+    padding: 0 8px
+  .main-banner
+    min-height: 10vh
+    max-height: 16vh
+    margin-top: 4px
+    padding: 4px
+  .main-card
+    width: 100vw
+    padding: 4px
+  .panel-flex
+    padding: 4px
+  .main-footer
+    min-height: 6vh
+    max-height: 8vh
+    padding: 4px
+    font-size: 16px
+  .footer-label, .footer-progress
+    font-size: 18px
+
+@media (orientation: landscape) and (max-width: 900px)
+  .main-banner
+    min-height: 7vh
+    max-height: 10vh
+    margin-top: 0
+    padding: 2px
+
+  .main-footer
+    min-height: 4vh
+    max-height: 5vh
+    padding: 2px
+    font-size: 15px
+
+@media (max-width: 400px)
+  .main-banner, .main-card, .panel-flex, .main-footer, .footer-label, .footer-progress
+    font-size: 13px
+
+@media (max-width: 600px) and (min-width: 401px)
+  .main-banner, .main-card, .panel-flex, .main-footer, .footer-label, .footer-progress
+    font-size: 15px
+
+@media (max-width: 900px) and (min-width: 601px)
+  .main-banner, .main-card, .panel-flex, .main-footer, .footer-label, .footer-progress
+    font-size: 18px
 </style>
