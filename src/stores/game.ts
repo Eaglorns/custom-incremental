@@ -295,7 +295,7 @@ export const useStoreGame = defineStore('storeGame', {
   },
   actions: {
     gameTick() {
-      console.time('gameTick');
+      //console.time('gameTick');
       const now = Date.now();
       const delta = now - this.lastTick;
       this.lastTick = now;
@@ -309,7 +309,7 @@ export const useStoreGame = defineStore('storeGame', {
         this.processScientists();
         this.processGiveEpicNumber();
       }
-      console.timeEnd('gameTick');
+      //console.timeEnd('gameTick');
     },
 
     processResearch() {

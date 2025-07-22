@@ -4,8 +4,7 @@ export const useStoreGlobal = defineStore('storeGlobal', {
   state: () => ({
     app: {
       name: 'Custom Incremental',
-      version: '0.0.3',
-      environment: 'development',
+      version: '0.0.4',
     },
   }),
   getters: {},
