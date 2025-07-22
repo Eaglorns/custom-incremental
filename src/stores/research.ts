@@ -36,7 +36,7 @@ interface ResearchLoadData {
 export const useStoreResearch = defineStore('storeResearch', {
   state: () => ({
     points: new Decimal(0),
-    speed: new Decimal(0),
+    speed: new Decimal(1),
     scientists: [] as Scientist[],
     list: {
       cpuPow: {

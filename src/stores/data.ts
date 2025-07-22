@@ -6,7 +6,7 @@ export const useStoreData = defineStore('storeData', {
   state: () => ({
     version: '0.0.0',
     epicNumber: new Decimal('2500'),
-    multiplierEpicNumber: new Decimal(0),
+    multiplierEpicNumber: new Decimal(1),
   }),
 
   getters: {

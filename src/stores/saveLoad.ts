@@ -68,6 +68,7 @@ export const useStoreSaveLoad = defineStore('storeSaveLoad', {
           storeShop.load(loaded.shop);
           storeAutomatic.load(loaded.automatic);
           storeAchievement.load(loaded.achievement);
+          console.log('load game');
         } else {
           storeData.version = storeGame.version;
         }

@@ -81,16 +81,10 @@ export const useStoreShop = defineStore('storeShop', {
     }) {
       this.list.cpu.value = new Decimal(loaded.list.cpu.value);
       this.list.cpu.multiply = new Decimal(loaded.list.cpu.multiply);
-      this.list.cpu.cost.value = new Decimal(loaded.list.cpu.cost.value);
-      this.list.cpu.cost.multiply = new Decimal(loaded.list.cpu.cost.multiply);
       this.list.hdd.value = new Decimal(loaded.list.hdd.value);
       this.list.hdd.multiply = new Decimal(loaded.list.hdd.multiply);
-      this.list.hdd.cost.value = new Decimal(loaded.list.hdd.cost.value);
-      this.list.hdd.cost.multiply = new Decimal(loaded.list.hdd.cost.multiply);
       this.list.ram.value = new Decimal(loaded.list.ram.value);
       this.list.ram.multiply = new Decimal(loaded.list.ram.multiply);
-      this.list.ram.cost.value = new Decimal(loaded.list.ram.cost.value);
-      this.list.ram.cost.multiply = new Decimal(loaded.list.ram.cost.multiply);
     },
   },
 });
