@@ -168,3 +168,33 @@ const onBuyMultiply = () => {
   ram.multiply = ram.multiply.plus(1);
 };
 </script>
+<style lang="sass" scoped>
+@media (max-width: 700px)
+  .row.q-col-gutter-lg > .col-12
+    margin-bottom: 1px !important
+    margin-top: 0 !important
+    padding-bottom: 0 !important
+    padding-top: 0 !important
+  .q-input.q-mb-md
+    margin-bottom: 0 !important
+    margin-top: 0 !important
+  .q-card
+    font-size: 13px !important
+    padding: 8px !important
+  .row, .q-mb-lg, .q-mb-md, .q-col-gutter-lg
+    margin-bottom: 4px !important
+    margin-top: 0 !important
+    gap: 4px !important
+  .q-input.q-mb-md
+    margin-bottom: 2px !important
+  .row.q-mt-md
+    flex-wrap: nowrap !important
+    gap: 8px !important
+    .col-6
+      flex: 1 1 0
+      max-width: 50%
+      min-width: 0
+      padding: 0 !important
+  .text-h5.text-weight-bold.text-primary
+    font-size: 17px !important
+</style>

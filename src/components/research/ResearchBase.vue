@@ -199,10 +199,10 @@ onMounted(() => {
 .research-card
   background: var(--color-card-bg)
   border-color: var(--color-card-border)
-  min-width: 260px
-  max-width: 260px
+  min-width: 240px
+  max-width: 240px
   min-height: 14vh
-  max-height: 24vh
+  max-height: 30vh
   position: relative
   box-sizing: border-box
   flex: 0 0 260px
@@ -270,4 +270,12 @@ onMounted(() => {
   overflow: hidden
   text-overflow: ellipsis
   white-space: nowrap
+
+.research-card .column
+  max-width: 100%
+  word-break: break-word
+
+.research-card .q-btn
+  max-width: 100%
+  word-break: break-word
 </style>

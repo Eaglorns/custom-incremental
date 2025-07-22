@@ -272,13 +272,11 @@ const infinityProgress = computed(() => {
   flex-direction: column
 
 .main-banner
-  flex: 0 0 8vh
-  min-height: 8vh
-  max-height: 12vh
   width: 100vw
   background: transparent
   padding: 0
-  margin-top: 8px
+  padding-top: 20px
+  padding-bottom: 5px
 
 .banner-row
   display: flex
@@ -322,7 +320,6 @@ const infinityProgress = computed(() => {
   display: flex
   align-items: center
   justify-content: center
-
   .q-tabs.vertical
     .q-tab__label
       font-size: 11px !important
@@ -380,17 +377,14 @@ const infinityProgress = computed(() => {
   font-weight: bold
   font-size: 15px
 
-@media (max-width: 600px)
-  .q-tabs.vertical .q-tab__content
+@media (max-width: 700px)
+  .q-tabs.vertical .q-tab__content,
+  .q-tabs.vertical .q-tab__icon,
+  .q-tabs.vertical .q-tab__label
     flex-direction: column
     align-items: center
     justify-content: center
     gap: 2px
-  .q-tabs.vertical .q-tab__icon
-    margin-bottom: 4px
-    display: block
-    align-self: center
-  .q-tabs.vertical .q-tab__label
     display: block
     text-align: center
     white-space: normal
@@ -398,46 +392,11 @@ const infinityProgress = computed(() => {
     max-width: 120px
     padding: 0
     flex-shrink: 1
-  .q-tabs.vertical .q-tab__content
-    flex-direction: column
-    align-items: center
-    justify-content: flex-start
-    gap: 2px
-  .q-tabs.vertical .q-tab__icon
-    margin-right: 0
     margin-bottom: 4px
-    display: block
-    align-self: center
-  .q-tabs.vertical .q-tab__label
-    display: block
-    text-align: center
-    white-space: normal
-    word-break: break-word
-    max-width: 120px
-    padding: 0
-    flex-shrink: 1
   .q-tab, .q-tab__content
     align-items: center
     justify-content: center
     gap: 2px
-  .q-tab__icon, .q-tab-panel .q-tab__icon
-    padding: 0
-    flex-shrink: 0
-    margin-right: 2px
-    .q-tabs:not(.vertical) .q-tab__label, .q-tab-panel .q-tab__label
-      padding: 0
-      flex-shrink: 1
-      max-width: 120px
-      overflow: visible
-      text-overflow: unset
-      white-space: normal
-    .q-tabs.vertical .q-tab__label
-      display: block
-      padding: 0
-      flex-shrink: 1
-    max-width: 120px
-      white-space: normal
-      word-break: break-word
   .q-tab__label, .q-tab-panel .q-tab__label
     font-size: 12px !important
     padding: 0 2px
@@ -449,8 +408,9 @@ const infinityProgress = computed(() => {
     flex-direction: row
     min-height: 6vh
     max-height: 10vh
-    margin-top: 2px
-    padding: 2px
+    margin-top: 18px !important
+    padding: 0 !important
+    padding-top: 20px !important
   .banner-row
     flex-direction: row
     align-items: center
@@ -460,18 +420,18 @@ const infinityProgress = computed(() => {
     align-items: center
     padding: 0
     flex-wrap: wrap
-    div
-      padding: 2px 6px
-      display: flex
-      align-items: center
-      justify-content: center
-      width: auto
-      box-sizing: border-box
-      .q-separator
-        align-self: stretch
-        height: auto !important
-        min-height: 0 !important
-        max-height: none !important
+  .banner-main > div
+    padding: 2px 6px
+    display: flex
+    align-items: center
+    justify-content: center
+    width: auto
+    box-sizing: border-box
+  .banner-main .q-separator
+    align-self: stretch
+    height: auto !important
+    min-height: 0 !important
+    max-height: none !important
   .on-color-epic-number,
   .on-color-multiplier-epic-number,
   .on-color-research-point,
@@ -485,7 +445,6 @@ const infinityProgress = computed(() => {
     padding: 0 2px
     flex-direction: column
     align-items: stretch
-    padding: 0
   .main-card
     width: 100vw
     padding: 2px
@@ -499,8 +458,6 @@ const infinityProgress = computed(() => {
     font-size: 15px
   .footer-label, .footer-progress
     font-size: 17px
-
-@media (max-width: 900px) and (min-width: 601px)
   .main-layout
     min-width: 100vw
     padding: 0 8px
@@ -521,29 +478,59 @@ const infinityProgress = computed(() => {
     font-size: 16px
   .footer-label, .footer-progress
     font-size: 18px
-
-@media (orientation: landscape) and (max-width: 900px)
   .main-banner
     min-height: 7vh
     max-height: 10vh
     margin-top: 0
     padding: 2px
-
   .main-footer
     min-height: 4vh
     max-height: 5vh
     padding: 2px
     font-size: 15px
-
-@media (max-width: 400px)
   .main-banner, .main-card, .panel-flex, .main-footer, .footer-label, .footer-progress
     font-size: 13px
-
-@media (max-width: 600px) and (min-width: 401px)
+  .main-banner
+    margin-top: 2px !important
+    margin-bottom: 6px !important
+  .banner-main
+    flex-wrap: nowrap !important
+    overflow-x: auto !important
+    min-width: 0
+    width: 100vw
+    .flex
+      min-width: 160px
+      max-width: 90vw
+      white-space: nowrap
+      flex-shrink: 0
+      padding: 2px 2px !important
+      margin-right: 8px !important
+      .q-icon
+        font-size: 13px !important
+        min-width: 0
+        padding: 0 1px !important
+      .text-h5, .on-color-epic-number, .on-color-multiplier-epic-number, .on-color-research-point, .on-color-research-speed
+        font-size: 13px !important
+        min-width: 0
+        padding: 0 1px !important
+        white-space: nowrap
+      .q-separator
+        height: 24px !important
+        min-height: 0 !important
+        max-height: none !important
   .main-banner, .main-card, .panel-flex, .main-footer, .footer-label, .footer-progress
     font-size: 15px
 
-@media (max-width: 900px) and (min-width: 601px)
-  .main-banner, .main-card, .panel-flex, .main-footer, .footer-label, .footer-progress
-    font-size: 18px
+@media (max-width: 450px)
+  .banner-main
+    flex-wrap: wrap !important
+    justify-content: center !important
+    gap: 8px !important
+    .flex
+      width: 100% !important
+      margin-right: 0 !important
+      margin-bottom: 8px !important
+
+  .main-banner
+    margin-bottom: 32px !important
 </style>

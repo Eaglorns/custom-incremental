@@ -28,7 +28,7 @@
         <div
           style="
             position: absolute;
-            left: -10px;
+            left: 0;
             top: 50%;
             transform: translateY(-75%);
             display: flex;
@@ -43,7 +43,7 @@
         <div
           style="
             position: absolute;
-            right: -10px;
+            right: 0;
             top: 50%;
             transform: translateY(-75%);
             display: flex;
@@ -205,3 +205,35 @@ function hireScientist() {
   }
 }
 </script>
+<style lang="sass" scoped>
+@media (max-width: 700px)
+  .row.q-gutter-md
+    display: grid !important
+    grid-template-columns: repeat(2, 1fr) !important
+    gap: 4px !important
+    .q-card
+      min-width: 0 !important
+      max-width: 100% !important
+      width: 95% !important
+      min-height: 120px !important
+      height: 140px !important
+      padding: 2px !important
+      font-size: 11px !important
+      .q-avatar
+        width: 28px !important
+        height: 28px !important
+      .text-bold, .text-subtitle2, span
+        font-size: 10px !important
+      .q-icon
+        font-size: 10px !important
+      .q-linear-progress
+        height: 4px !important
+      .text-center
+        font-size: 10px !important
+      .text-subtitle2
+        gap: 2px !important
+      .q-mb-xs, .q-mb-sm
+        margin-bottom: 2px !important
+      .q-mb-md
+        margin-bottom: 3px !important
+</style>

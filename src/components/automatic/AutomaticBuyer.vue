@@ -259,4 +259,29 @@ function getHelperChanceWithCount(percent: Decimal, count: Decimal): Decimal {
   width: 90px
   justify-content: center
   box-sizing: border-box
+
+@media (max-width: 700px)
+  .helper-wrapper
+    max-width: 100% !important
+    min-width: 0 !important
+    flex: 1 1 100% !important
+    padding: 2px !important
+  .helper-card
+    min-height: 120px !important
+    max-width: 100% !important
+    width: 100% !important
+    padding: 4px !important
+    font-size: 12px !important
+  .helper-title
+    font-size: 12px !important
+    max-height: none !important
+  .upgrade-cost-chip-wide
+    font-size: 11px !important
+    min-width: 0 !important
+    padding: 1px 4px !important
+  .btn-equal-width
+    font-size: 11px !important
+    min-width: 0 !important
+    width: 100px !important
+    padding: 2px 4px !important
 </style>
