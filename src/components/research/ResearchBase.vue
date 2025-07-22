@@ -73,7 +73,7 @@
         <q-btn
           :disable="
             isMaxLevel(meta.key).value ||
-            (!storeGame.researchPoint.gte(getResearchCost(meta.key).value) &&
+            (!storeResearch.points.gte(getResearchCost(meta.key).value) &&
               !getResearch(meta.key).currentTime.gt(0)) ||
             (getResearchTime(meta.key).value.gt(1000) && !getResearch(meta.key).currentTime.gt(0))
           "
@@ -101,15 +101,18 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
-import { useStoreGame } from 'src/stores/game';
+import { useStoreData } from 'stores/data';
 import Decimal from 'break_eternity.js';
 import type { Research } from 'src/constants/models';
 import { researchMeta } from 'src/constants/researchMeta';
+import { useStoreResearch } from 'stores/research';
 
-const storeGame = useStoreGame();
-const formatNumber = storeGame.formatNumber;
+const storeData = useStoreData();
+const storeResearch = useStoreResearch();
 
-const researchList = storeGame.research.list as Record<string, Research>;
+const formatNumber = storeData.formatNumber;
+
+const researchList = storeResearch.list as Record<string, Research>;
 
 function getResearch(key: string) {
   if (!researchList[key])
@@ -147,7 +150,7 @@ function getResearchTime(key: string) {
   const research = researchList[key];
   if (!research) return computed(() => new Decimal(0));
   return computed(() => {
-    const divTime = storeGame.getResearchSpeed;
+    const divTime = storeResearch.speed;
     return research.level.eq(0)
       ? research.time.div(divTime)
       : research.time.mul(research.timeMultiply.pow(research.level)).div(divTime);
@@ -172,8 +175,8 @@ function startResearch(key: string, isLoad: boolean) {
   const time = getResearchTime(key).value;
 
   if (!isLoad) {
-    if (!storeGame.researchPoint.gte(cost)) return;
-    storeGame.researchPoint = storeGame.researchPoint.minus(cost);
+    if (!storeResearch.points.gte(cost)) return;
+    storeResearch.points = storeResearch.points.minus(cost);
     research.currentTime = time;
     research.isActive = true;
   }
@@ -182,7 +185,7 @@ function startResearch(key: string, isLoad: boolean) {
 function cancelResearch(key: string) {
   const research = researchList[key];
   if (!research) return;
-  storeGame.researchPoint = storeGame.researchPoint.plus(getResearchCost(key).value);
+  storeResearch.points = storeResearch.points.plus(getResearchCost(key).value);
   research.currentTime = new Decimal(0);
 }
 
