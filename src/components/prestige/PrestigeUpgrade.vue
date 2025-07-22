@@ -50,11 +50,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useStoreGame } from 'src/stores/game';
+import { useStoreData } from 'stores/data';
 import Decimal from 'break_eternity.js';
 
-const storeGame = useStoreGame();
-const formatNumber = storeGame.formatNumber;
+const storeData = useStoreData();
+
+const formatNumber = storeData.formatNumber;
 
 const prestigeUpgrades = ref<PrestigeUpgrade[]>([
   {

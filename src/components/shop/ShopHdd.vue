@@ -127,47 +127,53 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useStoreGame } from 'src/stores/game';
+import { useStoreData } from 'stores/data';
+import { useStoreShop } from 'stores/shop';
+import { useStoreResearch } from 'stores/research';
 import Decimal from 'break_eternity.js';
 
-const storeGame = useStoreGame();
-const formatNumber = storeGame.formatNumber;
+const storeData = useStoreData();
+const storeShop = useStoreShop();
+const storeResearch = useStoreResearch();
 
-const hard = storeGame.shop.hard;
-const costMultiplierDecrease = storeGame.research.list.shopCostMultiplierDecrease;
+const formatNumber = storeData.formatNumber;
 
-const value = computed(() => hard.value);
-const multiply = computed(() => hard.multiply);
-const costValue = computed(() => hard.cost.value);
+const hdd = storeShop.list.hdd;
+const costMultiplierDecrease = storeResearch.list.shopCostMultiplierDecrease;
+
+const value = computed(() => hdd.value);
+const multiply = computed(() => hdd.multiply);
+const costValue = computed(() => hdd.cost.value);
 const decrease = computed(() =>
   costMultiplierDecrease.level.gt(0)
     ? costMultiplierDecrease.bonus.mul(costMultiplierDecrease.level)
     : new Decimal(1),
 );
-const costMultiply = computed(() => hard.cost.multiply.mul(hard.multiply).div(decrease.value));
+const costMultiply = computed(() => hdd.cost.multiply.mul(hdd.multiply).div(decrease.value));
 
-const canBuyValue = computed(() => storeGame.epicNumber.gte(costValue.value));
+const canBuyValue = computed(() => storeData.epicNumber.gte(costValue.value));
 const canBuyMultiply = computed(() => value.value.gte(costMultiply.value));
 
 const gainPerTick = computed(() => {
-  const parResearchHard = storeGame.research.list.hardPow;
-  return value.value.pow(parResearchHard.bonus.mul(parResearchHard.level).plus(1));
+  const parResearchHdd = storeResearch.list.hddPow;
+  return value.value.pow(parResearchHdd.bonus.mul(parResearchHdd.level).plus(1));
 });
 
 const onBuyValue = () => {
   if (!canBuyValue.value) return;
-  storeGame.epicNumber = storeGame.epicNumber.minus(costValue.value);
-  hard.value = hard.value.plus(hard.multiply);
+  storeData.epicNumber = storeData.epicNumber.minus(costValue.value);
+  hdd.value = hdd.value.plus(hdd.multiply);
 };
 
 const onBuyMultiply = () => {
   if (!canBuyMultiply.value) return;
-  const researchMultiplierChance = storeGame.research.list.shopMultiplierChanceReturn;
+  const researchMultiplierChance = storeResearch.list.shopMultiplierChanceReturn;
   if (researchMultiplierChance.level.mul(researchMultiplierChance.bonus).lt(Math.random()))
-    hard.value = hard.value.minus(costMultiply.value);
-  hard.multiply = hard.multiply.plus(1);
+    hdd.value = hdd.value.minus(costMultiply.value);
+  hdd.multiply = hdd.multiply.plus(1);
 };
 </script>
+
 <style lang="sass" scoped>
 @media (max-width: 700px)
   .row.q-col-gutter-lg > .col-12

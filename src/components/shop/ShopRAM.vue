@@ -127,14 +127,19 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useStoreGame } from 'src/stores/game';
+import { useStoreData } from 'stores/data';
+import { useStoreShop } from 'stores/shop';
+import { useStoreResearch } from 'stores/research';
 import Decimal from 'break_eternity.js';
 
-const storeGame = useStoreGame();
-const formatNumber = storeGame.formatNumber;
+const storeData = useStoreData();
+const storeShop = useStoreShop();
+const storeResearch = useStoreResearch();
 
-const ram = storeGame.shop.ram;
-const costMultiplierDecrease = storeGame.research.list.shopCostMultiplierDecrease;
+const formatNumber = storeData.formatNumber;
+
+const ram = storeShop.list.ram;
+const costMultiplierDecrease = storeResearch.list.shopCostMultiplierDecrease;
 
 const value = computed(() => ram.value);
 const multiply = computed(() => ram.multiply);
@@ -146,28 +151,29 @@ const decrease = computed(() =>
 );
 const costMultiply = computed(() => ram.cost.multiply.mul(ram.multiply).div(decrease.value));
 
-const canBuyValue = computed(() => storeGame.epicNumber.gte(costValue.value));
+const canBuyValue = computed(() => storeData.epicNumber.gte(costValue.value));
 const canBuyMultiply = computed(() => value.value.gte(costMultiply.value));
 
 const gainPerTick = computed(() => {
-  const parResearchRAM = storeGame.research.list.ramPow;
+  const parResearchRAM = storeResearch.list.ramPow;
   return value.value.pow(parResearchRAM.bonus.mul(parResearchRAM.level).plus(1));
 });
 
 const onBuyValue = () => {
   if (!canBuyValue.value) return;
-  storeGame.epicNumber = storeGame.epicNumber.minus(costValue.value);
+  storeData.epicNumber = storeData.epicNumber.minus(costValue.value);
   ram.value = ram.value.plus(ram.multiply);
 };
 
 const onBuyMultiply = () => {
   if (!canBuyMultiply.value) return;
-  const researchMultiplierChance = storeGame.research.list.shopMultiplierChanceReturn;
+  const researchMultiplierChance = storeResearch.list.shopMultiplierChanceReturn;
   if (researchMultiplierChance.level.mul(researchMultiplierChance.bonus).lt(Math.random()))
     ram.value = ram.value.minus(costMultiply.value);
   ram.multiply = ram.multiply.plus(1);
 };
 </script>
+
 <style lang="sass" scoped>
 @media (max-width: 700px)
   .row.q-col-gutter-lg > .col-12

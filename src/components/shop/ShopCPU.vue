@@ -127,14 +127,19 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useStoreGame } from 'src/stores/game';
+import { useStoreData } from 'stores/data';
+import { useStoreShop } from 'stores/shop';
+import { useStoreResearch } from 'stores/research';
 import Decimal from 'break_eternity.js';
 
-const storeGame = useStoreGame();
-const formatNumber = storeGame.formatNumber;
+const storeData = useStoreData();
+const storeShop = useStoreShop();
+const storeResearch = useStoreResearch();
 
-const cpu = storeGame.shop.cpu;
-const costMultiplierDecrease = storeGame.research.list.shopCostMultiplierDecrease;
+const formatNumber = storeData.formatNumber;
+
+const cpu = storeShop.list.cpu;
+const costMultiplierDecrease = storeResearch.list.shopCostMultiplierDecrease;
 
 const value = computed(() => cpu.value);
 const multiply = computed(() => cpu.multiply);
@@ -146,28 +151,29 @@ const decrease = computed(() =>
 );
 const costMultiply = computed(() => cpu.cost.multiply.mul(cpu.multiply).div(decrease.value));
 
-const canBuyValue = computed(() => storeGame.epicNumber.gte(costValue.value));
+const canBuyValue = computed(() => storeData.epicNumber.gte(costValue.value));
 const canBuyMultiply = computed(() => value.value.gte(costMultiply.value));
 
 const gainPerTick = computed(() => {
-  const parResearchCPU = storeGame.research.list.cpuPow;
+  const parResearchCPU = storeResearch.list.cpuPow;
   return value.value.pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1));
 });
 
 const onBuyValue = () => {
   if (!canBuyValue.value) return;
-  storeGame.epicNumber = storeGame.epicNumber.minus(costValue.value);
+  storeData.epicNumber = storeData.epicNumber.minus(costValue.value);
   cpu.value = cpu.value.plus(cpu.multiply);
 };
 
 const onBuyMultiply = () => {
   if (!canBuyMultiply.value) return;
-  const researchMultiplierChance = storeGame.research.list.shopMultiplierChanceReturn;
+  const researchMultiplierChance = storeResearch.list.shopMultiplierChanceReturn;
   if (researchMultiplierChance.level.mul(researchMultiplierChance.bonus).lt(Math.random()))
     cpu.value = cpu.value.minus(costMultiply.value);
   cpu.multiply = cpu.multiply.plus(1);
 };
 </script>
+
 <style lang="sass" scoped>
 @media (max-width: 700px)
   .row.q-col-gutter-lg > .col-12

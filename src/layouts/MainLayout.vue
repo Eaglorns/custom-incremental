@@ -4,9 +4,9 @@
       <q-bar class="q-electron-drag bg-grey-10">
         <div class="text-h6 text-weight-bold q-ml-md">
           <q-icon name="fa-duotone fa-arrow-trend-up" size="16px" color="grey-4" />
-          {{ storeGlobal.app.name }}
+          {{ storeGame.name }}
         </div>
-        <div class="text-h6 text-weight-bold q-ml-md">v{{ storeGlobal.app.version }}</div>
+        <div class="text-h6 text-weight-bold q-ml-md">v{{ storeGame.version }}</div>
         <q-space />
         <q-select
           v-model="locale"
@@ -28,10 +28,10 @@
 </template>
 
 <script setup lang="ts">
-import { useStoreGlobal } from 'src/stores/global';
+import { useStoreGame } from 'stores/game';
 import { useI18n } from 'vue-i18n';
 
-const storeGlobal = useStoreGlobal();
+const storeGame = useStoreGame();
 
 const { locale } = useI18n({ useScope: 'global' });
 

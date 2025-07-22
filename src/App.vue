@@ -20,7 +20,7 @@ const autoSaveId = ref<ReturnType<typeof setInterval> | null>(null);
 const startTimer = () => {
   if (timerId) clearInterval(timerId);
   storeGame.lastTick = Date.now();
-  timerId = setInterval(() => gameTick(), storeGame.timer);
+  timerId = setInterval(() => gameTick(), storeGame.timerTick);
 };
 
 onMounted(() => {
@@ -28,7 +28,7 @@ onMounted(() => {
   startTimer();
   autoSaveId.value = setInterval(() => {
     storeSaveLoad.saveGame();
-  }, 5000);
+  }, storeSaveLoad.timerSave);
 });
 
 onBeforeUnmount(() => {

@@ -122,19 +122,21 @@
 import { computed } from 'vue';
 import { helpersMeta } from 'src/constants/helpersMeta';
 import type { HelperState } from 'src/constants/models';
-import { useStoreGame } from 'src/stores/game';
+import { useStoreData } from 'stores/data';
 import Decimal from 'break_eternity.js';
+import { useStoreAutomatic } from 'stores/automatic';
 
-const storeGame = useStoreGame();
+const storeData = useStoreData();
+const storeAutomatic = useStoreAutomatic();
 
-const formatNumber = storeGame.formatNumber;
+const formatNumber = storeData.formatNumber;
 
-const helperKeys = computed(() => Object.keys(storeGame.helpers));
+const helperKeys = computed(() => Object.keys(storeAutomatic.helpers));
 
 const getHelper = (key: string) =>
   computed(() => {
     const meta = helpersMeta.find((m) => m.key === key)!;
-    const state = storeGame.helpers[key as keyof typeof storeGame.helpers];
+    const state = storeAutomatic.helpers[key as keyof typeof storeAutomatic.helpers];
     return {
       ...meta,
       ...state,
@@ -154,34 +156,34 @@ const costPercent = (helper: HelperState) => {
 };
 
 const canHireHelper = (helper: HelperState) => {
-  return computed(() => storeGame.epicNumber.gte(costCount(helper).value));
+  return computed(() => storeData.epicNumber.gte(costCount(helper).value));
 };
 
 const canUpgradeHelperChance = (helper: HelperState) => {
-  return computed(() => helper.count.gt(0) && storeGame.epicNumber.gte(costPercent(helper).value));
+  return computed(() => helper.count.gt(0) && storeData.epicNumber.gte(costPercent(helper).value));
 };
 
 function hireHelper(helper: HelperState) {
   const cost = costCount(helper).value;
-  if (storeGame.epicNumber.gte(cost)) {
-    storeGame.epicNumber = storeGame.epicNumber.minus(cost);
-    const key = helper.key as keyof typeof storeGame.helpers;
-    storeGame.helpers[key].count = storeGame.helpers[key].count.add(1);
+  if (storeData.epicNumber.gte(cost)) {
+    storeData.epicNumber = storeData.epicNumber.minus(cost);
+    const key = helper.key as keyof typeof storeAutomatic.helpers;
+    storeAutomatic.helpers[key].count = storeAutomatic.helpers[key].count.add(1);
   }
 }
 
 function upgradeHelperChance(helper: HelperState) {
   const cost = costPercent(helper).value;
-  if (storeGame.epicNumber.gte(cost)) {
-    storeGame.epicNumber = storeGame.epicNumber.minus(cost);
-    const key = helper.key as keyof typeof storeGame.helpers;
-    storeGame.helpers[key].percent = storeGame.helpers[key].percent.add(1);
+  if (storeData.epicNumber.gte(cost)) {
+    storeData.epicNumber = storeData.epicNumber.minus(cost);
+    const key = helper.key as keyof typeof storeAutomatic.helpers;
+    storeAutomatic.helpers[key].percent = storeAutomatic.helpers[key].percent.add(1);
   }
 }
 
 function getHelperChanceWithCount(percent: Decimal, count: Decimal): Decimal {
   if (!count || count.lte(0)) return new Decimal(0);
-  return storeGame.getHelperChance(percent);
+  return storeAutomatic.getHelperChance(percent);
 }
 </script>
 

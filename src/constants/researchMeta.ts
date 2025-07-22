@@ -6,7 +6,7 @@ export const researchMeta = [
     description: 'Процессоры увеличивают прирост числа в степени. За каждое улучшение +0.001',
   },
   {
-    key: 'hardPow',
+    key: 'hddPow',
     icon: 'fa-duotone fa-hard-drive',
     title: 'Улучшение жёстких дисков',
     description:

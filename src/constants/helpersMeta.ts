@@ -11,7 +11,7 @@ export const helpersMeta: HelperMeta[] = [
     title: 'Скупщик процессоров',
   },
   {
-    key: 'hard',
+    key: 'hdd',
     icon: 'fa-duotone fa-hard-drive',
     title: 'Скупщик жёстких дисков',
   },
@@ -26,7 +26,7 @@ export const helpersMeta: HelperMeta[] = [
     title: 'Скупщик множителей процессоров',
   },
   {
-    key: 'hardMultiplier',
+    key: 'hddMultiplier',
     icon: 'fa-duotone fa-database',
     title: 'Скупщик множителей жёстких дисков',
   },

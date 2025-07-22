@@ -9,7 +9,7 @@
           >
             <q-icon name="fa-duotone fa-gauge-high" size="24px" color="primary" />
             <span class="text-weight-bold text-h5 q-mx-xs on-color-epic-number">
-              {{ formatNumber(storeGame.epicNumber) }}
+              {{ formatNumber(storeData.epicNumber) }}
             </span>
             <q-separator vertical class="q-mx-md" style="height: 32px" />
             <q-icon name="fa-solid fa-arrow-trend-up" size="22px" color="secondary" />
@@ -71,7 +71,7 @@
                 transition-next="slide-up"
               >
                 <q-tab-panel name="innerShopCPU"><ShopCPU /></q-tab-panel>
-                <q-tab-panel name="innerShopHard"><ShopHard /></q-tab-panel>
+                <q-tab-panel name="innerShopHard"><ShopHdd /></q-tab-panel>
                 <q-tab-panel name="innerShopRAM"><ShopRAM /></q-tab-panel>
               </q-tab-panels>
             </template>
@@ -186,9 +186,9 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
-import { useStoreGame } from 'src/stores/game';
+import { useStoreData } from 'stores/data';
 import ShopCPU from 'src/components/shop/ShopCPU.vue';
-import ShopHard from 'src/components/shop/ShopHard.vue';
+import ShopHdd from 'src/components/shop/ShopHdd.vue';
 import ShopRAM from 'src/components/shop/ShopRAM.vue';
 import ResearchBase from 'src/components/research/ResearchBase.vue';
 import ResearchScientist from 'src/components/research/ResearchScientist.vue';
@@ -199,9 +199,12 @@ import Help from 'src/pages/HelpPage.vue';
 import Achievement from 'src/pages/AchievementPage.vue';
 import Decimal from 'break_eternity.js';
 import { animate } from 'animejs';
+import { useStoreResearch } from 'stores/research';
 
-const storeGame = useStoreGame();
-const formatNumber = storeGame.formatNumber;
+const storeData = useStoreData();
+const storeResearch = useStoreResearch();
+
+const formatNumber = storeData.formatNumber;
 
 const tab = ref('shop');
 const innerShop = ref('innerShopCPU');
@@ -211,15 +214,15 @@ const innerPrestige = ref('innerPrestigeBase');
 const splitterModel = ref(20);
 
 const multiplierEpicNumber = computed(() => {
-  return storeGame.getMultiplierEpicNumber;
-});
-
-const researchSpeed = computed(() => {
-  return storeGame.getResearchSpeed;
+  return storeData.getMultiplierEpicNumber;
 });
 
 const researchPoints = computed(() => {
-  return storeGame.researchPoint;
+  return storeResearch.points;
+});
+
+const researchSpeed = computed(() => {
+  return storeResearch.speed;
 });
 
 function animateColor(selector: string) {
@@ -233,13 +236,13 @@ function animateColor(selector: string) {
 }
 
 const watchConfigs = [
-  { getter: () => formatNumber(storeGame.epicNumber), selector: '.on-color-epic-number' },
+  { getter: () => formatNumber(storeData.epicNumber), selector: '.on-color-epic-number' },
   {
-    getter: () => formatNumber(storeGame.multiplierEpicNumber),
+    getter: () => formatNumber(storeData.multiplierEpicNumber),
     selector: '.on-color-multiplier-epic-number',
   },
-  { getter: () => formatNumber(storeGame.researchPoint), selector: '.on-color-research-point' },
-  { getter: () => formatNumber(storeGame.researchSpeed), selector: '.on-color-research-speed' },
+  { getter: () => formatNumber(storeResearch.points), selector: '.on-color-research-point' },
+  { getter: () => formatNumber(storeResearch.speed), selector: '.on-color-research-speed' },
 ];
 
 watchConfigs.forEach(({ getter, selector }) => {
@@ -257,7 +260,7 @@ const clamp = (v: number, min = 0, max = 1) => {
   return v;
 };
 const infinityProgress = computed(() => {
-  const value = storeGame.epicNumber;
+  const value = storeData.epicNumber;
   if (value.lte(0)) return 0;
   const percent = value.log10().div(log10Denom).toNumber();
   return clamp(percent);

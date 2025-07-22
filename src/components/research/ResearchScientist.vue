@@ -1,7 +1,7 @@
 <template>
   <div class="row q-gutter-md">
     <q-card
-      v-for="scientist in storeGame.scientists"
+      v-for="scientist in storeResearch.scientists"
       :key="scientist.id"
       class="q-pa-md flex column items-center bg-blue-grey-9 text-white justify-between"
       style="
@@ -172,30 +172,34 @@
 import { computed } from 'vue';
 import Decimal from 'break_eternity.js';
 import { uuidv7 } from 'src/boot/uuid';
-import { useStoreGame } from 'src/stores/game';
+import { useStoreData } from 'stores/data';
+import { useStoreResearch } from 'stores/research';
 
-const storeGame = useStoreGame();
-const formatNumber = storeGame.formatNumber;
-const expToLevel = (...args: Parameters<typeof storeGame.expToLevel>) =>
-  storeGame.expToLevel(...args);
+const storeData = useStoreData();
+const storeResearch = useStoreResearch();
+
+const formatNumber = storeData.formatNumber;
+
+const expToLevel = (...args: Parameters<typeof storeResearch.expToLevel>) =>
+  storeResearch.expToLevel(...args);
 
 const base = new Decimal(1000);
 const baseSoftCap = new Decimal(2);
 
 const hireCost = computed(() => {
-  const n = storeGame.scientists.length;
+  const n = storeResearch.scientists.length;
   if (n === 0) return base;
   const dynamicSoftCap = baseSoftCap.mul(new Decimal(1.2).pow(Math.floor(n / 3)));
   return base.mul(dynamicSoftCap.pow(n * n * n));
 });
 
 function hireScientist() {
-  const epicNumber = storeGame.epicNumber;
+  const epicNumber = storeData.epicNumber;
   const cost = hireCost.value;
   if (epicNumber.gte(cost)) {
-    storeGame.epicNumber = epicNumber.minus(cost);
+    storeData.epicNumber = epicNumber.minus(cost);
     const id = uuidv7();
-    storeGame.scientists.push({
+    storeResearch.scientists.push({
       id,
       level: new Decimal(1),
       exp: new Decimal(0),

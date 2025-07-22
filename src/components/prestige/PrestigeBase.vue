@@ -32,19 +32,21 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useStoreGame } from 'src/stores/game';
+import { useStorePrestige } from 'stores/prestige';
+import { useStoreData } from 'stores/data';
 
-const storeGame = useStoreGame();
+const storePrestige = useStorePrestige();
+const storeData = useStoreData();
 
-const formatNumber = storeGame.formatNumber;
+const formatNumber = storeData.formatNumber;
 
-const prestige = computed(() => storeGame.prestige);
-const prestigeGain = computed(() => storeGame.prestigeGain);
+const prestige = computed(() => storePrestige.points);
+const prestigeGain = computed(() => storePrestige.prestigeGain);
 const canPrestige = computed(() => prestigeGain.value.gte(1));
 
 const onPrestige = () => {
   if (canPrestige.value) {
-    storeGame.onPrestige();
+    storePrestige.onPrestige();
   }
 };
 </script>

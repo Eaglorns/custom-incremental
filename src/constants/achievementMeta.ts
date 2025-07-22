@@ -1,9 +1,9 @@
 import { computed } from 'vue';
-import { useStoreGame } from 'src/stores/game';
+import { useStoreAchievement } from 'stores/achievement';
 
-const storeGame = useStoreGame();
+const storeAchievement = useStoreAchievement();
 
-const achievementLevels = computed(() => storeGame.achievements);
+const achievementLevels = computed(() => storeAchievement.list);
 
 export const achievements = computed(() => [
   {
@@ -27,13 +27,13 @@ export const achievements = computed(() => [
     hint: 'Покупайте CPU, чтобы повышать уровень достижения. Каждый новый уровень требует в 100 раз больше CPU.',
   },
   {
-    id: 'hardLevel',
+    id: 'hddLevel',
     title: 'Коллекционер HDD',
     description: 'Получайте новые уровни за всё большее количество HDD',
     icon: 'fa-duotone fa-hard-drive',
     color: 'blue-grey',
-    level: achievementLevels.value.hardLevel,
-    unlocked: achievementLevels.value.hardLevel.gt(0),
+    level: achievementLevels.value.hddLevel,
+    unlocked: achievementLevels.value.hddLevel.gt(0),
     hint: 'Покупайте HDD, чтобы повышать уровень достижения. Каждый новый уровень требует в 100 раз больше HDD.',
   },
   {

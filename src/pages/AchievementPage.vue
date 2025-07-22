@@ -57,12 +57,17 @@
 
 <script setup lang="ts">
 import { computed, watch } from 'vue';
-import { useStoreGame } from 'src/stores/game';
+import { useStoreData } from 'stores/data';
+import { useStoreShop } from 'stores/shop';
+import { useStoreAchievement } from 'stores/achievement';
 import Decimal from 'break_eternity.js';
 import { achievements } from 'src/constants/achievementMeta';
 
-const storeGame = useStoreGame();
-const formatNumber = storeGame.formatNumber;
+const storeData = useStoreData();
+const storeShop = useStoreShop();
+const storeAchievement = useStoreAchievement();
+
+const formatNumber = storeData.formatNumber;
 
 interface Achievement {
   id: string;
@@ -87,34 +92,34 @@ function getEpicLevel(current: Decimal): Decimal {
 }
 
 function updateMaxCpuLevel() {
-  const cpu = getLevel(storeGame.shop.cpu.value);
-  if (cpu.gt(storeGame.achievements.cpuLevel)) {
-    storeGame.achievements.cpuLevel = cpu;
+  const cpu = getLevel(storeShop.list.cpu.value);
+  if (cpu.gt(storeAchievement.list.cpuLevel)) {
+    storeAchievement.list.cpuLevel = cpu;
   }
 }
-function updateMaxHardLevel() {
-  const hard = getLevel(storeGame.shop.hard.value);
-  if (hard.gt(storeGame.achievements.hardLevel)) {
-    storeGame.achievements.hardLevel = hard;
+function updateMaxHddLevel() {
+  const hdd = getLevel(storeShop.list.hdd.value);
+  if (hdd.gt(storeAchievement.list.hddLevel)) {
+    storeAchievement.list.hddLevel = hdd;
   }
 }
 function updateMaxRamLevel() {
-  const ram = getLevel(storeGame.shop.ram.value);
-  if (ram.gt(storeGame.achievements.ramLevel)) {
-    storeGame.achievements.ramLevel = ram;
+  const ram = getLevel(storeShop.list.ram.value);
+  if (ram.gt(storeAchievement.list.ramLevel)) {
+    storeAchievement.list.ramLevel = ram;
   }
 }
 function updateMaxEpicLevel() {
-  const epic = getEpicLevel(storeGame.epicNumber);
-  if (epic.gt(storeGame.achievements.epicLevel)) {
-    storeGame.achievements.epicLevel = epic;
+  const epic = getEpicLevel(storeData.epicNumber);
+  if (epic.gt(storeAchievement.list.epicLevel)) {
+    storeAchievement.list.epicLevel = epic;
   }
 }
 
-watch(() => storeGame.shop.cpu.value, updateMaxCpuLevel, { immediate: true });
-watch(() => storeGame.shop.hard.value, updateMaxHardLevel, { immediate: true });
-watch(() => storeGame.shop.ram.value, updateMaxRamLevel, { immediate: true });
-watch(() => storeGame.epicNumber, updateMaxEpicLevel, { immediate: true });
+watch(() => storeShop.list.cpu.value, updateMaxCpuLevel, { immediate: true });
+watch(() => storeShop.list.hdd.value, updateMaxHddLevel, { immediate: true });
+watch(() => storeShop.list.ram.value, updateMaxRamLevel, { immediate: true });
+watch(() => storeData.epicNumber, updateMaxEpicLevel, { immediate: true });
 
 function achievementCardClass(ach: Achievement) {
   if (ach.level !== undefined && ach.level.gt(0)) return 'bg-primary';
@@ -152,7 +157,7 @@ const totalAchievements = computed(() => {
 });
 
 const achievementBonus = computed(() => {
-  return storeGame.achievementBonus;
+  return storeAchievement.achievementBonus;
 });
 </script>
 
