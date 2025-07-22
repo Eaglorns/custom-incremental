@@ -24,7 +24,7 @@ const startTimer = () => {
 };
 
 onMounted(() => {
-  storeSaveLoad.loadGame();
+  //storeSaveLoad.loadGame();
   startTimer();
   autoSaveId.value = setInterval(() => {
     storeSaveLoad.saveGame();

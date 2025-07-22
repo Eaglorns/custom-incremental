@@ -5,7 +5,7 @@ import type { Scientist } from 'src/constants/models';
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     lastTick: Date.now(),
-    epicNumber: new Decimal('1e9999999'),
+    epicNumber: new Decimal('2500'),
     multiplierEpicNumber: new Decimal(0),
     researchSpeed: new Decimal(0),
     timer: 1000,
