@@ -15,6 +15,7 @@ export const useStoreSaveLoad = defineStore('saveLoadGlobal', {
     saveGame() {
       const storeGame = useStoreGame();
       const saveData = {
+        version: storeGame.version,
         epicNumber: storeGame.epicNumber,
         multiplierEpicNumber: storeGame.multiplierEpicNumber,
         researchSpeed: storeGame.researchSpeed,
@@ -147,6 +148,7 @@ export const useStoreSaveLoad = defineStore('saveLoadGlobal', {
         const bytes = CryptoJS.AES.decrypt(encrypted, SECRET);
         const decrypted = bytes.toString(CryptoJS.enc.Utf8);
         const loaded = JSON.parse(decrypted);
+        storeGame.version = loaded.version;
         storeGame.epicNumber = new Decimal(loaded.epicNumber);
         storeGame.multiplierEpicNumber = new Decimal(loaded.multiplierEpicNumber);
         storeGame.researchSpeed = new Decimal(loaded.researchSpeed);

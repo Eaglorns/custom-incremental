@@ -4,6 +4,7 @@ import type { Scientist } from 'src/constants/models';
 
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
+    version: '0.0.0',
     lastTick: Date.now(),
     epicNumber: new Decimal('2500'),
     multiplierEpicNumber: new Decimal(0),

@@ -4,11 +4,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { useStoreGlobal } from 'src/stores/global';
 import { useStoreGame } from 'src/stores/game';
 import { useStoreSaveLoad } from 'src/stores/saveLoad';
 
 const storeGame = useStoreGame();
 const storeSaveLoad = useStoreSaveLoad();
+const storeGlobal = useStoreGlobal();
 
 const gameTick = () => {
   storeGame.gameTick();
@@ -24,7 +26,11 @@ const startTimer = () => {
 };
 
 onMounted(() => {
-  //storeSaveLoad.loadGame();
+  if (storeGame.version == storeGlobal.app.version) {
+    storeSaveLoad.loadGame();
+  } else {
+    storeSaveLoad.saveGame();
+  }
   startTimer();
   autoSaveId.value = setInterval(() => {
     storeSaveLoad.saveGame();
