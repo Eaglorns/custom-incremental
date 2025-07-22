@@ -185,7 +185,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { useStoreGame } from 'src/stores/game';
 import ShopCPU from 'src/components/shop/ShopCPU.vue';
 import ShopHard from 'src/components/shop/ShopHard.vue';
@@ -232,19 +232,16 @@ function animateColor(selector: string) {
   animate(selector, { color });
 }
 
-const watchConfigs = [
-  { getter: () => formatNumber(storeGame.epicNumber), selector: '.on-color-epic-number' },
-  {
-    getter: () => formatNumber(storeGame.multiplierEpicNumber),
-    selector: '.on-color-multiplier-epic-number',
-  },
-  { getter: () => formatNumber(storeGame.researchPoint), selector: '.on-color-research-point' },
-  { getter: () => formatNumber(storeGame.researchSpeed), selector: '.on-color-research-speed' },
+const colorSelectors = [
+  '.on-color-epic-number',
+  '.on-color-multiplier-epic-number',
+  '.on-color-research-point',
+  '.on-color-research-speed',
 ];
 
-watchConfigs.forEach(({ getter, selector }) => {
-  watch(getter, () => animateColor(selector));
-});
+setInterval(() => {
+  colorSelectors.forEach((selector) => animateColor(selector));
+}, 1000);
 
 const log10Denom = new Decimal('1.8e308').log10();
 const clamp = (v: number, min = 0, max = 1) => {
