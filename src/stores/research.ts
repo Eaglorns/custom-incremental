@@ -298,8 +298,7 @@ export const useStoreResearch = defineStore('storeResearch', {
     load(loaded: ResearchLoadData) {
       this.points = new Decimal(loaded.points);
       this.speed = new Decimal(loaded.speed);
-
-      this.scientists = this.scientists.map((s: Scientist) => ({
+      this.scientists = loaded.scientists.map((s) => ({
         id: s.id,
         level: new Decimal(s.level),
         exp: new Decimal(s.exp),

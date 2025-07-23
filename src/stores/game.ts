@@ -18,6 +18,7 @@ export const useStoreGame = defineStore('storeGame', {
       console.time('gameTick');
       const storeResearch = useStoreResearch();
       const storeAutomatic = useStoreAutomatic();
+      const storeShop = useStoreShop();
       const now = Date.now();
       const delta = now - this.lastTick;
       this.lastTick = now;
@@ -25,6 +26,7 @@ export const useStoreGame = defineStore('storeGame', {
       const steps = Math.floor(delta / this.timerTick) || 1;
       for (let i = 0; i < steps; i++) {
         this.processGiveMultiplierEpicNumber();
+        storeShop.processGivePoints();
         storeResearch.processGiveResearchSpeed();
         storeResearch.processResearch();
         storeAutomatic.processHelpers();

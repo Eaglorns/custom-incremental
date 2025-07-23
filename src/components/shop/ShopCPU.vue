@@ -13,7 +13,7 @@
       <div class="row q-col-gutter-lg">
         <div class="col-12 col-md-6">
           <q-input
-            :model-value="formatNumber(value)"
+            :model-value="formatNumber(storeShop.list.cpu.value)"
             label="Значение"
             class="q-mb-md"
             :disable="true"
@@ -30,7 +30,7 @@
         </div>
         <div class="col-12 col-md-6">
           <q-input
-            :model-value="formatNumber(multiply)"
+            :model-value="formatNumber(storeShop.list.cpu.multiply)"
             label="Множитель"
             class="q-mb-md"
             :disable="true"
@@ -47,7 +47,7 @@
         </div>
         <div class="col-12 col-md-6">
           <q-input
-            :model-value="formatNumber(costValue)"
+            :model-value="formatNumber(storeShop.list.cpu.cost.value)"
             label="Основная стоимость"
             class="q-mb-md"
             :disable="true"
@@ -64,7 +64,7 @@
         </div>
         <div class="col-12 col-md-6">
           <q-input
-            :model-value="formatNumber(costMultiply)"
+            :model-value="formatNumber(storeShop.costMultiply('cpu'))"
             label="Стоимость множителя"
             class="q-mb-md"
             :disable="true"
@@ -75,24 +75,7 @@
             outlined
           >
             <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-arrow-up-right-dots" class="text-primary" />
-            </template>
-          </q-input>
-        </div>
-        <div class="col-12 col-md-6">
-          <q-input
-            :model-value="formatNumber(gainPerTick)"
-            label="Прирост числа за тик"
-            class="q-mb-md"
-            :disable="true"
-            dense
-            label-class="text-weight-bold text-body1 text-primary"
-            input-class="text-h6 text-blue-4"
-            color="primary"
-            outlined
-          >
-            <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-arrow-trend-up" class="text-primary" />
+              <q-icon name="fa-duotone fa-gauge-high" class="text-primary" />
             </template>
           </q-input>
         </div>
@@ -104,9 +87,9 @@
             outline
             label="Купить"
             class="full-width"
-            @click="onBuyValue"
+            @click="storeShop.onBuyValue('cpu')"
             size="lg"
-            :disable="!canBuyValue"
+            :disable="!storeShop.canBuyValue('cpu')"
           />
         </div>
         <div class="col-6">
@@ -115,9 +98,9 @@
             outline
             label="Умножить"
             class="full-width"
-            @click="onBuyMultiply"
+            @click="storeShop.onBuyMultiply('cpu')"
             size="lg"
-            :disable="!canBuyMultiply"
+            :disable="!storeShop.canBuyMultiply('cpu')"
           />
         </div>
       </div>
@@ -126,52 +109,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import { useStoreData } from 'stores/data';
 import { useStoreShop } from 'stores/shop';
-import { useStoreResearch } from 'stores/research';
-import Decimal from 'break_eternity.js';
 
 const storeData = useStoreData();
 const storeShop = useStoreShop();
-const storeResearch = useStoreResearch();
 
 const formatNumber = storeData.formatNumber;
-
-const cpu = storeShop.list.cpu;
-const costMultiplierDecrease = storeResearch.list.shopCostMultiplierDecrease;
-
-const value = computed(() => cpu.value);
-const multiply = computed(() => cpu.multiply);
-const costValue = computed(() => cpu.cost.value);
-const decrease = computed(() =>
-  costMultiplierDecrease.level.gt(0)
-    ? costMultiplierDecrease.bonus.mul(costMultiplierDecrease.level)
-    : new Decimal(1),
-);
-const costMultiply = computed(() => cpu.cost.multiply.mul(cpu.multiply).div(decrease.value));
-
-const canBuyValue = computed(() => storeData.epicNumber.gte(costValue.value));
-const canBuyMultiply = computed(() => value.value.gte(costMultiply.value));
-
-const gainPerTick = computed(() => {
-  const parResearchCPU = storeResearch.list.cpuPow;
-  return value.value.pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1));
-});
-
-const onBuyValue = () => {
-  if (!canBuyValue.value) return;
-  storeData.epicNumber = storeData.epicNumber.minus(costValue.value);
-  cpu.value = cpu.value.plus(cpu.multiply);
-};
-
-const onBuyMultiply = () => {
-  if (!canBuyMultiply.value) return;
-  const researchMultiplierChance = storeResearch.list.shopMultiplierChanceReturn;
-  if (researchMultiplierChance.level.mul(researchMultiplierChance.bonus).lt(Math.random()))
-    cpu.value = cpu.value.minus(costMultiply.value);
-  cpu.multiply = cpu.multiply.plus(1);
-};
 </script>
 
 <style lang="sass" scoped>

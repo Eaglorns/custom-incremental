@@ -140,25 +140,27 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
     },
 
     load(loaded: {
-      cpu: Helper;
-      hdd: Helper;
-      ram: Helper;
-      cpuMultiplier: Helper;
-      hddMultiplier: Helper;
-      ramMultiplier: Helper;
+      helpers: {
+        cpu: Helper;
+        hdd: Helper;
+        ram: Helper;
+        cpuMultiplier: Helper;
+        hddMultiplier: Helper;
+        ramMultiplier: Helper;
+      };
     }) {
-      this.helpers.cpu.count = new Decimal(loaded.cpu.count);
-      this.helpers.cpu.percent = new Decimal(loaded.cpu.percent);
-      this.helpers.hdd.count = new Decimal(loaded.hdd.count);
-      this.helpers.hdd.percent = new Decimal(loaded.hdd.percent);
-      this.helpers.ram.count = new Decimal(loaded.ram.count);
-      this.helpers.ram.percent = new Decimal(loaded.ram.percent);
-      this.helpers.cpuMultiplier.count = new Decimal(loaded.cpuMultiplier.count);
-      this.helpers.cpuMultiplier.percent = new Decimal(loaded.cpuMultiplier.percent);
-      this.helpers.hddMultiplier.count = new Decimal(loaded.hddMultiplier.count);
-      this.helpers.hddMultiplier.percent = new Decimal(loaded.hddMultiplier.percent);
-      this.helpers.ramMultiplier.count = new Decimal(loaded.ramMultiplier.count);
-      this.helpers.ramMultiplier.percent = new Decimal(loaded.ramMultiplier.percent);
+      this.helpers.cpu.count = new Decimal(loaded.helpers.cpu.count);
+      this.helpers.cpu.percent = new Decimal(loaded.helpers.cpu.percent);
+      this.helpers.hdd.count = new Decimal(loaded.helpers.hdd.count);
+      this.helpers.hdd.percent = new Decimal(loaded.helpers.hdd.percent);
+      this.helpers.ram.count = new Decimal(loaded.helpers.ram.count);
+      this.helpers.ram.percent = new Decimal(loaded.helpers.ram.percent);
+      this.helpers.cpuMultiplier.count = new Decimal(loaded.helpers.cpuMultiplier.count);
+      this.helpers.cpuMultiplier.percent = new Decimal(loaded.helpers.cpuMultiplier.percent);
+      this.helpers.hddMultiplier.count = new Decimal(loaded.helpers.hddMultiplier.count);
+      this.helpers.hddMultiplier.percent = new Decimal(loaded.helpers.hddMultiplier.percent);
+      this.helpers.ramMultiplier.count = new Decimal(loaded.helpers.ramMultiplier.count);
+      this.helpers.ramMultiplier.percent = new Decimal(loaded.helpers.ramMultiplier.percent);
     },
   },
 });

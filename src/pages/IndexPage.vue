@@ -11,10 +11,14 @@
             <span class="text-weight-bold text-h5 q-mx-xs on-color-epic-number">
               {{ formatNumber(storeData.epicNumber) }}
             </span>
-            <q-separator vertical class="q-mx-md" style="height: 32px" />
-            <q-icon name="fa-solid fa-arrow-trend-up" size="22px" color="secondary" />
-            <span class="text-weight-bold text-h5 q-ml-xs on-color-multiplier-epic-number">
-              {{ formatNumber(multiplierEpicNumber, true) }}
+          </div>
+          <div
+            class="flex items-center q-pa-sm q-mr-xl"
+            style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
+          >
+            <q-icon name="fa-duotone fa-coins" size="22px" color="secondary" />
+            <span class="text-weight-bold text-h5 q-ml-xs on-color-research-point">
+              {{ formatNumber(storeShop.points) }}
             </span>
           </div>
           <div
@@ -23,12 +27,7 @@
           >
             <q-icon name="fa-duotone fa-flask-vial" size="22px" color="secondary" />
             <span class="text-weight-bold text-h5 q-ml-xs on-color-research-point">
-              {{ formatNumber(researchPoints) }}
-            </span>
-            <q-separator vertical class="q-mx-md" style="height: 32px" />
-            <q-icon name="fa-duotone fa-hourglass-end" size="22px" color="secondary" />
-            <span class="text-weight-bold text-h5 q-ml-xs on-color-research-speed">
-              {{ formatNumber(researchSpeed, true) }}
+              {{ formatNumber(storeResearch.points) }}
             </span>
           </div>
         </div>
@@ -200,9 +199,11 @@ import Achievement from 'src/pages/AchievementPage.vue';
 import Decimal from 'break_eternity.js';
 import { animate } from 'animejs';
 import { useStoreResearch } from 'stores/research';
+import { useStoreShop } from 'stores/shop';
 
 const storeData = useStoreData();
 const storeResearch = useStoreResearch();
+const storeShop = useStoreShop();
 
 const formatNumber = storeData.formatNumber;
 
@@ -212,18 +213,6 @@ const innerResearch = ref('innerScientist');
 const innerAutomatic = ref('innerAutomaticBuyer');
 const innerPrestige = ref('innerPrestigeBase');
 const splitterModel = ref(20);
-
-const multiplierEpicNumber = computed(() => {
-  return storeData.getMultiplierEpicNumber;
-});
-
-const researchPoints = computed(() => {
-  return storeResearch.points;
-});
-
-const researchSpeed = computed(() => {
-  return storeResearch.speed;
-});
 
 function animateColor(selector: string) {
   const base = 100,
