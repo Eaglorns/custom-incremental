@@ -2,25 +2,22 @@
   <q-page class="q-pa-lg">
     <div class="q-mb-md text-h6 text-bold row items-center">
       <q-icon name="fa-duotone fa-sparkles" color="amber" size="28px" class="q-mr-sm" />
-      Выполнено достижений: {{ formatNumber(totalAchievements) }}
+      Выполнено: {{ formatNumber(totalAchievements) }}
       <q-chip color="primary" text-color="white" class="q-ml-md">
         <q-icon name="fa-duotone fa-arrow-trend-up" left size="18px" />
-        Бонус к производству: x{{ achievementBonus.toFixed(2) }}
+        Бонус: x{{ achievementBonus.toFixed(2) }}
       </q-chip>
     </div>
-    <div class="q-gutter-md" style="display: flex; flex-wrap: wrap; align-items: flex-start">
+    <div
+      class="q-gutter-md"
+      style="min-width: 100%; display: flex; flex-wrap: wrap; align-items: center"
+    >
       <q-card
         v-for="ach in achievements"
         :key="ach.id"
         class="q-pa-sm q-mb-xs"
         :class="achievementCardClass(ach)"
-        style="
-          width: 140px;
-          margin-right: 16px;
-          margin-bottom: 16px;
-          display: inline-block;
-          vertical-align: top;
-        "
+        style="width: 140px; margin: 5px; display: inline-block; vertical-align: top"
         flat
         bordered
         v-ripple
@@ -170,4 +167,31 @@ const achievementBonus = computed(() => {
   max-width: 220px
   min-width: 160px
   text-align: left
+
+  @media (max-width: 700px)
+    .q-page.q-pa-lg
+      padding: 8px !important
+    .q-mb-md.text-h6.text-bold.row.items-center
+      flex-direction: column !important
+      align-items: flex-start !important
+      font-size: 16px !important
+      .q-chip
+        margin-left: 0 !important
+        margin-top: 8px !important
+    .q-gutter-md
+      flex-wrap: wrap
+      gap: 8px !important
+      margin-left: 0 !important
+      margin-right: 0 !important
+    .q-card
+      width: 110px !important
+      min-width: 90px !important
+      margin-right: 8px !important
+      margin-bottom: 8px !important
+      padding: 4px !important
+      font-size: 13px !important
+    .q-tooltip.tooltip-bordered
+      max-width: 180px !important
+      min-width: 100px !important
+      padding: 6px !important
 </style>
