@@ -9,6 +9,7 @@ import { useStoreShop } from 'stores/shop';
 import { useStoreAutomatic } from 'stores/automatic';
 import { useStoreAchievement } from 'stores/achievement';
 import { useStoreStats } from 'stores/stats';
+import { useStoreSetting } from 'stores/setting';
 import Decimal from 'break_eternity.js';
 
 const STORAGE_KEY = 'save';
@@ -29,6 +30,7 @@ export const useStoreSaveLoad = defineStore('storeSaveLoad', {
       const storeAutomatic = useStoreAutomatic();
       const storeAchievement = useStoreAchievement();
       const storeStats = useStoreStats();
+      const storeSetting = useStoreSetting();
       const saveData = {
         data: storeData.save,
         research: storeResearch.save,
@@ -37,6 +39,7 @@ export const useStoreSaveLoad = defineStore('storeSaveLoad', {
         automatic: storeAutomatic.save,
         achievement: storeAchievement.save,
         stats: storeStats.save,
+        setting: storeSetting.save,
       };
 
       const replacer = (key: string, value: unknown) => {
@@ -56,6 +59,7 @@ export const useStoreSaveLoad = defineStore('storeSaveLoad', {
       const storeAutomatic = useStoreAutomatic();
       const storeAchievement = useStoreAchievement();
       const storeStats = useStoreStats();
+      const storeSetting = useStoreSetting();
       const encrypted = LocalStorage.getItem(STORAGE_KEY);
       if (typeof encrypted !== 'string') {
         storeData.version = storeGame.version;
@@ -73,6 +77,7 @@ export const useStoreSaveLoad = defineStore('storeSaveLoad', {
           storeAutomatic.load(loaded.automatic);
           storeAchievement.load(loaded.achievement);
           storeStats.load(loaded.stats);
+          storeSetting.load(loaded.setting);
           console.log('load game');
         } else {
           storeData.version = storeGame.version;

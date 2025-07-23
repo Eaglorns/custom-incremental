@@ -69,7 +69,7 @@
         </div>
       </div>
       <q-separator spaced class="q-my-xs" />
-      <q-card-actions align="right" class="q-pa-none q-mt-auto">
+      <q-card-actions class="research-actions q-mt-auto">
         <q-btn
           :disable="
             isMaxLevel(meta.key).value ||
@@ -85,7 +85,7 @@
               : 'Улучшить'
           "
           @click="startResearch(meta.key, false)"
-          class="q-mx-xs"
+          class="research-btn"
           :color="
             isMaxLevel(meta.key).value
               ? 'grey-8'
@@ -199,9 +199,10 @@ onMounted(() => {
 </script>
 
 <style lang="sass">
+
 .research-card
   background: var(--color-card-bg)
-  border-color: var(--color-card-border)
+  border: 1.5px solid var(--color-card-border)
   min-width: 240px
   max-width: 240px
   min-height: 14vh
@@ -210,6 +211,35 @@ onMounted(() => {
   box-sizing: border-box
   flex: 0 0 260px
   background-color: #181a1b !important
+  transition: box-shadow 0.25s, transform 0.2s
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18)
+
+.research-card:hover
+  box-shadow: 0 6px 24px 0 rgba(80, 100, 200, 0.18), 0 1.5px 8px 0 rgba(0,0,0,0.18)
+  transform: translateY(-2px) scale(1.012)
+
+
+.research-actions
+  display: flex
+  justify-content: flex-end
+  align-items: center
+  padding: 0 12px 8px 12px !important
+
+.research-btn
+  min-width: 120px
+  border-radius: 8px
+  font-weight: 700
+  transition: background 0.2s, box-shadow 0.2s, color 0.2s
+  box-shadow: 0 1.5px 6px 0 rgba(80, 100, 200, 0.08)
+
+.research-btn:hover:not(:disabled)
+  filter: brightness(1.08)
+  box-shadow: 0 4px 16px 0 rgba(80, 100, 200, 0.18)
+
+.q-linear-progress
+  height: 10px !important
+  border-radius: 6px !important
+  transition: height 0.2s, background 0.2s
 
 .research-inactive
   opacity: 0.55

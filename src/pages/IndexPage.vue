@@ -160,7 +160,7 @@
         <q-tab-panel name="help" class="panel-flex">
           <Help />
         </q-tab-panel>
-        <q-tab-panel name="setting" class="panel-flex"></q-tab-panel>
+        <q-tab-panel name="setting" class="panel-flex"> <SettingPage /></q-tab-panel>
       </q-tab-panels>
     </q-card>
     <q-footer class="footer">
@@ -193,6 +193,7 @@ import PrestigeUpgrade from 'src/components/prestige/PrestigeUpgrade.vue';
 import Help from 'src/pages/HelpPage.vue';
 import Achievement from 'src/pages/AchievementPage.vue';
 import StatsPage from 'src/pages/StatsPage.vue';
+import SettingPage from 'src/pages/SettingPage.vue';
 import Decimal from 'break_eternity.js';
 import { animate } from 'animejs';
 import { useStoreResearch } from 'stores/research';
@@ -301,9 +302,9 @@ const infinityProgress = computed(() => {
   flex-direction: column
 
 .footer
-  flex: 0 0 6vh
-  min-height: 6vh
-  max-height: 6vh
+  flex: 0 0 48px
+  min-height: 48px
+  max-height: 56px
   width: 100vw
   padding: 0
   background: #23243a
@@ -312,14 +313,20 @@ const infinityProgress = computed(() => {
   justify-content: center
   font-size: 16px
 
+.progress-bar
+  width: 300px
+  min-height: 18px
+  display: flex
+  align-items: center
+  position: relative
+
 .footer-progress
   color: #fff
   font-weight: bold
-  font-size: 15px
-
-.progress-bar
-  width: 300px
-  height: 22px
+  font-size: 18px
+  line-height: 1.2
+  white-space: nowrap
+  text-shadow: 0 1px 4px #23243a, 0 0 2px #23243a
 
 @media (max-width: 700px)
   .main-layout
@@ -331,15 +338,19 @@ const infinityProgress = computed(() => {
   .panel-flex
     padding: 4px
   .footer
-    min-height: 4vh
-    max-height: 6vh
+    min-height: 24px
+    max-height: 40px
     padding: 4px
     font-size: 12px !important
   .progress-bar
     width: 170px
-    height: 22px
+    height: 30px
+    display: flex
+    align-items: center
+    position: relative
   .footer-label, .footer-progress
-    font-size: 18px
+    font-size: 16px
+    line-height: 1.2
   .q-tabs.vertical .q-tab__content,
   .q-tabs.vertical .q-tab__icon,
   .q-tabs.vertical .q-tab__label

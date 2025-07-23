@@ -10,33 +10,71 @@ export const useStoreData = defineStore('storeData', {
   }),
 
   getters: {
-    formatNumber: () => (num: Decimal, fixed?: boolean) => {
-      if (num.lt(1e6)) return fixed ? num.toFixed(3) : num.toFixed(0);
-      let value = num;
-      let tetration = 0;
-      while (value.gte(1e6)) {
-        value = value.log10();
-        tetration++;
+    formatNumber: () => {
+      function formatSmall(num: Decimal, fixed?: boolean) {
+        if (fixed) return num.toFixed(3);
+        if (num.eq(num.floor())) return num.toFixed(0);
+        return num.toFixed(2);
       }
-      if (tetration === 0) {
+
+      function formatScientific(num: Decimal) {
         const exp = num.log10().floor();
-        return `${num.div(Decimal.pow(10, exp)).toFixed(3)}e${exp.toFixed(0)}`;
+        const mantissa = num.div(Decimal.pow(10, exp));
+        return mantissa.eq(mantissa.floor())
+          ? `${mantissa.toFixed(0)}e${exp.toFixed(0)}`
+          : `${mantissa.toFixed(3)}e${exp.toFixed(0)}`;
       }
-      if (tetration === 1) {
+
+      function formatE(num: Decimal, value: Decimal) {
         const exp = value.floor();
         const mantissa10 = Math.pow(10, num.log10().minus(exp).toNumber());
-        return Math.abs(mantissa10 - 1) < 1e-6
-          ? `e${exp.toFixed(0)}`
+        if (Math.abs(mantissa10 - 1) < 1e-6) {
+          return `e${exp.toFixed(0)}`;
+        }
+        return Number.isInteger(mantissa10)
+          ? `${mantissa10.toFixed(0)}e${exp.toFixed(0)}`
           : `${mantissa10.toFixed(3)}e${exp.toFixed(0)}`;
       }
-      if (tetration < 10) return `${value.toFixed(4)}[↑↑${tetration + 1}]`;
-      let superTetration = 0;
-      let t = tetration;
-      while (t >= 6) {
-        t = Math.log10(t);
-        superTetration++;
+
+      function formatTetration(value: Decimal, tetration: number) {
+        return value.eq(value.floor())
+          ? `${value.toFixed(0)}[↑↑${tetration + 1}]`
+          : `${value.toFixed(4)}[↑↑${tetration + 1}]`;
       }
-      return `${t.toFixed(4)}[↑↑↑${superTetration + 1}]`;
+
+      function formatSuperTetration(tetration: number) {
+        let superTetration = 0;
+        let t = tetration;
+        while (t >= 6) {
+          t = Math.log10(t);
+          superTetration++;
+        }
+        return Number.isInteger(t)
+          ? `${t.toFixed(0)}[↑↑↑${superTetration + 1}]`
+          : `${t.toFixed(4)}[↑↑↑${superTetration + 1}]`;
+      }
+
+      return (num: Decimal, fixed?: boolean) => {
+        if (num.lt(1e6)) {
+          return formatSmall(num, fixed);
+        }
+        let value = num;
+        let tetration = 0;
+        while (value.gte(1e6)) {
+          value = value.log10();
+          tetration++;
+        }
+        if (tetration === 0) {
+          return formatScientific(num);
+        }
+        if (tetration === 1) {
+          return formatE(num, value);
+        }
+        if (tetration < 10) {
+          return formatTetration(value, tetration);
+        }
+        return formatSuperTetration(tetration);
+      };
     },
 
     getMultiplierEpicNumber: (state): Decimal => {

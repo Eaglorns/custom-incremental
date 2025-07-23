@@ -1,5 +1,5 @@
 <template>
-  <q-card flat class="q-pa-lg prestige-bg-dark">
+  <q-card flat class="q-pa-lg">
     <div class="text-h5 text-accent q-mb-md">Улучшения престижа</div>
     <div class="row q-col-gutter-lg q-gutter-y-md">
       <div
@@ -155,9 +155,6 @@ function buyUpgrade(upgrade: PrestigeUpgrade) {
   &:hover, &:focus
     background: #1a1d22 !important
     color: #fff !important
-
-.prestige-bg-dark
-  background: #23272e !important
 
 .prestige-card-dark
   background: #2d323b !important
