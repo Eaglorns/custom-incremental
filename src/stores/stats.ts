@@ -1,5 +1,8 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import Decimal from 'break_eternity.js';
+import { useStoreData } from 'stores/data';
+import { useStoreResearch } from 'stores/research';
+import { useStorePrestige } from 'stores/prestige';
 
 export const useStoreStats = defineStore('storeStats', {
   state: () => ({
@@ -17,6 +20,15 @@ export const useStoreStats = defineStore('storeStats', {
     },
   },
   actions: {
+    processUpdate() {
+      const storeData = useStoreData();
+      const storeResearch = useStoreResearch();
+      const storePrestige = useStorePrestige();
+      this.maxEpicNumber = Decimal.max(this.maxEpicNumber, storeData.epicNumber);
+      this.maxResearchPoints = Decimal.max(this.maxResearchPoints, storeResearch.points);
+      this.maxPrestigePoints = Decimal.max(this.maxPrestigePoints, storePrestige.points);
+    },
+
     load(loaded: { maxEpicNumber: string; maxResearchPoints: string; maxPrestigePoints: string }) {
       this.maxEpicNumber = new Decimal(loaded.maxEpicNumber);
       this.maxResearchPoints = new Decimal(loaded.maxResearchPoints);

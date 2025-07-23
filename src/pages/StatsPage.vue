@@ -48,19 +48,19 @@ import { computed } from 'vue';
 import { useStoreData } from 'stores/data';
 import { useStoreGame } from 'stores/game';
 import { useStoreResearch } from 'stores/research';
-import { useStorePrestige } from 'stores/prestige';
+import { useStoreStats } from 'stores/stats';
 
 const storeData = useStoreData();
 const storeGame = useStoreGame();
 const storeResearch = useStoreResearch();
-const storePrestige = useStorePrestige();
+const storeStats = useStoreStats();
 
 const formatNumber = storeData.formatNumber;
 
 const stats = computed(() => [
   {
     label: 'Максимально набранное число',
-    value: formatNumber(storeData.epicNumber),
+    value: formatNumber(storeStats.maxEpicNumber),
     width: '200px',
   },
   {
@@ -78,7 +78,7 @@ const stats = computed(() => [
   },
   {
     label: 'Максимально набранные очки исследований',
-    value: formatNumber(storeResearch.points),
+    value: formatNumber(storeStats.maxResearchPoints),
     width: '280px',
   },
   {
@@ -91,7 +91,7 @@ const stats = computed(() => [
   },
   {
     label: 'Максимально набранные очки престижа',
-    value: formatNumber(storePrestige.points),
+    value: formatNumber(storeStats.maxPrestigePoints),
     width: '250px',
   },
 ]);

@@ -32,6 +32,7 @@ export const useStoreGame = defineStore('storeGame', {
       const storeResearch = useStoreResearch();
       const storeAutomatic = useStoreAutomatic();
       const storeShop = useStoreShop();
+      const storeStats = useStoreStats();
       const now = Date.now();
       const delta = now - this.lastTick;
       this.lastTick = now;
@@ -45,6 +46,7 @@ export const useStoreGame = defineStore('storeGame', {
         storeAutomatic.processHelpers();
         storeResearch.processScientists();
         this.processGiveEpicNumber();
+        storeStats.processUpdate();
       }
       console.timeEnd('gameTick');
     },
@@ -54,15 +56,12 @@ export const useStoreGame = defineStore('storeGame', {
       const storeShop = useStoreShop();
       const storeResearch = useStoreResearch();
       const storeAchievement = useStoreAchievement();
-      const storeStats = useStoreStats();
       const parShopCPU = storeShop.list.cpu.value;
       const parResearchCPU = storeResearch.list.cpuPow;
       const result = parShopCPU
         .pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1))
         .mul(storeAchievement.achievementBonus);
       storeData.epicNumber = storeData.epicNumber.plus(result);
-      if (storeData.epicNumber.gte(storeStats.maxEpicNumber))
-        storeStats.maxEpicNumber = storeData.epicNumber;
     },
 
     processGiveMultiplierEpicNumber() {

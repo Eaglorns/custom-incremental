@@ -2,7 +2,6 @@ import { defineStore, acceptHMRUpdate } from 'pinia';
 import Decimal from 'break_eternity.js';
 import type { Scientist } from 'src/constants/models';
 import { useStoreShop } from 'stores/shop';
-import { useStoreStats } from 'stores/stats';
 
 interface ResearchList {
   isActive: boolean;
@@ -270,7 +269,6 @@ export const useStoreResearch = defineStore('storeResearch', {
       return level.pow(2).mul(100).plus(50);
     },
     processScientists() {
-      const storeStats = useStoreStats();
       this.scientists.forEach((s) => {
         if (Math.random() < 0.01) this.randomUpgrade(s);
       });
@@ -289,8 +287,6 @@ export const useStoreResearch = defineStore('storeResearch', {
       });
 
       this.points = this.points.add(totalResearch);
-
-      if (this.points.gte(storeStats.maxResearchPoints)) storeStats.maxResearchPoints = this.points;
     },
     processGiveResearchSpeed() {
       const storeShop = useStoreShop();

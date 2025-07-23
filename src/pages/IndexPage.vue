@@ -39,9 +39,9 @@
         class="text-grey"
       >
         <q-tab name="shop" icon="fa-duotone fa-store" label="Магазин" />
+        <q-tab name="prestige" icon="fa-duotone fa-arrow-up-right-dots" label="Престиж" />
         <q-tab name="research" icon="fa-duotone fa-flask-vial" label="Исследования" />
         <q-tab name="automatic" icon="fa-duotone fa-microchip-ai" label="Автоматизация" />
-        <q-tab name="prestige" icon="fa-duotone fa-arrow-up-right-dots" label="Престиж" />
         <q-tab name="eternity" icon="fa-duotone fa-hourglass-end" label="Вечность" />
         <q-tab name="infinity" icon="fa-duotone fa-infinity" label="Бесконечность" />
         <q-tab name="achievement" icon="fa-duotone fa-trophy-star" label="Достижения" />
@@ -50,7 +50,7 @@
         <q-tab name="setting" icon="fa-duotone fa-gear-complex" label="Настройки" />
       </q-tabs>
       <q-separator />
-      <q-tab-panels v-model="tab" animated>
+      <q-tab-panels v-model="tab">
         <q-tab-panel name="shop" class="panel-flex">
           <q-splitter v-model="splitterModel">
             <template v-slot:before>
@@ -75,6 +75,34 @@
                 <q-tab-panel name="innerShopRAM"
                   ><ShopTemplate name="ram" label="Оперативная память" icon="fa-duotone fa-memory"
                 /></q-tab-panel>
+              </q-tab-panels>
+            </template>
+          </q-splitter>
+        </q-tab-panel>
+        <q-tab-panel name="prestige" class="panel-flex">
+          <q-splitter v-model="splitterModel">
+            <template v-slot:before>
+              <q-tabs v-model="innerPrestige" vertical class="text-teal">
+                <q-tab
+                  name="innerPrestigeBase"
+                  icon="fa-duotone fa-arrow-up-from-dotted-line"
+                  label="Основа"
+                />
+                <q-tab
+                  name="innerPrestigeUpgrade"
+                  icon="fa-duotone fa-sparkles"
+                  label="Улучшения"
+                />
+              </q-tabs>
+            </template>
+            <template v-slot:after>
+              <q-tab-panels
+                v-model="innerPrestige"
+                transition-prev="slide-down"
+                transition-next="slide-up"
+              >
+                <q-tab-panel name="innerPrestigeBase"><PrestigeBase /></q-tab-panel>
+                <q-tab-panel name="innerPrestigeUpgrade"><PrestigeUpgrade /></q-tab-panel>
               </q-tab-panels>
             </template>
           </q-splitter>
@@ -117,34 +145,6 @@
                 transition-next="slide-up"
               >
                 <q-tab-panel name="innerAutomaticBuyer"><AutomaticBuyer /></q-tab-panel>
-              </q-tab-panels>
-            </template>
-          </q-splitter>
-        </q-tab-panel>
-        <q-tab-panel name="prestige" class="panel-flex">
-          <q-splitter v-model="splitterModel">
-            <template v-slot:before>
-              <q-tabs v-model="innerPrestige" vertical class="text-teal">
-                <q-tab
-                  name="innerPrestigeBase"
-                  icon="fa-duotone fa-arrow-up-from-dotted-line"
-                  label="Основа"
-                />
-                <q-tab
-                  name="innerPrestigeUpgrade"
-                  icon="fa-duotone fa-sparkles"
-                  label="Улучшения"
-                />
-              </q-tabs>
-            </template>
-            <template v-slot:after>
-              <q-tab-panels
-                v-model="innerPrestige"
-                transition-prev="slide-down"
-                transition-next="slide-up"
-              >
-                <q-tab-panel name="innerPrestigeBase"><PrestigeBase /></q-tab-panel>
-                <q-tab-panel name="innerPrestigeUpgrade"><PrestigeUpgrade /></q-tab-panel>
               </q-tab-panels>
             </template>
           </q-splitter>

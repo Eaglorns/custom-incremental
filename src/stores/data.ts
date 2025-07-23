@@ -5,7 +5,7 @@ import { useStoreResearch } from 'stores/research';
 export const useStoreData = defineStore('storeData', {
   state: () => ({
     version: '0.0.0',
-    epicNumber: new Decimal('500'),
+    epicNumber: new Decimal('1e500000'),
     multiplierEpicNumber: new Decimal(1),
   }),
 

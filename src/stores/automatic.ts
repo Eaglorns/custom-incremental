@@ -1,11 +1,19 @@
 import Decimal from 'break_eternity.js';
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { useStoreShop } from 'stores/shop';
+import { useStoreData } from 'stores/data';
 
 interface Helper {
   count: string;
   percent: string;
 }
+
+const buyMax = (points: Decimal, price: Decimal, count: Decimal) => {
+  const maxCanBuy = points.div(price).floor();
+  const bought = Decimal.min(count, maxCanBuy);
+  const rest = bought.mul(price);
+  return { bought, rest };
+};
 
 export const useStoreAutomatic = defineStore('storeAutomatic', {
   state: () => ({
@@ -117,6 +125,7 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
   actions: {
     processHelpers() {
       const storeShop = useStoreShop();
+      const storeData = useStoreData();
       const rand = Math.random() * 100;
       const valueKeys = ['cpu', 'hdd', 'ram'] as const;
       const multiplierKeys = ['cpuMultiplier', 'hddMultiplier', 'ramMultiplier'] as const;
@@ -124,9 +133,13 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
       valueKeys.forEach((key) => {
         const helper = this.helpers[key];
         if (helper.count.gt(0) && this.getHelperChance(helper.percent).gte(rand)) {
-          storeShop.list[key].value = storeShop.list[key].value.plus(
-            helper.count.mul(storeShop.list[key].multiply),
-          );
+          const buyResult = buyMax(storeShop.points, storeShop.list[key].cost.value, helper.count);
+          if (buyResult.bought.gt(0)) {
+            storeShop.list[key].value = storeShop.list[key].value.plus(
+              buyResult.bought.mul(storeShop.list[key].multiply),
+            );
+            storeShop.points = storeShop.points.minus(buyResult.rest);
+          }
         }
       });
 
@@ -134,7 +147,17 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
         const baseKey = key.replace('Multiplier', '') as keyof typeof storeShop.list;
         const helper = this.helpers[key];
         if (helper.count.gt(0) && this.getHelperChance(helper.percent).gte(rand)) {
-          storeShop.list[baseKey].multiply = storeShop.list[baseKey].multiply.plus(helper.count);
+          const buyResult = buyMax(
+            storeData.epicNumber,
+            storeShop.costMultiply(baseKey),
+            helper.count,
+          );
+          if (buyResult.bought.gt(0)) {
+            storeShop.list[baseKey].multiply = storeShop.list[baseKey].multiply.plus(
+              buyResult.bought,
+            );
+            storeData.epicNumber = storeData.epicNumber.minus(buyResult.rest);
+          }
         }
       });
     },

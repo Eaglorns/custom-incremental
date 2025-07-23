@@ -122,7 +122,7 @@ export const useStoreShop = defineStore('storeShop', {
       if (!canBuyMultiply) return;
       const researchMultiplierChance = storeResearch.list.shopMultiplierChanceReturn;
       if (researchMultiplierChance.level.mul(researchMultiplierChance.bonus).lt(Math.random()))
-        storeData.epicNumber = storeData.epicNumber.minus(this.list[key].cost.multiply);
+        storeData.epicNumber = storeData.epicNumber.minus(this.costMultiply(key));
       this.list[key].multiply = this.list[key].multiply.plus(1);
     },
 
