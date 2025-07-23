@@ -8,7 +8,7 @@ import { useStoreAchievement } from 'stores/achievement';
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     name: 'cIncremental',
-    version: '0.0.5',
+    version: '0.0.6',
     timerTick: 1000,
     lastTick: Date.now(),
   }),
