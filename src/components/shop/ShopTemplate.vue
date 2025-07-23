@@ -87,7 +87,10 @@
             outline
             label="Купить"
             class="full-width"
-            @click="storeShop.onBuyValue(props.name)"
+            @click="
+              storeShop.onBuyValue(props.name);
+              onBuySound();
+            "
             size="lg"
             :disable="!storeShop.canBuyValue(props.name)"
           />
@@ -111,6 +114,7 @@
 <script setup lang="ts">
 import { useStoreData } from 'stores/data';
 import { useStoreShop } from 'stores/shop';
+import { Howl } from 'src/boot/hovler';
 
 type ShopItemName = keyof typeof storeShop.list;
 
@@ -120,6 +124,10 @@ const storeData = useStoreData();
 const storeShop = useStoreShop();
 
 const formatNumber = storeData.formatNumber;
+
+const onBuySound = () => {
+  new Howl({ src: ['sounds/buy.mp3'] }).play();
+};
 </script>
 
 <style lang="sass" scoped>
