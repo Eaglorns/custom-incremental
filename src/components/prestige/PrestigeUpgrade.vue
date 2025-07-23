@@ -1,56 +1,41 @@
 <template>
-  <q-card flat class="prestige-upgrades">
-    <div class="prestige-upgrades__title">Улучшения престижа</div>
-    <div class="prestige-upgrades__grid">
+  <q-card flat class="q-pa-lg prestige-bg-dark">
+    <div class="text-h5 text-accent q-mb-md">Улучшения престижа</div>
+    <div class="row q-col-gutter-lg q-gutter-y-md">
       <div
         v-for="upgrade in prestigeUpgrades"
         :key="upgrade.key"
-        class="prestige-upgrades__wrapper"
+        class="col-12 col-sm-6 col-md-4 flex flex-center"
       >
         <q-card
           flat
           bordered
-          class="prestige-upgrade-card"
-          :class="{
-            'prestige-upgrade-card--maxed':
-              upgrade.maxLevel !== -1 && upgrade.level.gte(upgrade.maxLevel),
-          }"
+          class="q-pa-md q-mb-md prestige-card-dark"
+          style="min-width: 220px; max-width: 320px"
         >
-          <div class="prestige-upgrade-card__header">
-            <q-icon :name="upgrade.icon" size="28px" class="prestige-upgrade-card__icon" />
-            <div class="prestige-upgrade-card__title-wrapper">
-              <span class="prestige-upgrade-card__title" :title="upgrade.title">
+          <div class="row items-center q-mb-sm no-wrap">
+            <q-icon :name="upgrade.icon" size="28px" color="accent" class="q-mr-sm" />
+            <div class="text-h6 text-bold text-white ellipsis" style="max-width: 200px">
+              <span :title="upgrade.title">
                 {{ upgrade.title }}
-                <q-tooltip class="prestige-tooltip">{{ upgrade.title }}</q-tooltip>
+                <q-tooltip class="prestige-tooltip-large">{{ upgrade.title }}</q-tooltip>
               </span>
             </div>
-            <q-badge class="prestige-upgrade-card__badge" v-if="upgrade.level !== undefined">
+            <q-badge class="q-ml-sm prestige-badge-dark" v-if="upgrade.level !== undefined">
               Ур. {{ upgrade.level
               }}<template v-if="upgrade.maxLevel !== -1"> / {{ upgrade.maxLevel }}</template>
             </q-badge>
           </div>
-          <div class="prestige-upgrade-card__description">{{ upgrade.description }}</div>
-          <div class="prestige-upgrade-card__cost">
-            <q-icon
-              name="fa-duotone fa-coins"
-              size="18px"
-              class="prestige-upgrade-card__cost-icon"
-            />
-            <span class="prestige-upgrade-card__cost-value">{{ formatNumber(upgrade.cost) }}</span>
+          <div class="text-body2 text-grey-3 q-mb-sm">{{ upgrade.description }}</div>
+          <div class="row items-center q-mb-sm">
+            <q-icon name="fa-duotone fa-coins" size="18px" color="yellow-4" class="q-mr-xs" />
+            <span class="text-weight-bold text-white">{{ formatNumber(upgrade.cost) }}</span>
           </div>
           <q-btn
             color="dark"
-            :label="
-              upgrade.maxLevel !== -1 && upgrade.level.gte(upgrade.maxLevel)
-                ? 'МАКС. УР.'
-                : 'Купить'
-            "
+            label="Купить"
             @click="buyUpgrade(upgrade)"
-            class="prestige-upgrade-card__button"
-            :class="{
-              'prestige-upgrade-card__button--maxed':
-                upgrade.maxLevel !== -1 && upgrade.level.gte(upgrade.maxLevel),
-            }"
+            class="full-width prestige-btn-dark"
             :disable="
               upgrade.maxLevel !== undefined &&
               upgrade.maxLevel !== -1 &&
@@ -91,7 +76,7 @@ const prestigeUpgrades = ref<PrestigeUpgrade[]>([
     cost: new Decimal(2e7),
     level: new Decimal(0),
     costGrowth: new Decimal(3),
-    maxLevel: 10,
+    maxLevel: 100,
   },
   {
     key: 'autoShopCPU',
@@ -148,352 +133,45 @@ function buyUpgrade(upgrade: PrestigeUpgrade) {
 }
 </script>
 
-<style scoped lang="scss">
-$mobile-breakpoint: 700px;
-$tablet-breakpoint: 1024px;
+<style lang="sass">
+.prestige-tooltip-large
+  font-size: 1.25rem
+  font-weight: 600
+  color: #fff !important
+  background: #23272e !important
+  border-radius: 8px
+  padding: 8px 16px
+  box-shadow: 0 2px 8px #0008
 
-:root {
-  --prestige-primary: #9f7aff;
-  --prestige-secondary: #b794ff;
-  --prestige-dark: #7c3aed;
-  --prestige-accent: #22c55e;
-  --prestige-success: #4caf50;
-  --prestige-success-light: #81c784;
-  --prestige-success-dark: #2e7d32;
-  --prestige-warning: #ffc107;
-  --prestige-text-primary: #e8eaf0;
-  --prestige-text-secondary: #b0b3c0;
-  --prestige-card-bg: #2a2d3f;
-  --prestige-card-bg-secondary: #2d323b;
-  --prestige-card-border: #5a5f70;
-  --prestige-card-border-hover: #7c82a0;
-  --prestige-shadow: rgba(159, 122, 255, 0.15);
-  --prestige-shadow-success: rgba(76, 175, 80, 0.3);
-  --prestige-card-shadow: rgba(0, 0, 0, 0.25);
-}
+.prestige-badge-dark
+  background: #23272e !important
+  color: #e0e0e0 !important
+  border: 1px solid #444 !important
 
-.prestige-upgrades {
-  padding: clamp(16px, 4vw, 32px);
-  background: linear-gradient(145deg, var(--prestige-card-bg), #23272e);
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
+.prestige-btn-dark
+  background: #23272e !important
+  color: #e0e0e0 !important
+  border: 1px solid #444 !important
+  &:hover, &:focus
+    background: #1a1d22 !important
+    color: #fff !important
 
-  &__title {
-    font-size: clamp(18px, 4vw, 24px);
-    font-weight: 800;
-    color: var(--prestige-warning);
-    margin-bottom: clamp(16px, 3vw, 24px);
-    text-align: center;
-    letter-spacing: 0.5px;
-    text-shadow: 0 2px 8px rgba(255, 179, 0, 0.3);
-  }
+.prestige-bg-dark
+  background: #23272e !important
 
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: clamp(16px, 3vw, 24px);
-    align-items: stretch;
+.prestige-card-dark
+  background: #2d323b !important
+  border: 1px solid black !important
 
-    @media (max-width: $tablet-breakpoint) {
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    }
+.text-accent
+  color: #ffb300 !important
 
-    @media (max-width: $mobile-breakpoint) {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-  }
+.q-card .text-white
+  color: #fff !important
 
-  &__wrapper {
-    display: flex;
-    justify-content: center;
-  }
-}
+.q-card .text-grey-3
+  color: #e0e0e0 !important
 
-.prestige-upgrade-card {
-  background: linear-gradient(145deg, var(--prestige-card-bg-secondary), #1e2329);
-  border: 2px solid var(--prestige-card-border);
-  border-radius: 16px;
-  padding: clamp(12px, 3vw, 20px);
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(8px);
-  box-shadow:
-    0 4px 16px var(--prestige-card-shadow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, transparent, rgba(159, 122, 255, 0.03));
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  &:hover:not(&--maxed) {
-    transform: translateY(-4px);
-    box-shadow:
-      0 12px 32px var(--prestige-shadow),
-      0 4px 16px var(--prestige-card-shadow),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    border-color: var(--prestige-card-border-hover);
-
-    &::before {
-      opacity: 1;
-    }
-
-    .prestige-upgrade-card__icon {
-      transform: scale(1.1);
-      filter: drop-shadow(0 0 8px var(--prestige-primary));
-    }
-  }
-
-  &--maxed {
-    background: linear-gradient(145deg, #1b3d1f, #0d2818);
-    border: 2px solid var(--prestige-success);
-    box-shadow:
-      0 0 20px var(--prestige-shadow-success),
-      0 4px 16px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(76, 175, 80, 0.2);
-
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--prestige-success), var(--prestige-success-light));
-    }
-
-    .prestige-upgrade-card__title {
-      color: var(--prestige-success-light);
-    }
-
-    .prestige-upgrade-card__badge {
-      background: var(--prestige-success-dark);
-      color: #fff;
-      border-color: var(--prestige-success);
-    }
-
-    .prestige-upgrade-card__cost-value {
-      color: var(--prestige-success-light);
-    }
-
-    .prestige-upgrade-card__icon {
-      color: var(--prestige-success-light);
-    }
-
-    .prestige-upgrade-card__cost-icon {
-      color: var(--prestige-success-light);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-
-    &:hover {
-      transform: none;
-    }
-
-    .prestige-upgrade-card__icon {
-      transition: none;
-    }
-  }
-
-  &__header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
-    gap: 12px;
-  }
-
-  &__icon {
-    color: var(--prestige-primary);
-    flex-shrink: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    filter: drop-shadow(0 0 4px rgba(159, 122, 255, 0.3));
-  }
-
-  &__title-wrapper {
-    flex: 1;
-    min-width: 0;
-  }
-
-  &__title {
-    font-size: clamp(14px, 3vw, 18px);
-    font-weight: 700;
-    color: var(--prestige-text-primary);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: block;
-    letter-spacing: 0.3px;
-    line-height: 1.3;
-  }
-
-  &__badge {
-    background: rgba(159, 122, 255, 0.15);
-    color: var(--prestige-primary);
-    border: 1px solid rgba(159, 122, 255, 0.3);
-    border-radius: 12px;
-    padding: 4px 12px;
-    font-size: clamp(10px, 2vw, 12px);
-    font-weight: 700;
-    flex-shrink: 0;
-    letter-spacing: 0.5px;
-  }
-
-  &__description {
-    font-size: clamp(12px, 2.5vw, 14px);
-    color: var(--prestige-text-secondary);
-    margin-bottom: 16px;
-    flex: 1;
-    min-height: 50px;
-    line-height: 1.5;
-  }
-
-  &__cost {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
-    padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    backdrop-filter: blur(4px);
-
-    &-icon {
-      color: var(--prestige-warning);
-      flex-shrink: 0;
-    }
-
-    &-value {
-      font-weight: 700;
-      color: var(--prestige-text-primary);
-      font-size: clamp(12px, 2.5vw, 14px);
-      letter-spacing: 0.3px;
-    }
-  }
-
-  &__button {
-    width: 100%;
-    background: linear-gradient(135deg, var(--prestige-dark), var(--prestige-primary));
-    color: white;
-    border: 1px solid var(--prestige-primary);
-    border-radius: 12px;
-    padding: clamp(10px, 2.5vw, 14px) clamp(16px, 4vw, 24px);
-    margin-top: auto;
-    font-weight: 700;
-    font-size: clamp(12px, 2.5vw, 14px);
-    letter-spacing: 0.5px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-
-    &::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-      transform: translateX(-100%);
-      transition: transform 0.6s ease;
-    }
-
-    &:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(159, 122, 255, 0.4);
-
-      &::before {
-        transform: translateX(100%);
-      }
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--prestige-primary);
-      outline-offset: 2px;
-    }
-
-    &:disabled {
-      background: linear-gradient(135deg, #4b5563, #6b7280);
-      color: #9ca3af;
-      border-color: #6b7280;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
-    &--maxed {
-      background: linear-gradient(
-        135deg,
-        var(--prestige-success-dark),
-        var(--prestige-success)
-      ) !important;
-      color: #fff !important;
-      border-color: var(--prestige-success) !important;
-      cursor: default;
-
-      &:hover,
-      &:focus {
-        background: linear-gradient(
-          135deg,
-          var(--prestige-success-dark),
-          var(--prestige-success)
-        ) !important;
-        transform: none;
-        box-shadow: 0 0 16px var(--prestige-shadow-success);
-      }
-    }
-  }
-
-  @media (max-width: $mobile-breakpoint) {
-    padding: 16px;
-
-    &__title {
-      font-size: 14px;
-    }
-
-    &__description {
-      font-size: 12px;
-      min-height: 40px;
-    }
-
-    &__badge {
-      padding: 3px 8px;
-      font-size: 10px;
-    }
-
-    &__button {
-      padding: 12px 16px;
-      font-size: 12px;
-    }
-  }
-}
-
-.prestige-tooltip {
-  background: rgba(42, 45, 63, 0.95);
-  backdrop-filter: blur(12px);
-  color: var(--prestige-text-primary);
-  border: 1px solid rgba(159, 122, 255, 0.3);
-  border-radius: 12px;
-  padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 20px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  font-size: clamp(12px, 3vw, 16px);
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  max-width: 280px;
-
-  @media (max-width: $mobile-breakpoint) {
-    max-width: 200px;
-    font-size: 12px;
-    padding: 8px 12px;
-  }
-}
+.q-card .text-grey-8
+  color: #b0b0b0 !important
 </style>

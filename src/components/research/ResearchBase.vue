@@ -1,72 +1,75 @@
 <template>
-  <div class="research-container">
+  <div class="q-gutter-md row wrap items-stretch q-pa-md" style="overflow-y: auto">
     <q-card
       v-for="meta in researchMeta"
       :key="meta.key"
       flat
       bordered
-      class="research-card"
+      class="q-pa-md column flex justify-between research-card bg-grey-10 text-white"
       :class="{
-        'research-card--inactive': isMaxLevel(meta.key).value,
-        'research-card--active': getResearch(meta.key).currentTime.gt(0),
+        'research-inactive': isMaxLevel(meta.key).value,
       }"
     >
-      <div v-if="isMaxLevel(meta.key).value" class="research-card__banner">
-        <span class="research-card__banner-text">Завершено</span>
+      <div
+        v-if="isMaxLevel(meta.key).value"
+        class="q-pa-md flex flex-center text-white text-bold research-completed-banner"
+      >
+        <span class="research-completed-text">Завершено</span>
       </div>
       <q-tooltip
         anchor="top middle"
         self="bottom middle"
         :offset="[0, 10]"
-        class="research-tooltip"
+        class="bg-grey-9 text-white research-tooltip"
       >
-        <div class="research-tooltip__title">{{ meta.title }}</div>
-        <div class="research-tooltip__description">{{ meta.description }}</div>
+        <div class="text-bold research-tooltip-title">
+          {{ meta.title }}
+        </div>
+        <div class="research-tooltip-desc">{{ meta.description }}</div>
       </q-tooltip>
-      <q-card-section class="research-card__header">
-        <div class="research-card__title">
-          <q-icon :name="meta.icon" size="18px" class="research-card__icon" />
-          <span class="research-card__title-text">{{ meta.title }}</span>
+      <q-card-section class="q-pa-sm">
+        <div class="text-subtitle2 row items-center no-wrap ellipsis research-title-row q-mb-md">
+          <q-icon :name="meta.icon" size="18px" class="text-primary q-mr-xs" />
+          <span class="ellipsis research-title-text">{{ meta.title }}</span>
         </div>
       </q-card-section>
-      <div class="research-card__content">
-        <div class="research-card__level">
-          <q-icon name="fa-duotone fa-signal-bars" class="research-card__level-icon" />
+      <div class="column q-px-sm q-pt-xs q-pb-none flex-1">
+        <div class="row items-center text-grey-7 q-mb-md" style="font-size: 13px; font-weight: 600">
+          <q-icon name="fa-duotone fa-signal-bars" class="q-mr-xs" />
           Уровень: {{ getResearch(meta.key).level }} / {{ getResearch(meta.key).maxLevel }}
         </div>
-        <div class="research-card__stats">
-          <div class="research-card__stat">
-            <q-icon name="fa-duotone fa-coins" size="15px" class="research-card__stat-icon" />
-            <q-badge class="research-card__stat-badge">{{
+        <div class="row justify-between items-center q-mb-md">
+          <div class="row items-center">
+            <q-icon name="fa-duotone fa-coins" size="15px" class="q-mr-xs text-grey-7" />
+            <q-badge class="q-pa-xs text-bold bg-grey-3 text-primary" style="font-size: 11px">{{
               formatNumber(getResearchCost(meta.key).value)
             }}</q-badge>
           </div>
-          <div class="research-card__stat">
-            <q-icon name="fa-duotone fa-clock" size="15px" class="research-card__stat-icon" />
-            <q-badge class="research-card__stat-badge"
+          <div class="row items-center">
+            <q-icon name="fa-duotone fa-clock" size="15px" class="q-mr-xs text-grey-7" />
+            <q-badge class="q-pa-xs text-bold bg-grey-3 text-primary" style="font-size: 11px"
               >{{ formatNumber(getResearchTime(meta.key).value) }} сек</q-badge
             >
           </div>
         </div>
-        <div class="research-card__progress">
+        <div v-if="getResearch(meta.key).maxLevel.gt(1)">
           <q-linear-progress
-            v-if="getResearch(meta.key).maxLevel.gt(1)"
             :value="getResearch(meta.key).level.div(getResearch(meta.key).maxLevel).toNumber()"
-            color="primary"
-            size="8px"
+            color="green"
+            size="6px"
             rounded
-            class="research-card__progress-bar"
           />
+        </div>
+        <div v-else>
           <q-badge
-            v-else
-            :color="getResearch(meta.key).level ? 'primary' : 'grey'"
-            class="research-card__status-badge"
+            :color="getResearch(meta.key).level ? 'green' : 'grey'"
+            style="font-size: 11px"
             >{{ getResearch(meta.key).level ? 'Изучено' : 'Не изучено' }}</q-badge
           >
         </div>
       </div>
-      <q-separator spaced class="research-card__separator" />
-      <q-card-actions align="right" class="research-card__actions">
+      <q-separator spaced class="q-my-xs" />
+      <q-card-actions align="right" class="q-pa-none q-mt-auto">
         <q-btn
           :disable="
             isMaxLevel(meta.key).value ||
@@ -82,7 +85,7 @@
               : 'Улучшить'
           "
           @click="startResearch(meta.key, false)"
-          class="research-card__button"
+          class="q-mx-xs"
           :color="
             isMaxLevel(meta.key).value
               ? 'grey-8'
@@ -195,332 +198,87 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang="scss">
-$mobile-breakpoint: 700px;
-$tablet-breakpoint: 1024px;
+<style lang="sass">
+.research-card
+  background: var(--color-card-bg)
+  border-color: var(--color-card-border)
+  min-width: 240px
+  max-width: 240px
+  min-height: 14vh
+  max-height: 30vh
+  position: relative
+  box-sizing: border-box
+  flex: 0 0 260px
+  background-color: #181a1b !important
 
-:root {
-  --research-card-bg: #181a1b;
-  --research-card-border: #444;
-  --research-text-primary: #fff;
-  --research-text-secondary: #b0bec5;
-  --research-accent: #2196f3;
-  --research-success: #4caf50;
-  --research-shadow: rgba(33, 150, 243, 0.15);
-  --research-button-bg: #2a2d3a;
-  --research-button-bg-hover: #363b4a;
-  --research-button-text: #b0bec5;
-  --research-button-primary: #1565c0;
-  --research-button-negative: #d32f2f;
-}
+.research-inactive
+  opacity: 0.55
+  filter: grayscale(0.5)
+  pointer-events: none
 
-.research-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: clamp(8px, 2vw, 16px);
-  padding: clamp(8px, 2vw, 16px);
-  align-items: stretch;
+.research-completed-banner
+  background: var(--color-banner-completed-bg)
+  color: var(--color-banner-completed-text)
+  font-size: 22px
+  letter-spacing: 2px
+  z-index: 2
+  pointer-events: none
+  border-radius: 8px
+  text-shadow: 0 1px 2px #fff, 0 0 1px #fff, 0 0 2px #fff
+  position: absolute
+  top: 50%
+  left: 50%
+  width: 100%
+  max-width: 240px
+  transform: translate(-50%, -50%)
+  text-align: center
+  font-weight: 900
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25)
+  user-select: none
+  padding: 12px 0
+  display: flex
+  align-items: center
+  justify-content: center
 
-  @media (max-width: $tablet-breakpoint) {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
+.research-completed-text
+  width: 100%
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+  display: block
+  text-align: center
 
-  @media (max-width: $mobile-breakpoint) {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-}
+.research-tooltip
+  max-width: 240px
+  font-size: 13px
+  line-height: 1.4
+  border-radius: 10px
+  box-shadow: 0 2px 12px 0 rgba(80, 100, 200, 0.1)
 
-.research-card {
-  background: var(--research-card-bg);
-  border-color: var(--research-card-border);
-  padding: 16px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  color: var(--research-text-primary);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 12px;
-  overflow: hidden;
+.research-tooltip-title
+  font-size: 15px
+  margin-bottom: 6px
+  color: #fff
 
-  &:hover:not(&--inactive) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px var(--research-shadow);
-    border-color: var(--research-accent);
-  }
+.research-tooltip-desc
+  font-size: 13px
+  color: #fff
 
-  &--active {
-    border-color: var(--research-accent);
-    box-shadow: 0 0 16px var(--research-shadow);
+.research-title-row
+  max-width: 100%
+  overflow: hidden
 
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--research-accent), var(--research-success));
-      animation: pulse 2s ease-in-out infinite;
-    }
-  }
+.research-title-text
+  max-width: 180px
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
 
-  &--inactive {
-    opacity: 0.6;
-    filter: grayscale(0.7);
-    pointer-events: none;
-  }
+.research-card .column
+  max-width: 100%
+  word-break: break-word
 
-  &__banner {
-    background: linear-gradient(135deg, var(--research-success), #66bb6a);
-    color: white;
-    font-size: clamp(16px, 4vw, 20px);
-    font-weight: 900;
-    letter-spacing: 1px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 90%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    border-radius: 8px;
-    padding: 12px;
-    z-index: 2;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(4px);
-
-    &-text {
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-    }
-  }
-
-  &__header {
-    padding: 0 0 12px;
-  }
-
-  &__title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
-
-    &-text {
-      font-size: clamp(14px, 2.5vw, 16px);
-      font-weight: 600;
-      line-height: 1.3;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      flex: 1;
-    }
-  }
-
-  &__icon {
-    color: var(--research-accent);
-    flex-shrink: 0;
-  }
-
-  &__content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  &__level {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--research-text-secondary);
-    font-size: clamp(11px, 2vw, 13px);
-    font-weight: 600;
-
-    &-icon {
-      color: var(--research-accent);
-    }
-  }
-
-  &__stats {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-  }
-
-  &__stat {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex: 1;
-
-    &-icon {
-      color: var(--research-text-secondary);
-      transition: color 0.2s ease;
-    }
-
-    &-badge {
-      padding: 4px 8px;
-      font-weight: 600;
-      background: rgba(33, 150, 243, 0.1);
-      color: var(--research-accent);
-      border: 1px solid rgba(33, 150, 243, 0.3);
-      font-size: clamp(9px, 1.5vw, 11px);
-      border-radius: 6px;
-      flex: 1;
-      text-align: center;
-    }
-  }
-
-  &__progress {
-    &-bar {
-      background: rgba(33, 150, 243, 0.1);
-
-      .q-linear-progress__track {
-        background: linear-gradient(90deg, var(--research-accent), var(--research-success));
-      }
-    }
-  }
-
-  &__status-badge {
-    font-size: clamp(9px, 1.5vw, 11px);
-    padding: 6px 12px;
-    border-radius: 6px;
-  }
-
-  &__separator {
-    margin: 8px 0;
-    opacity: 0.3;
-  }
-
-  &__actions {
-    padding: 0;
-    margin-top: auto;
-  }
-
-  &__button {
-    width: 100%;
-    font-size: clamp(11px, 2vw, 13px);
-    font-weight: 600;
-    border-radius: 8px;
-    padding: 8px 16px;
-    transition: all 0.2s ease;
-    background: var(--research-button-bg);
-    color: var(--research-button-text);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-
-    &.q-btn--standard {
-      background: var(--research-button-bg);
-      color: var(--research-button-text);
-
-      &:hover:not(:disabled) {
-        background: var(--research-button-bg-hover);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        border-color: rgba(255, 255, 255, 0.2);
-      }
-    }
-
-    &.q-btn--flat,
-    &.q-btn--outline,
-    &.q-btn--unelevated {
-      background: var(--research-button-bg) !important;
-      color: var(--research-button-text) !important;
-      border: 1px solid rgba(255, 255, 255, 0.1) !important;
-
-      &:hover:not(:disabled) {
-        background: var(--research-button-bg-hover) !important;
-        color: #fff !important;
-        border-color: rgba(255, 255, 255, 0.2) !important;
-      }
-    }
-
-    &[class*='bg-primary'],
-    &.text-primary {
-      background: linear-gradient(135deg, #263238, #37474f) !important;
-      color: #b0bec5 !important;
-      border-color: #455a64 !important;
-
-      &:hover:not(:disabled) {
-        background: linear-gradient(135deg, #37474f, #455a64) !important;
-        color: #cfd8dc !important;
-        box-shadow: 0 4px 12px rgba(69, 90, 100, 0.2) !important;
-      }
-    }
-
-    &[class*='bg-negative'],
-    &.text-negative {
-      background: linear-gradient(135deg, #3e2723, #5d4037) !important;
-      color: #bcaaa4 !important;
-      border-color: #6d4c41 !important;
-
-      &:hover:not(:disabled) {
-        background: linear-gradient(135deg, #5d4037, #6d4c41) !important;
-        color: #d7ccc8 !important;
-        box-shadow: 0 4px 12px rgba(109, 76, 65, 0.2) !important;
-      }
-    }
-
-    &[class*='bg-grey'],
-    &.text-grey {
-      background: #2e2e2e !important;
-      color: #757575 !important;
-      border-color: #424242 !important;
-    }
-
-    &:disabled {
-      background: #2e2e2e !important;
-      color: #616161 !important;
-      border-color: #424242 !important;
-      opacity: 0.7 !important;
-    }
-
-    &:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
-  }
-
-  @media (max-width: $mobile-breakpoint) {
-    padding: 12px;
-
-    &__banner {
-      font-size: 14px;
-      padding: 8px;
-    }
-  }
-}
-
-.research-tooltip {
-  background: rgba(66, 66, 66, 0.95);
-  backdrop-filter: blur(8px);
-  color: white;
-  max-width: 280px;
-  font-size: clamp(11px, 2vw, 13px);
-  line-height: 1.5;
-  border-radius: 12px;
-  padding: 12px 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-
-  &__title {
-    font-size: clamp(13px, 2.5vw, 15px);
-    margin-bottom: 8px;
-    font-weight: 700;
-    color: var(--research-accent);
-  }
-
-  &__description {
-    color: #e0e0e0;
-    line-height: 1.4;
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.6;
-  }
-}
+.research-card .q-btn
+  max-width: 100%
+  word-break: break-word
 </style>

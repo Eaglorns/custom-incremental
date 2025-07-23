@@ -9,7 +9,7 @@ import { useStoreStats } from 'stores/stats';
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     name: 'cIncremental',
-    version: '0.0.8',
+    version: '0.0.7',
     timerTick: 1000,
     lastTick: Date.now(),
   }),

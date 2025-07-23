@@ -1,45 +1,45 @@
 <template>
-  <q-page class="stats-page">
-    <div class="stats-container">
-      <q-card flat bordered class="stats-card">
-        <q-card-section>
-          <q-separator class="stats-separator" />
-          <template v-for="stat in stats" :key="stat.label">
-            <div v-if="Array.isArray(stat.value)" class="stats-group">
-              <div class="stats-group__label">
-                {{ stat.label }}
-              </div>
-              <div class="stats-group__row">
-                <q-input
-                  v-for="(item, idx) in stat.value"
-                  :label="item.label"
-                  :key="stat.label + idx"
-                  :model-value="item.value"
-                  readonly
-                  dense
-                  filled
-                  color="primary"
-                  class="stats-input stats-input--group"
-                  :style="{ width: stat.widths ? stat.widths[idx] : stat.width }"
-                />
-              </div>
+  <q-page class="q-pa-lg bg-dark text-white">
+    <q-card flat bordered class="bg-grey-10 text-white">
+      <q-card-section>
+        <q-separator style="margin-top: 5px; margin-bottom: 5px" />
+        <template v-for="stat in stats" :key="stat.label">
+          <div v-if="Array.isArray(stat.value)">
+            <div class="q-mb-xs text-primary text-weight-bold" style="font-size: 1.08em">
+              {{ stat.label }}
             </div>
-            <q-input
-              v-else
-              :label="stat.label"
-              :model-value="stat.value"
-              readonly
-              dense
-              filled
-              color="primary"
-              class="stats-input"
-              :style="{ width: stat.width }"
-            />
-            <q-separator class="stats-separator" />
-          </template>
-        </q-card-section>
-      </q-card>
-    </div>
+            <div class="row items-center">
+              <q-input
+                v-for="(item, idx) in stat.value"
+                :label="item.label"
+                :key="stat.label + idx"
+                :model-value="item.value"
+                readonly
+                dense
+                filled
+                color="primary"
+                class="bg-grey-9 text-accent text-weight-bold"
+                :style="
+                  'width: ' + (stat.widths ? stat.widths[idx] : stat.width) + '; margin-right: 5px;'
+                "
+              />
+            </div>
+          </div>
+          <q-input
+            v-else
+            :label="stat.label"
+            :model-value="stat.value"
+            readonly
+            dense
+            filled
+            color="primary"
+            class="bg-grey-9 text-accent text-weight-bold"
+            :style="'width: ' + stat.width + ';'"
+          />
+          <q-separator style="margin-top: 5px; margin-bottom: 5px" />
+        </template>
+      </q-card-section>
+    </q-card>
   </q-page>
 </template>
 
@@ -61,7 +61,7 @@ const stats = computed(() => [
   {
     label: 'Максимально набранное число',
     value: formatNumber(storeStats.maxEpicNumber),
-    width: '220px',
+    width: '200px',
   },
   {
     label: 'Генерация числа тик',
@@ -79,7 +79,7 @@ const stats = computed(() => [
   {
     label: 'Максимально набранные очки исследований',
     value: formatNumber(storeStats.maxResearchPoints),
-    width: '310px',
+    width: '280px',
   },
   {
     label: 'Множитель ускорения исследований',
@@ -92,148 +92,15 @@ const stats = computed(() => [
   {
     label: 'Максимально набранные очки престижа',
     value: formatNumber(storeStats.maxPrestigePoints),
-    width: '280px',
+    width: '250px',
   },
 ]);
 </script>
 
-<style scoped lang="scss">
-$mobile-breakpoint: 700px;
-
-.stats-page {
-  padding: 24px;
-  color: #e8eaf0;
-  min-height: 100vh;
-
-  @media (max-width: $mobile-breakpoint) {
-    padding: 16px;
-  }
-}
-
-.stats-container {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.stats-card {
-  border: 2px solid #4a5568;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  color: #e8eaf0;
-}
-
-.stats-separator {
-  margin: 8px 0;
-  background: rgba(66, 165, 245, 0.2);
-  height: 1px;
-}
-
-.stats-group {
-  margin-bottom: 12px;
-
-  &__label {
-    color: #64b5f6;
-    font-weight: 700;
-    font-size: 1.12em;
-    margin-bottom: 8px;
-    letter-spacing: 0.3px;
-  }
-
-  &__row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-
-    @media (max-width: $mobile-breakpoint) {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 8px;
-    }
-  }
-}
-
-.stats-input {
-  background: #363b48;
-  color: #e8eaf0;
-  font-weight: 600;
-  border-radius: 8px;
-
-  &--group {
-    margin-right: 8px;
-
-    @media (max-width: $mobile-breakpoint) {
-      margin-right: 0;
-      width: 100% !important;
-    }
-  }
-
-  @media (max-width: $mobile-breakpoint) {
-    width: 100% !important;
-  }
-
-  :deep(.q-field__label) {
-    color: #90caf9 !important;
-    font-weight: 600 !important;
-    font-size: 1.05em !important;
-  }
-
-  :deep(.q-field__control) {
-    background: #363b48 !important;
-    border: 1px solid #4a5568 !important;
-    border-radius: 8px !important;
-  }
-
-  :deep(.q-field__native) {
-    color: #e8eaf0 !important;
-    font-weight: 700 !important;
-    font-size: 1.08em !important;
-    letter-spacing: 0.3px;
-  }
-
-  &:nth-child(1) {
-    :deep(.q-field__native) {
-      color: #81c784 !important;
-    }
-    :deep(.q-field__label) {
-      color: #a5d6a7 !important;
-    }
-  }
-
-  &:nth-child(2) {
-    :deep(.q-field__native) {
-      color: #64b5f6 !important;
-    }
-    :deep(.q-field__label) {
-      color: #90caf9 !important;
-    }
-  }
-
-  &:nth-child(4) {
-    :deep(.q-field__native) {
-      color: #81c784 !important;
-    }
-    :deep(.q-field__label) {
-      color: #a5d6a7 !important;
-    }
-  }
-
-  &:nth-child(6) {
-    :deep(.q-field__native) {
-      color: #81c784 !important;
-    }
-    :deep(.q-field__label) {
-      color: #a5d6a7 !important;
-    }
-  }
-}
-
-.stats-group .stats-input {
-  :deep(.q-field__native) {
-    color: #ffb74d !important;
-  }
-  :deep(.q-field__label) {
-    color: #ffcc80 !important;
-  }
+<style scoped>
+.bg-grey-9 :deep(.q-field__label) {
+  color: #92e6b5 !important;
+  font-weight: bold !important;
+  font-size: 1.01em;
 }
 </style>
