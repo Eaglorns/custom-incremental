@@ -2,6 +2,7 @@ import Decimal from 'break_eternity.js';
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { useStoreData } from 'stores/data';
 import { useStoreShop } from 'stores/shop';
+import { useStoreStats } from 'stores/stats';
 
 export const useStorePrestige = defineStore('storePrestige', {
   state: () => ({
@@ -24,6 +25,7 @@ export const useStorePrestige = defineStore('storePrestige', {
       const storeData = useStoreData();
       const storePrestige = useStorePrestige();
       const storeShop = useStoreShop();
+      const storeStats = useStoreStats();
       storePrestige.points = storePrestige.points.add(storePrestige.prestigeGain);
       storeData.epicNumber = new Decimal(1);
       storeShop.list.cpu.value = new Decimal(1);
@@ -32,6 +34,8 @@ export const useStorePrestige = defineStore('storePrestige', {
       storeShop.list.hdd.multiply = new Decimal(1);
       storeShop.list.ram.value = new Decimal(1);
       storeShop.list.ram.multiply = new Decimal(1);
+      if (storePrestige.points.gte(storeStats.maxPrestigePoints))
+        storeStats.maxPrestigePoints = storePrestige.points;
     },
 
     load(loaded: { points: string }) {

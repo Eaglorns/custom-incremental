@@ -8,6 +8,7 @@ import { useStorePrestige } from 'stores/prestige';
 import { useStoreShop } from 'stores/shop';
 import { useStoreAutomatic } from 'stores/automatic';
 import { useStoreAchievement } from 'stores/achievement';
+import { useStoreStats } from 'stores/stats';
 import Decimal from 'break_eternity.js';
 
 const STORAGE_KEY = 'save';
@@ -15,7 +16,7 @@ const SECRET = 'incremental';
 
 export const useStoreSaveLoad = defineStore('storeSaveLoad', {
   state: () => ({
-    timerSave: 5000,
+    timerSave: 30000,
   }),
   getters: {},
   actions: {
@@ -27,6 +28,7 @@ export const useStoreSaveLoad = defineStore('storeSaveLoad', {
       const storeShop = useStoreShop();
       const storeAutomatic = useStoreAutomatic();
       const storeAchievement = useStoreAchievement();
+      const storeStats = useStoreStats();
       const saveData = {
         data: storeData.save,
         research: storeResearch.save,
@@ -34,6 +36,7 @@ export const useStoreSaveLoad = defineStore('storeSaveLoad', {
         shop: storeShop.save,
         automatic: storeAutomatic.save,
         achievement: storeAchievement.save,
+        stats: storeStats.save,
       };
 
       const replacer = (key: string, value: unknown) => {
@@ -52,6 +55,7 @@ export const useStoreSaveLoad = defineStore('storeSaveLoad', {
       const storeShop = useStoreShop();
       const storeAutomatic = useStoreAutomatic();
       const storeAchievement = useStoreAchievement();
+      const storeStats = useStoreStats();
       const encrypted = LocalStorage.getItem(STORAGE_KEY);
       if (typeof encrypted !== 'string') {
         storeData.version = storeGame.version;
@@ -68,6 +72,7 @@ export const useStoreSaveLoad = defineStore('storeSaveLoad', {
           storeShop.load(loaded.shop);
           storeAutomatic.load(loaded.automatic);
           storeAchievement.load(loaded.achievement);
+          storeStats.load(loaded.stats);
           console.log('load game');
         } else {
           storeData.version = storeGame.version;

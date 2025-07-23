@@ -4,15 +4,28 @@ import { useStoreResearch } from 'stores/research';
 import { useStoreAutomatic } from 'stores/automatic';
 import { useStoreShop } from 'stores/shop';
 import { useStoreAchievement } from 'stores/achievement';
+import { useStoreStats } from 'stores/stats';
 
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     name: 'cIncremental',
-    version: '0.0.6',
+    version: '0.0.7',
     timerTick: 1000,
     lastTick: Date.now(),
   }),
-  getters: {},
+  getters: {
+    generateEpicNumber() {
+      const storeShop = useStoreShop();
+      const storeResearch = useStoreResearch();
+      const storeAchievement = useStoreAchievement();
+      const parShopCPU = storeShop.list.cpu.value;
+      const parResearchCPU = storeResearch.list.cpuPow;
+      const result = parShopCPU
+        .pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1))
+        .mul(storeAchievement.achievementBonus);
+      return result;
+    },
+  },
   actions: {
     gameTick() {
       console.time('gameTick');
@@ -41,22 +54,20 @@ export const useStoreGame = defineStore('storeGame', {
       const storeShop = useStoreShop();
       const storeResearch = useStoreResearch();
       const storeAchievement = useStoreAchievement();
+      const storeStats = useStoreStats();
       const parShopCPU = storeShop.list.cpu.value;
       const parResearchCPU = storeResearch.list.cpuPow;
       const result = parShopCPU
         .pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1))
         .mul(storeAchievement.achievementBonus);
       storeData.epicNumber = storeData.epicNumber.plus(result);
+      if (storeData.epicNumber.gte(storeStats.maxEpicNumber))
+        storeStats.maxEpicNumber = storeData.epicNumber;
     },
 
     processGiveMultiplierEpicNumber() {
       const storeData = useStoreData();
-      const storeShop = useStoreShop();
-      const storeResearch = useStoreResearch();
-      const parHDD = storeShop.list.hdd.value;
-      const parResearchHDD = storeResearch.list.hddPow;
-      const result = parHDD.pow(parResearchHDD.bonus.mul(parResearchHDD.level).plus(1));
-      storeData.multiplierEpicNumber = storeData.multiplierEpicNumber.plus(result);
+      storeData.multiplierEpicNumber = storeData.multiplierEpicNumber.plus(this.generateEpicNumber);
     },
   },
 });

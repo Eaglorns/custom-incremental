@@ -45,6 +45,7 @@
         <q-tab name="eternity" icon="fa-duotone fa-hourglass-end" label="Вечность" />
         <q-tab name="infinity" icon="fa-duotone fa-infinity" label="Бесконечность" />
         <q-tab name="achievement" icon="fa-duotone fa-trophy-star" label="Достижения" />
+        <q-tab name="stats" icon="fa-duotone fa-chart-line" label="Статистика" />
         <q-tab name="help" icon="fa-duotone fa-circle-question" label="Помощь" />
         <q-tab name="setting" icon="fa-duotone fa-gear-complex" label="Настройки" />
       </q-tabs>
@@ -153,6 +154,9 @@
         <q-tab-panel name="achievement" class="panel-flex">
           <Achievement />
         </q-tab-panel>
+        <q-tab-panel name="stats" class="panel-flex">
+          <StatsPage />
+        </q-tab-panel>
         <q-tab-panel name="help" class="panel-flex">
           <Help />
         </q-tab-panel>
@@ -188,6 +192,7 @@ import PrestigeBase from 'src/components/prestige/PrestigeBase.vue';
 import PrestigeUpgrade from 'src/components/prestige/PrestigeUpgrade.vue';
 import Help from 'src/pages/HelpPage.vue';
 import Achievement from 'src/pages/AchievementPage.vue';
+import StatsPage from 'src/pages/StatsPage.vue';
 import Decimal from 'break_eternity.js';
 import { animate } from 'animejs';
 import { useStoreResearch } from 'stores/research';

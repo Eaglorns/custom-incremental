@@ -1,9 +1,7 @@
 <template>
   <q-page class="q-pa-lg">
-    <q-card class="q-pa-xl q-mx-auto" style="max-width: 900px">
+    <q-card class="q-pa-xl q-mx-auto" style="min-width: 100%">
       <div class="text-h4 text-primary q-mb-md">Справка по игре</div>
-
-      <!-- Основная цель -->
       <div
         class="q-mb-lg q-pa-md"
         style="
@@ -36,8 +34,6 @@
           >
         </div>
       </div>
-
-      <!-- Магазин -->
       <div
         class="q-mb-lg q-pa-md"
         style="
@@ -62,11 +58,9 @@
           <li><span class="text-bold">Оперативная память</span> — ускоряет исследования</li>
         </ul>
         <div class="q-mt-sm">
-          Покупка множителей уменьшает значение ресурса, но увеличивает прирост при покупке.
+          Покупка множителей увеличивает прирост значения при нажатии "Купить".
         </div>
       </div>
-
-      <!-- Исследования -->
       <div
         class="q-mb-lg q-pa-md"
         style="
@@ -100,8 +94,6 @@
           </li>
         </ul>
       </div>
-
-      <!-- Автоматизация -->
       <div
         class="q-mb-lg q-pa-md"
         style="
@@ -127,8 +119,6 @@
           </li>
         </ul>
       </div>
-
-      <!-- Достижения -->
       <div
         class="q-mb-lg q-pa-md"
         style="
