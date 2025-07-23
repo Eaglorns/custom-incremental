@@ -6,14 +6,14 @@
     :style="{ background: 'var(--color-card-bg)', borderColor: 'var(--color-card-border)' }"
   >
     <div class="row items-center q-mb-lg">
-      <q-icon name="fa-duotone fa-memory" class="text-primary q-mr-md" size="32px" />
-      <span class="text-h5 text-weight-bold text-primary">Оперативная память</span>
+      <q-icon :name="props.icon" class="text-primary q-mr-md" size="32px" />
+      <span class="text-h5 text-weight-bold text-primary">{{ props.label }}</span>
     </div>
     <q-form>
       <div class="row q-col-gutter-lg">
         <div class="col-12 col-md-6">
           <q-input
-            :model-value="formatNumber(storeShop.list.ram.value)"
+            :model-value="formatNumber(storeShop.list[props.name].value)"
             label="Значение"
             class="q-mb-md"
             :disable="true"
@@ -30,7 +30,7 @@
         </div>
         <div class="col-12 col-md-6">
           <q-input
-            :model-value="formatNumber(storeShop.list.ram.multiply)"
+            :model-value="formatNumber(storeShop.list[props.name].multiply)"
             label="Множитель"
             class="q-mb-md"
             :disable="true"
@@ -47,7 +47,7 @@
         </div>
         <div class="col-12 col-md-6">
           <q-input
-            :model-value="formatNumber(storeShop.list.ram.cost.value)"
+            :model-value="formatNumber(storeShop.list[props.name].cost.value)"
             label="Основная стоимость"
             class="q-mb-md"
             :disable="true"
@@ -64,7 +64,7 @@
         </div>
         <div class="col-12 col-md-6">
           <q-input
-            :model-value="formatNumber(storeShop.costMultiply('ram'))"
+            :model-value="formatNumber(storeShop.costMultiply(props.name))"
             label="Стоимость множителя"
             class="q-mb-md"
             :disable="true"
@@ -75,7 +75,7 @@
             outlined
           >
             <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-arrow-up-right-dots" class="text-primary" />
+              <q-icon name="fa-duotone fa-gauge-high" class="text-primary" />
             </template>
           </q-input>
         </div>
@@ -87,9 +87,9 @@
             outline
             label="Купить"
             class="full-width"
-            @click="storeShop.onBuyValue('ram')"
+            @click="storeShop.onBuyValue(props.name)"
             size="lg"
-            :disable="!storeShop.canBuyValue('ram')"
+            :disable="!storeShop.canBuyValue(props.name)"
           />
         </div>
         <div class="col-6">
@@ -98,9 +98,9 @@
             outline
             label="Умножить"
             class="full-width"
-            @click="storeShop.onBuyMultiply('ram')"
+            @click="storeShop.onBuyMultiply(props.name)"
             size="lg"
-            :disable="!storeShop.canBuyMultiply('ram')"
+            :disable="!storeShop.canBuyMultiply(props.name)"
           />
         </div>
       </div>
@@ -111,6 +111,10 @@
 <script setup lang="ts">
 import { useStoreData } from 'stores/data';
 import { useStoreShop } from 'stores/shop';
+
+type ShopItemName = keyof typeof storeShop.list;
+
+const props = defineProps<{ name: ShopItemName; label: string; icon: string }>();
 
 const storeData = useStoreData();
 const storeShop = useStoreShop();

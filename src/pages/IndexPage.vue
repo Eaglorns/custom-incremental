@@ -59,7 +59,7 @@
             <template v-slot:before>
               <q-tabs v-model="innerShop" vertical class="text-teal" align="left">
                 <q-tab name="innerShopCPU" icon="fa-duotone fa-microchip" label="CPU" />
-                <q-tab name="innerShopHard" icon="fa-duotone fa-hard-drive" label="RAM" />
+                <q-tab name="innerShopHdd" icon="fa-duotone fa-hard-drive" label="RAM" />
                 <q-tab name="innerShopRAM" icon="fa-duotone fa-memory" label="HDD" />
               </q-tabs>
             </template>
@@ -69,9 +69,15 @@
                 transition-prev="slide-down"
                 transition-next="slide-up"
               >
-                <q-tab-panel name="innerShopCPU"><ShopCPU /></q-tab-panel>
-                <q-tab-panel name="innerShopHard"><ShopHdd /></q-tab-panel>
-                <q-tab-panel name="innerShopRAM"><ShopRAM /></q-tab-panel>
+                <q-tab-panel name="innerShopCPU"
+                  ><ShopTemplate name="cpu" label="Процессор" icon="fa-duotone fa-microchip"
+                /></q-tab-panel>
+                <q-tab-panel name="innerShopHdd"
+                  ><ShopTemplate name="hdd" label="Жёсткий диск" icon="fa-duotone fa-hard-drive"
+                /></q-tab-panel>
+                <q-tab-panel name="innerShopRAM"
+                  ><ShopTemplate name="ram" label="Оперативная память" icon="fa-duotone fa-memory"
+                /></q-tab-panel>
               </q-tab-panels>
             </template>
           </q-splitter>
@@ -186,9 +192,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
 import { useStoreData } from 'stores/data';
-import ShopCPU from 'src/components/shop/ShopCPU.vue';
-import ShopHdd from 'src/components/shop/ShopHdd.vue';
-import ShopRAM from 'src/components/shop/ShopRAM.vue';
+import ShopTemplate from 'src/components/shop/ShopTemplate.vue';
 import ResearchBase from 'src/components/research/ResearchBase.vue';
 import ResearchScientist from 'src/components/research/ResearchScientist.vue';
 import AutomaticBuyer from 'src/components/automatic/AutomaticBuyer.vue';
