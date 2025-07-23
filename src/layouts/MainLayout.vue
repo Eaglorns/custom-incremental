@@ -40,43 +40,68 @@ const localeOptions = [
   { value: 'en', label: 'English' },
 ];
 </script>
-<style lang="sass">
-.q-bar.q-electron-drag
-  display: flex
-  flex-direction: row
-  flex-wrap: nowrap
-  align-items: center
-  overflow: hidden
-  min-width: 0
-  .q-icon, .text-h6, .text-caption, .q-select
-    min-width: 0
-    max-width: 100%
-    overflow: hidden
-    text-overflow: ellipsis
-  .q-space
-    flex: 1 1 auto
-  .q-select
-    max-width: 150px
-    min-width: 60px
-    font-size: 14px
-    margin-left: 8px
-  .text-h6
-    margin-left: 8px
-  .text-caption
-    margin-left: 4px
-  .q-icon
-    margin-right: 4px
-@media (max-width: 700px)
-  .text-h6
-    font-size: 15px
-    text-align: left
-  .q-icon
-    margin-right: 8px
-    margin-bottom: 0
-  .q-select
-    right: 0
-    font-size: 14px
-  .text-caption
-    margin: 0 0 4px 0
-    font-size: 13px
+<style scoped lang="scss">
+$mobile-breakpoint: 700px;
+
+.q-bar.q-electron-drag {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow: hidden;
+  min-width: 0;
+
+  .q-icon,
+  .text-h6,
+  .text-caption,
+  .q-select {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .q-space {
+    flex: 1 1 auto;
+  }
+
+  .q-select {
+    max-width: 150px;
+    min-width: 60px;
+    font-size: 14px;
+    margin-left: 8px;
+
+    @media (max-width: $mobile-breakpoint) {
+      right: 0;
+      font-size: 14px;
+    }
+  }
+
+  .text-h6 {
+    margin-left: 8px;
+
+    @media (max-width: $mobile-breakpoint) {
+      font-size: 15px;
+      text-align: left;
+    }
+  }
+
+  .text-caption {
+    margin-left: 4px;
+
+    @media (max-width: $mobile-breakpoint) {
+      margin: 0 0 4px 0;
+      font-size: 13px;
+    }
+  }
+
+  .q-icon {
+    margin-right: 4px;
+
+    @media (max-width: $mobile-breakpoint) {
+      margin-right: 8px;
+      margin-bottom: 0;
+    }
+  }
+}
 </style>

@@ -1,53 +1,50 @@
 <template>
-  <q-page class="q-pa-lg">
-    <div class="q-mb-md text-h6 text-bold row items-center">
-      <q-icon name="fa-duotone fa-sparkles" color="amber" size="28px" class="q-mr-sm" />
-      Выполнено: {{ formatNumber(totalAchievements) }}
-      <q-chip color="primary" text-color="white" class="q-ml-md">
-        <q-icon name="fa-duotone fa-arrow-trend-up" left size="18px" />
-        Бонус: x{{ achievementBonus.toFixed(2) }}
-      </q-chip>
-    </div>
-    <div
-      class="q-gutter-md"
-      style="min-width: 100%; display: flex; flex-wrap: wrap; align-items: center"
-    >
-      <q-card
-        v-for="ach in achievements"
-        :key="ach.id"
-        class="q-pa-sm q-mb-xs"
-        :class="achievementCardClass(ach)"
-        style="width: 140px; margin: 5px; display: inline-block; vertical-align: top"
-        flat
-        bordered
-        v-ripple
-      >
-        <q-tooltip
-          v-if="ach.level !== undefined && ach.hint"
-          class="bg-dark text-white tooltip-bordered"
-          anchor="center middle"
-          self="center middle"
-          :offset="[0, 12]"
-          style="max-width: 220px; min-width: 160px; padding: 10px; text-align: left"
+  <q-page class="achievement-page">
+    <div class="achievement-container">
+      <div class="achievement-header">
+        <q-icon name="fa-duotone fa-sparkles" color="amber" size="28px" class="q-mr-sm" />
+        Выполнено: {{ formatNumber(totalAchievements) }}
+        <q-chip color="primary" text-color="white" class="achievement-header__chip">
+          <q-icon name="fa-duotone fa-arrow-trend-up" left size="18px" />
+          Бонус: x{{ achievementBonus.toFixed(2) }}
+        </q-chip>
+      </div>
+      <div class="achievement-grid">
+        <q-card
+          v-for="ach in achievements"
+          :key="ach.id"
+          class="achievement-card"
+          :class="achievementCardClass(ach)"
+          flat
+          bordered
+          v-ripple
         >
-          <div class="text-subtitle2 text-bold q-mb-xs">{{ ach.title }}</div>
-          <div class="text-caption q-mb-xs">{{ ach.hint }}</div>
-        </q-tooltip>
-        <div class="flex flex-center q-mb-xs">
-          <q-icon :name="ach.icon" :color="iconColor(ach)" size="32px" />
-        </div>
-        <div class="text-subtitle2 text-center text-bold" :class="textColor(ach)">
-          {{ ach.title }}
-        </div>
-        <div class="text-caption text-center" :class="textColor(ach, true)">
-          {{ ach.description }}
-        </div>
-        <div v-if="ach.level !== undefined" class="text-center q-mt-xs">
-          <q-badge :color="badgeColor(ach)" :text-color="badgeTextColor(ach)">
-            Уровень: {{ formatNumber(ach.level) }}
-          </q-badge>
-        </div>
-      </q-card>
+          <q-tooltip
+            v-if="ach.level !== undefined && ach.hint"
+            class="bg-dark text-white tooltip-bordered"
+            anchor="center middle"
+            self="center middle"
+            :offset="[0, 12]"
+          >
+            <div class="text-subtitle2 text-bold q-mb-xs">{{ ach.title }}</div>
+            <div class="text-caption q-mb-xs">{{ ach.hint }}</div>
+          </q-tooltip>
+          <div class="achievement-card__icon">
+            <q-icon :name="ach.icon" :color="iconColor(ach)" size="32px" />
+          </div>
+          <div class="achievement-card__title" :class="textColor(ach)">
+            {{ ach.title }}
+          </div>
+          <div class="achievement-card__description" :class="textColor(ach, true)">
+            {{ ach.description }}
+          </div>
+          <div v-if="ach.level !== undefined" class="achievement-card__badge">
+            <q-badge :color="badgeColor(ach)" :text-color="badgeTextColor(ach)">
+              Уровень: {{ formatNumber(ach.level) }}
+            </q-badge>
+          </div>
+        </q-card>
+      </div>
     </div>
   </q-page>
 </template>
@@ -158,40 +155,136 @@ const achievementBonus = computed(() => {
 });
 </script>
 
-<style lang="sass">
-.tooltip-bordered
-  border: 2px solid $primary
-  border-radius: 8px
-  box-shadow: 0 2px 12px rgba(0,0,0,0.18)
-  padding: 10px
-  max-width: 220px
-  min-width: 160px
-  text-align: left
+<style scoped lang="scss">
+$mobile-breakpoint: 700px;
 
-  @media (max-width: 700px)
-    .q-page.q-pa-lg
-      padding: 8px !important
-    .q-mb-md.text-h6.text-bold.row.items-center
-      flex-direction: column !important
-      align-items: flex-start !important
-      font-size: 16px !important
-      .q-chip
-        margin-left: 0 !important
-        margin-top: 8px !important
-    .q-gutter-md
-      flex-wrap: wrap
-      gap: 8px !important
-      margin-left: 0 !important
-      margin-right: 0 !important
-    .q-card
-      width: 110px !important
-      min-width: 90px !important
-      margin-right: 8px !important
-      margin-bottom: 8px !important
-      padding: 4px !important
-      font-size: 13px !important
-    .q-tooltip.tooltip-bordered
-      max-width: 180px !important
-      min-width: 100px !important
-      padding: 6px !important
+.achievement-page {
+  padding: 24px;
+
+  @media (max-width: $mobile-breakpoint) {
+    padding: 16px;
+  }
+}
+
+.achievement-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.achievement-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  font-size: 1.25rem;
+  font-weight: bold;
+
+  &__chip {
+    margin-left: 16px;
+
+    @media (max-width: $mobile-breakpoint) {
+      margin-left: 0;
+      margin-top: 12px;
+    }
+  }
+
+  @media (max-width: $mobile-breakpoint) {
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 1rem;
+    margin-bottom: 16px;
+  }
+}
+
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+
+  @media (max-width: $mobile-breakpoint) {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 12px;
+  }
+}
+
+.achievement-card {
+  padding: 12px;
+  text-align: center;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &__icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+
+  &__title {
+    font-size: 0.875rem;
+    font-weight: bold;
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+
+  &__description {
+    font-size: 0.75rem;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  &__badge {
+    margin-top: 8px;
+  }
+
+  @media (max-width: $mobile-breakpoint) {
+    padding: 8px;
+
+    &__icon {
+      margin-bottom: 6px;
+
+      .q-icon {
+        font-size: 24px !important;
+      }
+    }
+
+    &__title {
+      font-size: 0.75rem;
+      margin-bottom: 4px;
+    }
+
+    &__description {
+      font-size: 0.7rem;
+      margin-bottom: 6px;
+    }
+
+    &__badge {
+      margin-top: 6px;
+
+      .q-badge {
+        font-size: 0.65rem;
+      }
+    }
+  }
+}
+
+.tooltip-bordered {
+  border: 2px solid var(--q-primary);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  padding: 10px;
+  max-width: 220px;
+  min-width: 160px;
+  text-align: left;
+
+  @media (max-width: $mobile-breakpoint) {
+    max-width: 180px;
+    min-width: 100px;
+    padding: 6px;
+  }
+}
 </style>

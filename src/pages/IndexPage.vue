@@ -160,7 +160,7 @@
         <q-tab-panel name="help" class="panel-flex">
           <Help />
         </q-tab-panel>
-        <q-tab-panel name="setting" class="panel-flex"></q-tab-panel>
+        <q-tab-panel name="setting" class="panel-flex"><SettingPage /></q-tab-panel>
       </q-tab-panels>
     </q-card>
     <q-footer class="footer">
@@ -190,6 +190,7 @@ import ResearchScientist from 'src/components/research/ResearchScientist.vue';
 import AutomaticBuyer from 'src/components/automatic/AutomaticBuyer.vue';
 import PrestigeBase from 'src/components/prestige/PrestigeBase.vue';
 import PrestigeUpgrade from 'src/components/prestige/PrestigeUpgrade.vue';
+import SettingPage from 'src/pages/SettingPage.vue';
 import Help from 'src/pages/HelpPage.vue';
 import Achievement from 'src/pages/AchievementPage.vue';
 import StatsPage from 'src/pages/StatsPage.vue';
@@ -249,131 +250,171 @@ const infinityProgress = computed(() => {
 });
 </script>
 
-<style lang="sass">
-.main-layout
-  min-height: 100vh
-  min-width: 100vw
-  display: flex
-  flex-direction: column
+<style lang="scss">
+$mobile-breakpoint: 700px;
+$footer-bg: #23243a;
+$banner-bg: rgba(255, 255, 255, 0.04);
 
-.banner-row
-  display: flex
-  flex-direction: row
-  flex-wrap: nowrap
-  align-items: center
-  justify-content: center
-  margin-top: 15px
-  margin-bottom: 5px
+.main-layout {
+  min-height: 100vh;
+  min-width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
 
-.banner-row > div
-  margin: 3px
-  max-height: 30px
-  min-width: 100px
-  max-width: 130px
-  display: flex
-  align-items: center
-  justify-content: center
+.banner-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  margin: 15px 0 5px;
 
-.banner-row > div
-  margin-left: 7px !important
-  margin-right: 7px !important
+  > div {
+    margin: 3px 7px;
+    max-height: 30px;
+    min-width: 100px;
+    max-width: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $banner-bg;
+    border-radius: 10px;
 
-.banner-row > div > q-icon, span
-  margin-left: 4px !important
-  margin-right: 4px !important
+    > q-icon,
+    span {
+      margin: 0 4px;
+    }
+  }
+}
 
-.main-card
-  flex: 1 1 auto
-  min-height: 0
-  min-width: 0
-  width: 100vw
-  display: flex
-  flex-direction: column
-  background: transparent
-  box-shadow: none
-  padding: 0
+.main-card {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
 
-.panel-flex
-  flex: 1 1 auto
-  min-height: 0
-  min-width: 0
-  display: flex
-  flex-direction: column
+.panel-flex {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
 
-.footer
-  flex: 0 0 6vh
-  min-height: 6vh
-  max-height: 6vh
-  width: 100vw
-  padding: 0
-  background: #23243a
-  display: flex
-  align-items: center
-  justify-content: center
-  font-size: 16px
+.footer {
+  flex: 0 0 6vh;
+  min-height: 6vh;
+  max-height: 6vh;
+  width: 100vw;
+  padding: 0;
+  background: $footer-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
 
-.footer-progress
-  color: #fff
-  font-weight: bold
-  font-size: 15px
+.footer-progress {
+  color: #fff;
+  font-weight: bold;
+  font-size: 15px;
+}
 
-.progress-bar
-  width: 300px
-  height: 22px
+.progress-bar {
+  width: 300px;
+  height: 22px;
+}
 
-@media (max-width: 700px)
-  .main-layout
-    min-width: 100vw
-  .main-card
-    width: 100vw
-    padding: 4px
-    box-shadow: none
-  .panel-flex
-    padding: 4px
-  .footer
-    min-height: 4vh
-    max-height: 6vh
-    padding: 4px
-    font-size: 12px !important
-  .progress-bar
-    width: 170px
-    height: 22px
-  .footer-label, .footer-progress
-    font-size: 18px
-  .q-tabs.vertical .q-tab__content,
-  .q-tabs.vertical .q-tab__icon,
-  .q-tabs.vertical .q-tab__label
-    flex-direction: column
-    align-items: center
-    justify-content: center
-    gap: 2px
-    display: block
-    text-align: center
-    white-space: normal
-    word-break: break-word
-    max-width: 120px
-    padding: 0
-    flex-shrink: 1
-    margin-bottom: 4px
-  .q-tab, .q-tab__content
-    align-items: center
-    justify-content: center
-    gap: 2px
-  .q-tab__label, .q-tab-panel .q-tab__label
-    font-size: 12px !important
-    padding: 0 2px
-  .q-tab__icon, .q-tab-panel .q-tab__icon
-    font-size: 18px !important
-    min-width: 0
-    padding: 0 2px
+@media (max-width: $mobile-breakpoint) {
+  .main-layout {
+    min-width: 100vw;
+  }
+
+  .main-card {
+    width: 100vw;
+    padding: 4px;
+    box-shadow: none;
+  }
+
+  .panel-flex {
+    padding: 4px;
+  }
+
+  .footer {
+    min-height: 4vh;
+    max-height: 6vh;
+    padding: 4px;
+    font-size: 12px;
+  }
+
+  .progress-bar {
+    width: 170px;
+    height: 22px;
+  }
+
+  .footer-label,
+  .footer-progress {
+    font-size: 18px;
+  }
+
   .on-color-epic-number,
   .on-color-shop-points,
-  .on-color-research-points
-    font-size: 15px !important
-  .q-icon
-    font-size: 14px !important
-    min-width: 0
-    padding: 0 2px
-    flex-direction: column
-    align-items: stretch
+  .on-color-research-points {
+    font-size: 15px;
+  }
+
+  .q-tabs.vertical {
+    .q-tab__content,
+    .q-tab__icon,
+    .q-tab__label {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      display: block;
+      text-align: center;
+      white-space: normal;
+      word-break: break-word;
+      max-width: 120px;
+      padding: 0;
+      flex-shrink: 1;
+      margin-bottom: 4px;
+    }
+  }
+
+  .q-tab,
+  .q-tab__content {
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .q-tab__label,
+  .q-tab-panel .q-tab__label {
+    font-size: 12px;
+    padding: 0 2px;
+  }
+
+  .q-tab__icon,
+  .q-tab-panel .q-tab__icon {
+    font-size: 18px;
+    min-width: 0;
+    padding: 0 2px;
+  }
+
+  .q-icon {
+    font-size: 14px;
+    min-width: 0;
+    padding: 0 2px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
 </style>
