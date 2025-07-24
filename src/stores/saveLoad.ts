@@ -17,12 +17,11 @@ const SECRET = 'incremental';
 
 export const useStoreSaveLoad = defineStore('storeSaveLoad', {
   state: () => ({
-    timerSave: 30000,
+    timerSave: 15000,
   }),
   getters: {},
   actions: {
     saveGame() {
-      console.log('save game');
       const storeData = useStoreData();
       const storeResearch = useStoreResearch();
       const storePrestige = useStorePrestige();
@@ -31,24 +30,28 @@ export const useStoreSaveLoad = defineStore('storeSaveLoad', {
       const storeAchievement = useStoreAchievement();
       const storeStats = useStoreStats();
       const storeSetting = useStoreSetting();
-      const saveData = {
-        data: storeData.save,
-        research: storeResearch.save,
-        prestige: storePrestige.save,
-        shop: storeShop.save,
-        automatic: storeAutomatic.save,
-        achievement: storeAchievement.save,
-        stats: storeStats.save,
-        setting: storeSetting.save,
-      };
-
-      const replacer = (key: string, value: unknown) => {
-        if (value instanceof Decimal) return { __decimal__: value.toString() };
-        return value;
-      };
-      const plainState = JSON.stringify(saveData, replacer);
-      const encrypted = CryptoJS.AES.encrypt(plainState, SECRET).toString();
-      LocalStorage.setItem(STORAGE_KEY, encrypted);
+      try {
+        const saveData = {
+          data: storeData.save,
+          research: storeResearch.save,
+          prestige: storePrestige.save,
+          shop: storeShop.save,
+          automatic: storeAutomatic.save,
+          achievement: storeAchievement.save,
+          stats: storeStats.save,
+          setting: storeSetting.save,
+        };
+        const replacer = (key: string, value: unknown) => {
+          if (value instanceof Decimal) return { __decimal__: value.toString() };
+          return value;
+        };
+        const plainState = JSON.stringify(saveData, replacer);
+        const encrypted = CryptoJS.AES.encrypt(plainState, SECRET).toString();
+        LocalStorage.setItem(STORAGE_KEY, encrypted);
+        console.log('save game');
+      } catch (e) {
+        console.error('Error save game:', e);
+      }
     },
     loadGame() {
       const storeData = useStoreData();

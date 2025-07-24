@@ -3,36 +3,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { onMounted, onBeforeUnmount } from 'vue';
 import { useStoreGame } from 'src/stores/game';
 import { useStoreSaveLoad } from 'src/stores/saveLoad';
 
 const storeGame = useStoreGame();
 const storeSaveLoad = useStoreSaveLoad();
 
-const gameTick = () => {
-  storeGame.gameTick();
+let timerIdGameTick: ReturnType<typeof setInterval> | null = null;
+let timerIdGameSave: ReturnType<typeof setInterval> | null = null;
+
+const startGameTickTimer = () => {
+  if (timerIdGameTick) clearInterval(timerIdGameTick);
+  storeGame.lastTick = Date.now();
+  timerIdGameTick = setInterval(() => storeGame.gameTick(), storeGame.timerTick);
 };
 
-let timerId: ReturnType<typeof setInterval> | null = null;
-const autoSaveId = ref<ReturnType<typeof setInterval> | null>(null);
-
-const startTimer = () => {
-  if (timerId) clearInterval(timerId);
-  storeGame.lastTick = Date.now();
-  timerId = setInterval(() => gameTick(), storeGame.timerTick);
+const startGameSaveTimer = () => {
+  if (timerIdGameSave) clearInterval(timerIdGameSave);
+  timerIdGameSave = setInterval(() => storeSaveLoad.saveGame(), storeSaveLoad.timerSave);
 };
 
 onMounted(() => {
   storeSaveLoad.loadGame();
-  startTimer();
-  autoSaveId.value = setInterval(() => {
-    storeSaveLoad.saveGame();
-  }, storeSaveLoad.timerSave);
+  startGameTickTimer();
+  startGameSaveTimer();
 });
 
 onBeforeUnmount(() => {
-  if (timerId) clearInterval(timerId);
-  if (autoSaveId.value) clearInterval(autoSaveId.value);
+  if (timerIdGameTick) clearInterval(timerIdGameTick);
+  if (timerIdGameSave) clearInterval(timerIdGameSave);
 });
 </script>
