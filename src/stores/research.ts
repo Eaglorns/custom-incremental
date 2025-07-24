@@ -157,7 +157,7 @@ export const useStoreResearch = defineStore('storeResearch', {
       if (base.lt(1)) return new Decimal(1);
       const research = store.list.researchTimeMultiplierDecrease;
       const bonus = research.level.gt(0) ? research.bonus.pow(research.level) : new Decimal(1);
-      const reduced = base.div(new Decimal(100).div(bonus)).log(3);
+      const reduced = base.log(5).div(new Decimal(1000).div(bonus));
       return Decimal.max(new Decimal(1), new Decimal(1).add(reduced));
     },
 

@@ -44,7 +44,7 @@
                       style="min-width: 90px"
                     >
                       <q-icon
-                        name="fa-duotone fa-coins"
+                        name="fa-duotone fa-gauge-high"
                         size="12px"
                         class="q-mr-xs icon-accent-custom"
                       />
@@ -62,11 +62,8 @@
                     />
                   </div>
                 </div>
-
                 <q-separator class="q-my-xs separator-custom" />
-
                 <q-separator class="q-my-xs separator-custom" />
-
                 <div class="column q-gutter-xs">
                   <div class="row items-center">
                     <q-icon
@@ -91,7 +88,7 @@
                       style="min-width: 90px"
                     >
                       <q-icon
-                        name="fa-duotone fa-coins"
+                        name="fa-duotone fa-gauge-high"
                         size="12px"
                         class="q-mr-xs icon-accent-custom"
                       />
@@ -131,12 +128,12 @@ const storeAutomatic = useStoreAutomatic();
 
 const formatNumber = storeData.formatNumber;
 
-const helperKeys = computed(() => Object.keys(storeAutomatic.helpers));
+const helperKeys = computed(() => Object.keys(storeAutomatic.helpersShop));
 
 const getHelper = (key: string) =>
   computed(() => {
     const meta = helpersMeta.find((m) => m.key === key)!;
-    const state = storeAutomatic.helpers[key as keyof typeof storeAutomatic.helpers];
+    const state = storeAutomatic.helpersShop[key as keyof typeof storeAutomatic.helpersShop];
     return {
       ...meta,
       ...state,
@@ -167,8 +164,8 @@ function hireHelper(helper: HelperState) {
   const cost = costCount(helper).value;
   if (storeData.epicNumber.gte(cost)) {
     storeData.epicNumber = storeData.epicNumber.minus(cost);
-    const key = helper.key as keyof typeof storeAutomatic.helpers;
-    storeAutomatic.helpers[key].count = storeAutomatic.helpers[key].count.add(1);
+    const key = helper.key as keyof typeof storeAutomatic.helpersShop;
+    storeAutomatic.helpersShop[key].count = storeAutomatic.helpersShop[key].count.add(1);
   }
 }
 
@@ -176,8 +173,8 @@ function upgradeHelperChance(helper: HelperState) {
   const cost = costPercent(helper).value;
   if (storeData.epicNumber.gte(cost)) {
     storeData.epicNumber = storeData.epicNumber.minus(cost);
-    const key = helper.key as keyof typeof storeAutomatic.helpers;
-    storeAutomatic.helpers[key].percent = storeAutomatic.helpers[key].percent.add(1);
+    const key = helper.key as keyof typeof storeAutomatic.helpersShop;
+    storeAutomatic.helpersShop[key].percent = storeAutomatic.helpersShop[key].percent.add(1);
   }
 }
 

@@ -86,7 +86,7 @@ export const useStoreData = defineStore('storeData', {
       if (base.lt(1)) return new Decimal(1);
       const research = storeResearch.list.epicNumberMultiplierDecrease;
       const bonus = research.level.gt(0) ? research.bonus.pow(research.level) : new Decimal(1);
-      const reduced = base.div(new Decimal(100).div(bonus)).log(3);
+      const reduced = base.log(3).div(new Decimal(250).div(bonus));
       return Decimal.max(new Decimal(1), new Decimal(1).add(reduced));
     },
 

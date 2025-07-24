@@ -2,10 +2,43 @@ import Decimal from 'break_eternity.js';
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { useStoreData } from 'stores/data';
 import { useStoreShop } from 'stores/shop';
+import { useStoreResearch } from 'stores/research';
 
 export const useStorePrestige = defineStore('storePrestige', {
   state: () => ({
     points: new Decimal(0),
+    list: {
+      prestigeBonus: {
+        cost: new Decimal(5),
+        level: new Decimal(0),
+        costGrowth: new Decimal(1.2),
+        maxLevel: -1,
+      },
+      prestigeSoftening: {
+        cost: new Decimal(5),
+        level: new Decimal(0),
+        costGrowth: new Decimal(1.05),
+        maxLevel: -1,
+      },
+      autoShopCPU: {
+        cost: new Decimal(1),
+        level: new Decimal(0),
+        costGrowth: new Decimal(3),
+        maxLevel: -1,
+      },
+      autoShopHard: {
+        cost: new Decimal(5),
+        level: new Decimal(0),
+        costGrowth: new Decimal(2),
+        maxLevel: -1,
+      },
+      autoShopRAM: {
+        cost: new Decimal(20),
+        level: new Decimal(0),
+        costGrowth: new Decimal(1.5),
+        maxLevel: -1,
+      },
+    },
   }),
   getters: {
     prestigeGain: (): Decimal => {
@@ -30,8 +63,11 @@ export const useStorePrestige = defineStore('storePrestige', {
       const storeData = useStoreData();
       const storePrestige = useStorePrestige();
       const storeShop = useStoreShop();
+      const storeResearch = useStoreResearch();
       storePrestige.points = storePrestige.points.add(storePrestige.prestigeGain);
       storeData.epicNumber = new Decimal(1);
+      storeResearch.points = new Decimal(0);
+      storeData.multiplierEpicNumber = new Decimal(0);
       storeShop.list.cpu.value = new Decimal(1);
       storeShop.list.cpu.multiply = new Decimal(1);
       storeShop.list.hdd.value = new Decimal(1);

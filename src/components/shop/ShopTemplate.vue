@@ -89,7 +89,7 @@
             class="full-width"
             @click="
               storeShop.onBuyValue(props.name);
-              onBuySound();
+              storeSetting.playSound('ShopOnBuyValue');
             "
             size="lg"
             :disable="!storeShop.canBuyValue(props.name)"
@@ -101,7 +101,10 @@
             outline
             label="Умножить"
             class="full-width"
-            @click="storeShop.onBuyMultiply(props.name)"
+            @click="
+              storeShop.onBuyMultiply(props.name);
+              storeSetting.playSound('ShopOnBuyMultiplier', 2);
+            "
             size="lg"
             :disable="!storeShop.canBuyMultiply(props.name)"
           />
@@ -114,7 +117,7 @@
 <script setup lang="ts">
 import { useStoreData } from 'stores/data';
 import { useStoreShop } from 'stores/shop';
-import { Howl } from 'src/boot/hovler';
+import { useStoreSetting } from 'stores/setting';
 
 type ShopItemName = keyof typeof storeShop.list;
 
@@ -122,12 +125,9 @@ const props = defineProps<{ name: ShopItemName; label: string; icon: string }>()
 
 const storeData = useStoreData();
 const storeShop = useStoreShop();
+const storeSetting = useStoreSetting();
 
 const formatNumber = storeData.formatNumber;
-
-const onBuySound = () => {
-  new Howl({ src: ['sounds/buy.mp3'] }).play();
-};
 </script>
 
 <style lang="sass" scoped>

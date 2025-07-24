@@ -17,7 +17,7 @@ const buyMax = (points: Decimal, price: Decimal, count: Decimal) => {
 
 export const useStoreAutomatic = defineStore('storeAutomatic', {
   state: () => ({
-    helpers: {
+    helpersShop: {
       cpu: {
         count: new Decimal(0),
         percent: new Decimal(0),
@@ -93,37 +93,37 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
 
     save(state) {
       return {
-        helpers: {
+        helpersShop: {
           cpu: {
-            count: state.helpers.cpu.count,
-            percent: state.helpers.cpu.percent,
+            count: state.helpersShop.cpu.count,
+            percent: state.helpersShop.cpu.percent,
           },
           hdd: {
-            count: state.helpers.hdd.count,
-            percent: state.helpers.hdd.percent,
+            count: state.helpersShop.hdd.count,
+            percent: state.helpersShop.hdd.percent,
           },
           ram: {
-            count: state.helpers.ram.count,
-            percent: state.helpers.ram.percent,
+            count: state.helpersShop.ram.count,
+            percent: state.helpersShop.ram.percent,
           },
           cpuMultiplier: {
-            count: state.helpers.cpuMultiplier.count,
-            percent: state.helpers.cpuMultiplier.percent,
+            count: state.helpersShop.cpuMultiplier.count,
+            percent: state.helpersShop.cpuMultiplier.percent,
           },
           hddMultiplier: {
-            count: state.helpers.hddMultiplier.count,
-            percent: state.helpers.hddMultiplier.percent,
+            count: state.helpersShop.hddMultiplier.count,
+            percent: state.helpersShop.hddMultiplier.percent,
           },
           ramMultiplier: {
-            count: state.helpers.ramMultiplier.count,
-            percent: state.helpers.ramMultiplier.percent,
+            count: state.helpersShop.ramMultiplier.count,
+            percent: state.helpersShop.ramMultiplier.percent,
           },
         },
       };
     },
   },
   actions: {
-    processHelpers() {
+    processHelpersShop() {
       const storeShop = useStoreShop();
       const storeData = useStoreData();
       const rand = Math.random() * 100;
@@ -131,7 +131,7 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
       const multiplierKeys = ['cpuMultiplier', 'hddMultiplier', 'ramMultiplier'] as const;
 
       valueKeys.forEach((key) => {
-        const helper = this.helpers[key];
+        const helper = this.helpersShop[key];
         if (helper.count.gt(0) && this.getHelperChance(helper.percent).gte(rand)) {
           const buyResult = buyMax(storeShop.points, storeShop.list[key].cost.value, helper.count);
           if (buyResult.bought.gt(0)) {
@@ -145,7 +145,7 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
 
       multiplierKeys.forEach((key) => {
         const baseKey = key.replace('Multiplier', '') as keyof typeof storeShop.list;
-        const helper = this.helpers[key];
+        const helper = this.helpersShop[key];
         if (helper.count.gt(0) && this.getHelperChance(helper.percent).gte(rand)) {
           const buyResult = buyMax(
             storeData.epicNumber,
@@ -163,7 +163,7 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
     },
 
     load(loaded: {
-      helpers: {
+      helpersShop: {
         cpu: Helper;
         hdd: Helper;
         ram: Helper;
@@ -172,18 +172,24 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
         ramMultiplier: Helper;
       };
     }) {
-      this.helpers.cpu.count = new Decimal(loaded.helpers.cpu.count);
-      this.helpers.cpu.percent = new Decimal(loaded.helpers.cpu.percent);
-      this.helpers.hdd.count = new Decimal(loaded.helpers.hdd.count);
-      this.helpers.hdd.percent = new Decimal(loaded.helpers.hdd.percent);
-      this.helpers.ram.count = new Decimal(loaded.helpers.ram.count);
-      this.helpers.ram.percent = new Decimal(loaded.helpers.ram.percent);
-      this.helpers.cpuMultiplier.count = new Decimal(loaded.helpers.cpuMultiplier.count);
-      this.helpers.cpuMultiplier.percent = new Decimal(loaded.helpers.cpuMultiplier.percent);
-      this.helpers.hddMultiplier.count = new Decimal(loaded.helpers.hddMultiplier.count);
-      this.helpers.hddMultiplier.percent = new Decimal(loaded.helpers.hddMultiplier.percent);
-      this.helpers.ramMultiplier.count = new Decimal(loaded.helpers.ramMultiplier.count);
-      this.helpers.ramMultiplier.percent = new Decimal(loaded.helpers.ramMultiplier.percent);
+      this.helpersShop.cpu.count = new Decimal(loaded.helpersShop.cpu.count);
+      this.helpersShop.cpu.percent = new Decimal(loaded.helpersShop.cpu.percent);
+      this.helpersShop.hdd.count = new Decimal(loaded.helpersShop.hdd.count);
+      this.helpersShop.hdd.percent = new Decimal(loaded.helpersShop.hdd.percent);
+      this.helpersShop.ram.count = new Decimal(loaded.helpersShop.ram.count);
+      this.helpersShop.ram.percent = new Decimal(loaded.helpersShop.ram.percent);
+      this.helpersShop.cpuMultiplier.count = new Decimal(loaded.helpersShop.cpuMultiplier.count);
+      this.helpersShop.cpuMultiplier.percent = new Decimal(
+        loaded.helpersShop.cpuMultiplier.percent,
+      );
+      this.helpersShop.hddMultiplier.count = new Decimal(loaded.helpersShop.hddMultiplier.count);
+      this.helpersShop.hddMultiplier.percent = new Decimal(
+        loaded.helpersShop.hddMultiplier.percent,
+      );
+      this.helpersShop.ramMultiplier.count = new Decimal(loaded.helpersShop.ramMultiplier.count);
+      this.helpersShop.ramMultiplier.percent = new Decimal(
+        loaded.helpersShop.ramMultiplier.percent,
+      );
     },
   },
 });

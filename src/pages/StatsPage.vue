@@ -64,9 +64,9 @@ const stats = computed(() => [
     width: '200px',
   },
   {
-    label: 'Генерация числа тик',
+    label: 'Генерация числа за тик (CPU).',
     value: formatNumber(storeGame.generateEpicNumber),
-    width: '160px',
+    width: '200px',
   },
   {
     label: 'Множитель прироста числа',

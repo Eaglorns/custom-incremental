@@ -45,7 +45,7 @@ export const useStoreGame = defineStore('storeGame', {
         storeShop.processGivePoints();
         storeResearch.processGiveResearchSpeed();
         storeResearch.processResearch();
-        storeAutomatic.processHelpers();
+        storeAutomatic.processHelpersShop();
         storeResearch.processScientists();
         storeData.processGiveEpicNumber();
         storeAchievement.processUpdate();

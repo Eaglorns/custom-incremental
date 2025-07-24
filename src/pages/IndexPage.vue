@@ -111,7 +111,11 @@
           <q-splitter v-model="splitterModel">
             <template v-slot:before>
               <q-tabs v-model="innerResearch" vertical class="text-teal">
-                <q-tab name="innerScientist" icon="fa-duotone fa-user-astronaut" label="Учёные" />
+                <q-tab
+                  name="innerResearchScientist"
+                  icon="fa-duotone fa-user-astronaut"
+                  label="Учёные"
+                />
                 <q-tab name="innerResearchBase" icon="fa-duotone fa-flask" label="Базовые" />
               </q-tabs>
             </template>
@@ -121,7 +125,7 @@
                 transition-prev="slide-down"
                 transition-next="slide-up"
               >
-                <q-tab-panel name="innerScientist"><ResearchScientist /></q-tab-panel>
+                <q-tab-panel name="innerResearchScientist"><ResearchScientist /></q-tab-panel>
                 <q-tab-panel name="innerResearchBase"><ResearchBase /></q-tab-panel>
               </q-tab-panels>
             </template>
@@ -132,9 +136,9 @@
             <template v-slot:before>
               <q-tabs v-model="innerAutomatic" vertical class="text-teal">
                 <q-tab
-                  name="innerAutomaticBuyer"
+                  name="innerAutomaticHelpersShop"
                   icon="fa-duotone fa-cart-shopping"
-                  label="Скупщики"
+                  label="Скупщики комплектующих"
                 />
               </q-tabs>
             </template>
@@ -144,7 +148,7 @@
                 transition-prev="slide-down"
                 transition-next="slide-up"
               >
-                <q-tab-panel name="innerAutomaticBuyer"><AutomaticBuyer /></q-tab-panel>
+                <q-tab-panel name="innerAutomaticHelpersShop"><AutomaticHelpersShop /></q-tab-panel>
               </q-tab-panels>
             </template>
           </q-splitter>
@@ -187,7 +191,7 @@ import { useStoreData } from 'stores/data';
 import ShopTemplate from 'src/components/shop/ShopTemplate.vue';
 import ResearchBase from 'src/components/research/ResearchBase.vue';
 import ResearchScientist from 'src/components/research/ResearchScientist.vue';
-import AutomaticBuyer from 'src/components/automatic/AutomaticBuyer.vue';
+import AutomaticHelpersShop from 'src/components/automatic/AutomaticHelpersShop.vue';
 import PrestigeBase from 'src/components/prestige/PrestigeBase.vue';
 import PrestigeUpgrade from 'src/components/prestige/PrestigeUpgrade.vue';
 import Help from 'src/pages/HelpPage.vue';
@@ -207,8 +211,8 @@ const formatNumber = storeData.formatNumber;
 
 const tab = ref('shop');
 const innerShop = ref('innerShopCPU');
-const innerResearch = ref('innerScientist');
-const innerAutomatic = ref('innerAutomaticBuyer');
+const innerResearch = ref('innerResearchScientist');
+const innerAutomatic = ref('innerAutomaticHelpersShop');
 const innerPrestige = ref('innerPrestigeBase');
 const splitterModel = ref(20);
 
@@ -360,19 +364,29 @@ const infinityProgress = computed(() => {
     gap: 2px
     display: block
     text-align: center
-    white-space: normal
-    word-break: break-word
-    max-width: 120px
     padding: 0
     flex-shrink: 1
     margin-bottom: 4px
+  .q-tabs.vertical .q-tab__label
+    font-size: 12px !important
+    white-space: normal !important
+    word-break: break-word !important
+    max-width: none !important
+    text-align: center
+    padding: 0 2px
+    writing-mode: vertical-rl
+    text-orientation: mixed
+  .q-tab__label, .q-tab-panel .q-tab__label
+    font-size: 12px !important
+    white-space: normal !important
+    word-break: break-word !important
+    max-width: none !important
+    text-align: center
+    padding: 0 2px
   .q-tab, .q-tab__content
     align-items: center
     justify-content: center
     gap: 2px
-  .q-tab__label, .q-tab-panel .q-tab__label
-    font-size: 12px !important
-    padding: 0 2px
   .q-tab__icon, .q-tab-panel .q-tab__icon
     font-size: 18px !important
     min-width: 0

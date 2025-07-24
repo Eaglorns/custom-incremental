@@ -19,7 +19,7 @@ export const achievements = computed(() => [
   {
     id: 'shopCpuValue',
     title: 'Коллекционер CPU',
-    description: 'Получайте новые уровни за всё большее количество CPU',
+    description: 'Получайте новые уровни за большее количество CPU',
     icon: 'fa-duotone fa-microchip',
     color: 'teal',
     level: achievementLevels.value.shopCpuValue,
@@ -29,7 +29,7 @@ export const achievements = computed(() => [
   {
     id: 'shopHddValue',
     title: 'Коллекционер HDD',
-    description: 'Получайте новые уровни за всё большее количество HDD',
+    description: 'Получайте новые уровни за большее количество HDD',
     icon: 'fa-duotone fa-hard-drive',
     color: 'blue-grey',
     level: achievementLevels.value.shopHddValue,
@@ -39,7 +39,7 @@ export const achievements = computed(() => [
   {
     id: 'shopRamValue',
     title: 'Коллекционер RAM',
-    description: 'Получайте новые уровни за всё большее количество RAM',
+    description: 'Получайте новые уровни за большее количество RAM',
     icon: 'fa-duotone fa-memory',
     color: 'deep-orange',
     level: achievementLevels.value.shopRamValue,
@@ -49,7 +49,7 @@ export const achievements = computed(() => [
   {
     id: 'prestigePoints',
     title: 'Мастер сброса',
-    description: 'Получайте новые уровни за всё большее количество очков престижа',
+    description: 'Получайте новые уровни за большее количество очков престижа',
     icon: 'fa-duotone fa-trophy',
     color: 'purple',
     level: achievementLevels.value.prestigePoints,
@@ -59,7 +59,7 @@ export const achievements = computed(() => [
   {
     id: 'researchPoints',
     title: 'Учёный',
-    description: 'Получайте новые уровни за всё большее количество очков исследований',
+    description: 'Получайте новые уровни за большее количество очков исследований',
     icon: 'fa-duotone fa-flask',
     color: 'green',
     level: achievementLevels.value.researchPoints,
@@ -69,7 +69,7 @@ export const achievements = computed(() => [
   {
     id: 'shopPoints',
     title: 'Магнат',
-    description: 'Получайте новые уровни за всё большее количество монет.',
+    description: 'Получайте новые уровни за большее количество монет.',
     icon: 'fa-duotone fa-store',
     color: 'blue',
     level: achievementLevels.value.shopPoints,

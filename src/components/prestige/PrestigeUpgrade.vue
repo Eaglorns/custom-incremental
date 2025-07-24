@@ -28,7 +28,12 @@
           </div>
           <div class="text-body2 text-grey-3 q-mb-sm">{{ upgrade.description }}</div>
           <div class="row items-center q-mb-sm">
-            <q-icon name="fa-duotone fa-coins" size="18px" color="yellow-4" class="q-mr-xs" />
+            <q-icon
+              name="fa-duotone fa-arrow-up-right-dots"
+              size="18px"
+              color="yellow-4"
+              class="q-mr-xs"
+            />
             <span class="text-weight-bold text-white">{{ formatNumber(upgrade.cost) }}</span>
           </div>
           <q-btn

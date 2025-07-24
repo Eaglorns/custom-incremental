@@ -40,7 +40,7 @@
         </div>
         <div class="row justify-between items-center q-mb-md">
           <div class="row items-center">
-            <q-icon name="fa-duotone fa-coins" size="15px" class="q-mr-xs text-grey-7" />
+            <q-icon name="fa-duotone fa-flask-vial" size="15px" class="q-mr-xs text-grey-7" />
             <q-badge class="q-pa-xs text-bold bg-grey-3 text-primary" style="font-size: 11px">{{
               formatNumber(getResearchCost(meta.key).value)
             }}</q-badge>
