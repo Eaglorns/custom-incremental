@@ -37,14 +37,12 @@
               color="yellow-4"
               class="q-mr-xs"
             />
-            <span class="text-weight-bold text-white">{{
-              formatNumber(getUpgrade(key).value.cost)
-            }}</span>
+            <span class="text-weight-bold text-white">{{ formatNumber(getCost(key)) }}</span>
           </div>
           <q-btn
             color="dark"
             label="Купить"
-            @click="buyUpgrade(getUpgrade(key).value)"
+            @click="buyUpgrade(key)"
             class="full-width prestige-btn-dark"
             :disable="
               getUpgrade(key).value.maxLevel !== undefined &&
@@ -63,7 +61,6 @@ import { computed } from 'vue';
 import { useStoreData } from 'stores/data';
 import { useStorePrestige } from 'stores/prestige';
 import { prestigeUpgradeMeta } from 'src/constants/prestigeUpgradeMeta';
-import type { PrestigeUpgrade } from 'src/constants/models';
 
 const storeData = useStoreData();
 const storePrestige = useStorePrestige();
@@ -82,16 +79,21 @@ const getUpgrade = (key: string) =>
     };
   });
 
-function buyUpgrade(upgrade: PrestigeUpgrade) {
-  if (
-    upgrade.maxLevel !== undefined &&
-    upgrade.maxLevel !== -1 &&
-    upgrade.level.gte(upgrade.maxLevel)
-  )
-    return;
-  upgrade.level = upgrade.level.add(1);
-  upgrade.cost = upgrade.cost.mul(upgrade.costGrowth);
-}
+const getCost = (key: string) => {
+  const upgrade = storePrestige.upgrades[key as keyof typeof storePrestige.upgrades];
+  if (upgrade.level.lt(1)) return upgrade.cost;
+  return upgrade.costGrowth.pow(upgrade.level).mul(upgrade.cost);
+};
+
+const buyUpgrade = (key: string) => {
+  const upgrade = storePrestige.upgrades[key as keyof typeof storePrestige.upgrades];
+  if (upgrade.maxLevel !== -1 && upgrade.level.gte(upgrade.maxLevel)) return;
+  const cost = getCost(key);
+  if (storePrestige.points.gte(cost)) {
+    storePrestige.points = storePrestige.points.minus(cost);
+    upgrade.level = upgrade.level.add(1);
+  }
+};
 </script>
 
 <style lang="sass">

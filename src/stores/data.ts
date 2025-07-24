@@ -10,6 +10,7 @@ export const useStoreData = defineStore('storeData', {
     version: '0.0.0',
     epicNumber: new Decimal('0'),
     multiplierEpicNumber: new Decimal(1),
+    currentTab: 'shop',
   }),
 
   getters: {

@@ -6,25 +6,37 @@
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
         <q-icon name="fa-duotone fa-gauge-high" size="24px" color="primary" />
-        <span class="text-weight-bold text-h5 on-color-epic-number">
+        <span ref="epicRef" class="text-weight-bold text-h5">
           {{ formatNumber(storeData.epicNumber) }}
         </span>
       </div>
       <div
+        v-if="storeData.currentTab === 'shop'"
         class="flex items-center"
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
         <q-icon name="fa-duotone fa-coins" size="22px" color="secondary" />
-        <span class="text-weight-bold text-h5 on-color-shop-points">
+        <span ref="shopRef" class="text-weight-bold text-h5">
           {{ formatNumber(storeShop.points) }}
         </span>
       </div>
       <div
+        v-if="storeData.currentTab === 'prestige'"
+        class="flex items-center"
+        style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
+      >
+        <q-icon name="fa-duotone fa-arrow-up-right-dots" size="22px" color="secondary" />
+        <span ref="prestigeRef" class="text-weight-bold text-h5">
+          {{ formatNumber(storePrestige.points) }}
+        </span>
+      </div>
+      <div
+        v-if="storeData.currentTab === 'research'"
         class="flex items-center"
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
         <q-icon name="fa-duotone fa-flask-vial" size="22px" color="secondary" />
-        <span class="text-weight-bold text-h5 on-color-research-points">
+        <span ref="researchRef" class="text-weight-bold text-h5">
           {{ formatNumber(storeResearch.points) }}
         </span>
       </div>
@@ -186,7 +198,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { useStoreData } from 'stores/data';
 import ShopTemplate from 'src/components/shop/ShopTemplate.vue';
 import ResearchBase from 'src/components/research/ResearchBase.vue';
@@ -202,43 +214,80 @@ import Decimal from 'break_eternity.js';
 import { animate } from 'animejs';
 import { useStoreResearch } from 'stores/research';
 import { useStoreShop } from 'stores/shop';
+import { useStorePrestige } from 'stores/prestige';
 
 const storeData = useStoreData();
 const storeResearch = useStoreResearch();
 const storeShop = useStoreShop();
+const storePrestige = useStorePrestige();
 
 const formatNumber = storeData.formatNumber;
 
-const tab = ref('shop');
+const tab = computed({
+  get: () => storeData.currentTab,
+  set: (val: string) => {
+    storeData.currentTab = val;
+  },
+});
 const innerShop = ref('innerShopCPU');
 const innerResearch = ref('innerResearchScientist');
 const innerAutomatic = ref('innerAutomaticHelpersShop');
 const innerPrestige = ref('innerPrestigeBase');
 const splitterModel = ref(20);
 
-function animateColor(selector: string) {
+const epicRef = ref<HTMLElement | null>(null);
+const shopRef = ref<HTMLElement | null>(null);
+const prestigeRef = ref<HTMLElement | null>(null);
+const researchRef = ref<HTMLElement | null>(null);
+
+function animateColorEl(el: HTMLElement | null, fast: boolean = false) {
+  if (!el) return;
   const base = 100,
     spread = 50;
   const r = Math.round(Math.random() * spread) + base;
   const g = Math.round(Math.random() * spread) + base;
   const b = Math.round(Math.random() * spread) + base;
   const color = `rgb(${r},${g},${b})`;
-  animate(selector, { color });
+  animate(el, { color, duration: fast ? 0 : 1000 });
 }
 
-const watchConfigs = [
-  { getter: () => formatNumber(storeData.epicNumber), selector: '.on-color-epic-number' },
-  { getter: () => formatNumber(storeShop.points), selector: '.on-color-shop-points' },
-  { getter: () => formatNumber(storeResearch.points), selector: '.on-color-research-points' },
-];
-
-watchConfigs.forEach(({ getter, selector }) => {
-  watch(getter, () => animateColor(selector));
-});
+watch(
+  () => formatNumber(storeData.epicNumber),
+  () => animateColorEl(epicRef.value),
+);
+watch(
+  () => formatNumber(storeShop.points),
+  () => animateColorEl(shopRef.value),
+);
+watch(
+  () => formatNumber(storePrestige.points),
+  () => animateColorEl(prestigeRef.value),
+);
+watch(
+  () => formatNumber(storeResearch.points),
+  () => animateColorEl(researchRef.value),
+);
 
 onMounted(() => {
-  watchConfigs.forEach(({ selector }) => animateColor(selector));
+  animateColorEl(epicRef.value);
+  animateColorEl(shopRef.value);
+  animateColorEl(prestigeRef.value);
+  animateColorEl(researchRef.value);
 });
+
+watch(
+  () => storeData.currentTab,
+  (tab) => {
+    nextTick(() => {
+      if (tab === 'shop') animateColorEl(shopRef.value, true);
+      else if (tab === 'prestige') animateColorEl(prestigeRef.value, true);
+      else if (tab === 'research') animateColorEl(researchRef.value, true);
+      else animateColorEl(epicRef.value);
+    }).catch((error) => {
+      console.error('Error animating color:', error);
+    });
+  },
+);
 
 const log10Denom = new Decimal('1.8e308').log10();
 const clamp = (v: number, min = 0, max = 1) => {

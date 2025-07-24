@@ -172,7 +172,7 @@ export const useStoreResearch = defineStore('storeResearch', {
           intellect: s.intellect,
           efficiency: s.efficiency,
         })),
-        list: {
+        base: {
           cpuPow: {
             isActive: store.base.cpuPow.isActive,
             currentTime: store.base.cpuPow.currentTime,

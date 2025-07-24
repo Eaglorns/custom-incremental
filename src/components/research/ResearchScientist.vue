@@ -69,7 +69,7 @@
       </q-avatar>
       <div style="flex: 1 1 auto"></div>
       <div class="text-subtitle2 text-center q-mb-xs scientist-hire-cost-row">
-        <q-icon name="fa-solid fa-coins" color="amber-6" size="18px" />
+        <q-icon name="fa-solid fa-gauge-high" color="amber-6" size="18px" />
         <span>{{ formatNumber(hireCost) }}</span>
       </div>
     </q-card>
