@@ -270,7 +270,7 @@ const infinityProgress = computed(() => {
   margin: 3px
   max-height: 30px
   min-width: 100px
-  max-width: 130px
+  max-width: 160px
   display: flex
   align-items: center
   justify-content: center

@@ -9,10 +9,16 @@ export const useStorePrestige = defineStore('storePrestige', {
   }),
   getters: {
     prestigeGain: (): Decimal => {
-      const storeDate = useStoreData();
-      if (storeDate.epicNumber.lte(0)) return new Decimal(0);
-      return storeDate.epicNumber.log10();
+      const storeData = useStoreData();
+      if (storeData.epicNumber.lte(0)) return new Decimal(0);
+      return storeData.epicNumber.mul(0.00001).log10();
     },
+
+    prestigeCan: (): boolean => {
+      const storePrestige = useStorePrestige();
+      return storePrestige.prestigeGain.gte(1);
+    },
+
     save(state) {
       return {
         points: state.points,

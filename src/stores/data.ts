@@ -1,11 +1,14 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import Decimal from 'break_eternity.js';
 import { useStoreResearch } from 'stores/research';
+import { useStoreShop } from 'stores/shop';
+import { useStoreAchievement } from 'stores/achievement';
+import { useStorePrestige } from 'stores/prestige';
 
 export const useStoreData = defineStore('storeData', {
   state: () => ({
     version: '0.0.0',
-    epicNumber: new Decimal('1e500000'),
+    epicNumber: new Decimal('0'),
     multiplierEpicNumber: new Decimal(1),
   }),
 
@@ -97,6 +100,22 @@ export const useStoreData = defineStore('storeData', {
   },
 
   actions: {
+    processGiveEpicNumber() {
+      const storeData = useStoreData();
+      const storeShop = useStoreShop();
+      const storeResearch = useStoreResearch();
+      const storeAchievement = useStoreAchievement();
+      const storePrestige = useStorePrestige();
+      const parShopCPU = storeShop.list.cpu.value;
+      const parResearchCPU = storeResearch.list.cpuPow;
+      const prestigeMul = storePrestige.points.mul(0.01).add(1);
+      const result = parShopCPU
+        .pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1))
+        .mul(prestigeMul)
+        .mul(storeAchievement.achievementBonus);
+      storeData.epicNumber = storeData.epicNumber.plus(result);
+    },
+
     load(loaded: { version: string; epicNumber: string; multiplierEpicNumber: string }) {
       this.version = loaded.version;
       this.epicNumber = new Decimal(loaded.epicNumber);

@@ -15,9 +15,8 @@
       <q-card
         v-for="ach in achievements"
         :key="ach.id"
-        class="q-pa-sm q-mb-xs"
+        class="q-pa-sm q-mb-xs achievement-card-fixed"
         :class="achievementCardClass(ach)"
-        style="width: 140px; margin: 5px; display: inline-block; vertical-align: top"
         flat
         bordered
         v-ripple
@@ -42,7 +41,7 @@
         <div class="text-caption text-center" :class="textColor(ach, true)">
           {{ ach.description }}
         </div>
-        <div v-if="ach.level !== undefined" class="text-center q-mt-xs">
+        <div v-if="ach.level !== undefined" class="achievement-badge-bottom text-center q-mt-xs">
           <q-badge :color="badgeColor(ach)" :text-color="badgeTextColor(ach)">
             Уровень: {{ formatNumber(ach.level) }}
           </q-badge>
@@ -53,15 +52,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import { useStoreData } from 'stores/data';
-import { useStoreShop } from 'stores/shop';
 import { useStoreAchievement } from 'stores/achievement';
 import Decimal from 'break_eternity.js';
 import { achievements } from 'src/constants/achievementMeta';
 
 const storeData = useStoreData();
-const storeShop = useStoreShop();
 const storeAchievement = useStoreAchievement();
 
 const formatNumber = storeData.formatNumber;
@@ -77,46 +74,6 @@ interface Achievement {
   hint?: string;
   levelHint?: string;
 }
-
-function getLevel(current: Decimal): Decimal {
-  if (current.lt(100)) return new Decimal(0);
-  return current.log10().div(2).floor();
-}
-
-function getEpicLevel(current: Decimal): Decimal {
-  if (current.lt(1000000000)) return new Decimal(0);
-  return current.div(1000).log10().div(9).floor();
-}
-
-function updateMaxCpuLevel() {
-  const cpu = getLevel(storeShop.list.cpu.value);
-  if (cpu.gt(storeAchievement.list.cpuLevel)) {
-    storeAchievement.list.cpuLevel = cpu;
-  }
-}
-function updateMaxHddLevel() {
-  const hdd = getLevel(storeShop.list.hdd.value);
-  if (hdd.gt(storeAchievement.list.hddLevel)) {
-    storeAchievement.list.hddLevel = hdd;
-  }
-}
-function updateMaxRamLevel() {
-  const ram = getLevel(storeShop.list.ram.value);
-  if (ram.gt(storeAchievement.list.ramLevel)) {
-    storeAchievement.list.ramLevel = ram;
-  }
-}
-function updateMaxEpicLevel() {
-  const epic = getEpicLevel(storeData.epicNumber);
-  if (epic.gt(storeAchievement.list.epicLevel)) {
-    storeAchievement.list.epicLevel = epic;
-  }
-}
-
-watch(() => storeShop.list.cpu.value, updateMaxCpuLevel, { immediate: true });
-watch(() => storeShop.list.hdd.value, updateMaxHddLevel, { immediate: true });
-watch(() => storeShop.list.ram.value, updateMaxRamLevel, { immediate: true });
-watch(() => storeData.epicNumber, updateMaxEpicLevel, { immediate: true });
 
 function achievementCardClass(ach: Achievement) {
   if (ach.level !== undefined && ach.level.gt(0)) return 'bg-primary';
@@ -159,6 +116,25 @@ const achievementBonus = computed(() => {
 </script>
 
 <style lang="sass">
+.achievement-card-fixed
+  width: 140px
+  min-height: 220px
+  max-height: 220px
+  display: flex
+  flex-direction: column
+  justify-content: flex-start
+  align-items: stretch
+  margin: 5px
+  box-sizing: border-box
+
+.achievement-card-fixed > .flex,
+.achievement-card-fixed > .text-subtitle2,
+.achievement-card-fixed > .text-caption
+  flex-shrink: 0
+
+.achievement-badge-bottom
+  margin-top: auto
+
 .tooltip-bordered
   border: 2px solid $primary
   border-radius: 8px

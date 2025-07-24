@@ -4,93 +4,32 @@
       v-for="scientist in storeResearch.scientists"
       :key="scientist.id"
       class="q-pa-md flex column items-center bg-blue-grey-9 text-white justify-between"
-      style="
-        width: 200px;
-        min-height: 200px;
-        height: 220px;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      "
+      style="width: 230px; height: 220px"
       flat
       bordered
     >
-      <div
-        style="
-          position: relative;
-          width: 100%;
-          height: 20px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        "
-      >
-        <div
-          style="
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-75%);
-            display: flex;
-            align-items: center;
-          "
-        >
+      <div class="scientist-header-row">
+        <div class="scientist-header-left">
           <q-icon name="fa-solid fa-brain" color="blue-4" size="14px" class="q-mr-xs" />
-          <span class="text-bold" style="font-size: 11px">{{
+          <span class="text-bold scientist-intellect-value">{{
             formatNumber(scientist.intellect)
           }}</span>
         </div>
-        <div
-          style="
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-75%);
-            display: flex;
-            align-items: center;
-          "
-        >
-          <span class="text-bold" style="font-size: 11px">{{
+        <div class="scientist-header-right">
+          <span class="text-bold scientist-efficiency-value">{{
             formatNumber(scientist.efficiency)
           }}</span>
           <q-icon name="fa-solid fa-bolt" color="teal-5" size="14px" class="q-ml-xs" />
         </div>
       </div>
-      <div
-        style="
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          margin-bottom: 8px;
-        "
-      >
+      <div class="scientist-avatar-row">
         <q-avatar size="56px" color="blue-grey-7">
           <q-icon name="fa-duotone fa-user-astronaut" size="40px" color="white" />
         </q-avatar>
       </div>
-      <div
-        style="
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          margin-bottom: 4px;
-        "
-      >
+      <div class="scientist-level-row">
         <q-icon name="fa-solid fa-medal" color="blue-grey-3" size="22px" class="q-mr-xs" />
-        <span
-          style="
-            font-size: 22px;
-            font-weight: bold;
-            color: #fff;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            padding: 2px 14px;
-            letter-spacing: 0.5px;
-            box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.08);
-          "
-        >
+        <span class="scientist-level-value scientist-level-gold">
           {{ formatNumber(scientist.level) }}
         </span>
       </div>
@@ -100,26 +39,10 @@
         class="q-mb-xs"
         style="height: 8px"
       />
-      <div
-        style="
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          margin-top: 2px;
-        "
-      >
+      <div class="scientist-exp-row">
         <q-icon name="fa-solid fa-circle-dot" color="deep-orange-4" size="15px" class="q-mr-xs" />
-        <span
-          style="
-            font-size: 12px;
-            background: rgba(255, 255, 255, 0.07);
-            border-radius: 6px;
-            padding: 2px 8px;
-            letter-spacing: 0.5px;
-          "
-        >
-          {{ formatNumber(scientist.exp) }} / {{ formatNumber(expToLevel(scientist.level)) }}
+        <span class="scientist-exp-value scientist-exp-orange">
+          {{ formatNumber(scientist.exp) }}
         </span>
       </div>
     </q-card>
@@ -141,26 +64,11 @@
       bordered
       @click="hireScientist"
     >
-      <q-avatar
-        size="56px"
-        class="q-mb-sm"
-        color="blue-grey-7"
-        style="margin-top: 24px; margin-bottom: 8px; display: flex; align-self: center"
-      >
+      <q-avatar size="56px" class="q-mb-sm scientist-hire-avatar" color="blue-grey-7">
         <q-icon name="fa-duotone fa-user-plus" size="40px" color="white" />
       </q-avatar>
       <div style="flex: 1 1 auto"></div>
-      <div
-        class="text-subtitle2 text-center q-mb-xs"
-        style="
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 6px;
-          margin-bottom: 12px;
-          margin-top: auto;
-        "
-      >
+      <div class="text-subtitle2 text-center q-mb-xs scientist-hire-cost-row">
         <q-icon name="fa-solid fa-coins" color="amber-6" size="18px" />
         <span>{{ formatNumber(hireCost) }}</span>
       </div>
@@ -210,6 +118,95 @@ function hireScientist() {
 }
 </script>
 <style lang="sass" scoped>
+.scientist-header-row
+  position: relative
+  width: 100%
+  height: 20px
+  display: flex
+  justify-content: center
+  align-items: center
+
+.scientist-header-left
+  position: absolute
+  left: 0
+  top: 50%
+  transform: translateY(-75%)
+  display: flex
+  align-items: center
+
+.scientist-header-right
+  position: absolute
+  right: 0
+  top: 50%
+  transform: translateY(-75%)
+  display: flex
+  align-items: center
+
+.scientist-avatar-row
+  width: 100%
+  display: flex
+  justify-content: center
+  align-items: center
+  margin-bottom: 8px
+
+.scientist-level-row
+  width: 100%
+  display: flex
+  justify-content: center
+  align-items: center
+  margin-bottom: 4px
+
+.scientist-level-value
+  font-size: 22px
+  font-weight: bold
+  background: rgba(255, 255, 255, 0.08)
+  border-radius: 8px
+  padding: 2px 14px
+  letter-spacing: 0.5px
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.08)
+.scientist-level-gold
+  color: #ffd700
+  text-shadow: 0 0 1.5px #fffbe6, 0 0 0.5px #ffd700
+.scientist-intellect-value
+  color: #42a5f5
+  font-size: 11px
+  text-shadow: 0 0 2px #42a5f5cc
+.scientist-efficiency-value
+  color: #26c6da
+  font-size: 11px
+  text-shadow: 0 0 2px #26c6dacc
+.scientist-exp-orange
+  color: #ff9800
+  text-shadow: 0 0 2px #ff9800cc
+
+.scientist-exp-row
+  width: 100%
+  display: flex
+  justify-content: center
+  align-items: center
+  margin-top: 2px
+
+.scientist-exp-value
+  font-size: 12px
+  background: rgba(255, 255, 255, 0.07)
+  border-radius: 6px
+  padding: 2px 8px
+  letter-spacing: 0.5px
+
+.scientist-hire-avatar
+  margin-top: 24px
+  margin-bottom: 8px
+  display: flex
+  align-self: center
+
+.scientist-hire-cost-row
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 6px
+  margin-bottom: 12px
+  margin-top: auto
+
 @media (max-width: 700px)
   .row.q-gutter-md
     display: grid !important

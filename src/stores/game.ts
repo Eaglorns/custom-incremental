@@ -9,7 +9,7 @@ import { useStoreStats } from 'stores/stats';
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     name: 'cIncremental',
-    version: '0.0.8',
+    version: '0.0.9',
     timerTick: 1000,
     lastTick: Date.now(),
   }),
@@ -33,6 +33,8 @@ export const useStoreGame = defineStore('storeGame', {
       const storeAutomatic = useStoreAutomatic();
       const storeShop = useStoreShop();
       const storeStats = useStoreStats();
+      const storeData = useStoreData();
+      const storeAchievement = useStoreAchievement();
       const now = Date.now();
       const delta = now - this.lastTick;
       this.lastTick = now;
@@ -45,23 +47,11 @@ export const useStoreGame = defineStore('storeGame', {
         storeResearch.processResearch();
         storeAutomatic.processHelpers();
         storeResearch.processScientists();
-        this.processGiveEpicNumber();
+        storeData.processGiveEpicNumber();
+        storeAchievement.processUpdate();
         storeStats.processUpdate();
       }
       console.timeEnd('gameTick');
-    },
-
-    processGiveEpicNumber() {
-      const storeData = useStoreData();
-      const storeShop = useStoreShop();
-      const storeResearch = useStoreResearch();
-      const storeAchievement = useStoreAchievement();
-      const parShopCPU = storeShop.list.cpu.value;
-      const parResearchCPU = storeResearch.list.cpuPow;
-      const result = parShopCPU
-        .pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1))
-        .mul(storeAchievement.achievementBonus);
-      storeData.epicNumber = storeData.epicNumber.plus(result);
     },
 
     processGiveMultiplierEpicNumber() {

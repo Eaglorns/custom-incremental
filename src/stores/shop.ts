@@ -19,7 +19,7 @@ export const useStoreShop = defineStore('storeShop', {
     points: new Decimal(0),
     list: {
       cpu: {
-        value: new Decimal(20),
+        value: new Decimal(1),
         multiply: new Decimal(1),
         cost: {
           value: new Decimal(1),
