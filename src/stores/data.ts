@@ -110,9 +110,11 @@ export const useStoreData = defineStore('storeData', {
       const parShopCPU = storeShop.list.cpu.value;
       const parResearchCPU = storeResearch.base.cpuPow;
       const prestigeMul = storePrestige.points.mul(0.01).add(1);
+      const prestigeUpgradeBonus = storePrestige.upgrades.prestigeBonus.level.mul(0.01).add(1);
       const result = parShopCPU
         .pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1))
         .mul(prestigeMul)
+        .mul(prestigeUpgradeBonus)
         .mul(storeAchievement.achievementBonus);
       storeData.epicNumber = storeData.epicNumber.plus(result);
     },

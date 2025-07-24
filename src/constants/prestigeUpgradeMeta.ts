@@ -19,21 +19,39 @@ export const prestigeUpgradeMeta: PrestigeUpgradeType[] = [
     description: 'Смягчает формулу престижа, делая прирост более плавным.',
   },
   {
-    key: 'autoShopCPU',
+    key: 'autoShopCPUValue',
     icon: 'fa-duotone fa-microchip',
     title: 'Прирост CPU',
     description: 'Автоматически повышает значение CPU в магазине каждый тик.',
   },
   {
-    key: 'autoShopHard',
+    key: 'autoShopHDDValue',
     icon: 'fa-duotone fa-hard-drive',
     title: 'Прирост HDD',
     description: 'Автоматически повышает значение HDD в магазине каждый тик.',
   },
   {
-    key: 'autoShopRAM',
+    key: 'autoShopRAMValue',
     icon: 'fa-duotone fa-memory',
     title: 'Прирост RAM',
     description: 'Автоматически повышает значение RAM в магазине каждый тик.',
+  },
+  {
+    key: 'autoShopCPUMultiply',
+    icon: 'fa-duotone fa-microchip',
+    title: 'Умножение CPU',
+    description: 'Автоматически повышает множитель CPU в магазине каждый тик.',
+  },
+  {
+    key: 'autoShopHDDMultiply',
+    icon: 'fa-duotone fa-hard-drive',
+    title: 'Умножение HDD',
+    description: 'Автоматически повышает множитель HDD в магазине каждый тик.',
+  },
+  {
+    key: 'autoShopRAMMultiply',
+    icon: 'fa-duotone fa-memory',
+    title: 'Умножение RAM',
+    description: 'Автоматически повышает множитель RAM в магазине каждый тик.',
   },
 ];

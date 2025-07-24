@@ -6,7 +6,7 @@ import { useStoreResearch } from 'stores/research';
 
 export const useStorePrestige = defineStore('storePrestige', {
   state: () => ({
-    points: new Decimal(0),
+    points: new Decimal(1000),
     upgrades: {
       prestigeBonus: {
         cost: new Decimal(5),
@@ -20,22 +20,40 @@ export const useStorePrestige = defineStore('storePrestige', {
         costGrowth: new Decimal(1.05),
         maxLevel: -1,
       },
-      autoShopCPU: {
+      autoShopCPUValue: {
         cost: new Decimal(1),
         level: new Decimal(0),
-        costGrowth: new Decimal(3),
+        costGrowth: new Decimal(1.5),
         maxLevel: -1,
       },
-      autoShopHard: {
+      autoShopHDDValue: {
         cost: new Decimal(5),
         level: new Decimal(0),
         costGrowth: new Decimal(2),
         maxLevel: -1,
       },
-      autoShopRAM: {
+      autoShopRAMValue: {
         cost: new Decimal(20),
         level: new Decimal(0),
-        costGrowth: new Decimal(1.5),
+        costGrowth: new Decimal(2.5),
+        maxLevel: -1,
+      },
+      autoShopCPUMultiply: {
+        cost: new Decimal(8),
+        level: new Decimal(0),
+        costGrowth: new Decimal(3.0),
+        maxLevel: -1,
+      },
+      autoShopHDDMultiply: {
+        cost: new Decimal(25),
+        level: new Decimal(0),
+        costGrowth: new Decimal(4.5),
+        maxLevel: -1,
+      },
+      autoShopRAMMultiply: {
+        cost: new Decimal(60),
+        level: new Decimal(0),
+        costGrowth: new Decimal(6),
         maxLevel: -1,
       },
     },
@@ -43,8 +61,12 @@ export const useStorePrestige = defineStore('storePrestige', {
   getters: {
     prestigeGain: (): Decimal => {
       const storeData = useStoreData();
+      const storePrestige = useStorePrestige();
       if (storeData.epicNumber.lte(0)) return new Decimal(0);
-      return storeData.epicNumber.mul(0.00001).log10();
+      const prestigeUpgradeSoftening = storePrestige.upgrades.prestigeSoftening.level.gt(0)
+        ? storePrestige.upgrades.prestigeSoftening.level
+        : new Decimal(1);
+      return storeData.epicNumber.mul(0.00001).mul(prestigeUpgradeSoftening).log10();
     },
 
     prestigeCan: (): boolean => {
@@ -55,6 +77,16 @@ export const useStorePrestige = defineStore('storePrestige', {
     save(state) {
       return {
         points: state.points,
+        upgrades: {
+          prestigeBonus: { level: state.upgrades.prestigeBonus.level },
+          prestigeSoftening: { level: state.upgrades.prestigeSoftening.level },
+          autoShopCPUValue: { level: state.upgrades.autoShopCPUValue.level },
+          autoShopHDDValue: { level: state.upgrades.autoShopHDDValue.level },
+          autoShopRAMValue: { level: state.upgrades.autoShopRAMValue.level },
+          autoShopCPUMultiply: { level: state.upgrades.autoShopCPUMultiply.level },
+          autoShopHDDMultiply: { level: state.upgrades.autoShopHDDMultiply.level },
+          autoShopRAMMultiply: { level: state.upgrades.autoShopRAMMultiply.level },
+        },
       };
     },
   },
@@ -77,8 +109,63 @@ export const useStorePrestige = defineStore('storePrestige', {
       storeShop.points = new Decimal(0);
     },
 
-    load(loaded: { points: string }) {
+    processUpgradeAddShop() {
+      const storePrestige = useStorePrestige();
+      const storeShop = useStoreShop();
+      const upgradesValue = [
+        { key: 'autoShopCPUValue', shopKey: 'cpu' },
+        { key: 'autoShopHDDValue', shopKey: 'hdd' },
+        { key: 'autoShopRAMValue', shopKey: 'ram' },
+      ];
+      upgradesValue.forEach(({ key, shopKey }) => {
+        const level = storePrestige.upgrades[key as keyof typeof storePrestige.upgrades].level;
+        if (level.gt(0)) {
+          storeShop.list[shopKey as keyof typeof storeShop.list].value =
+            storeShop.list[shopKey as keyof typeof storeShop.list].value.add(level);
+        }
+      });
+      const upgradesMultiply = [
+        { key: 'autoShopCPUMultiply', shopKey: 'cpu' },
+        { key: 'autoShopHDDMultiply', shopKey: 'hdd' },
+        { key: 'autoShopRAMMultiply', shopKey: 'ram' },
+      ];
+      upgradesMultiply.forEach(({ key, shopKey }) => {
+        const level = storePrestige.upgrades[key as keyof typeof storePrestige.upgrades].level;
+        if (level.gt(0)) {
+          storeShop.list[shopKey as keyof typeof storeShop.list].multiply =
+            storeShop.list[shopKey as keyof typeof storeShop.list].multiply.add(level);
+        }
+      });
+    },
+
+    load(loaded: {
+      points: string;
+      upgrades: {
+        prestigeBonus: { level: string };
+        prestigeSoftening: { level: string };
+        autoShopCPUValue: { level: string };
+        autoShopHDDValue: { level: string };
+        autoShopRAMValue: { level: string };
+        autoShopCPUMultiply: { level: string };
+        autoShopHDDMultiply: { level: string };
+        autoShopRAMMultiply: { level: string };
+      };
+    }) {
       this.points = new Decimal(loaded.points);
+      this.upgrades.prestigeBonus.level = new Decimal(loaded.upgrades.prestigeBonus.level);
+      this.upgrades.prestigeSoftening.level = new Decimal(loaded.upgrades.prestigeSoftening.level);
+      this.upgrades.autoShopCPUValue.level = new Decimal(loaded.upgrades.autoShopCPUValue.level);
+      this.upgrades.autoShopHDDValue.level = new Decimal(loaded.upgrades.autoShopHDDValue.level);
+      this.upgrades.autoShopRAMValue.level = new Decimal(loaded.upgrades.autoShopRAMValue.level);
+      this.upgrades.autoShopCPUMultiply.level = new Decimal(
+        loaded.upgrades.autoShopCPUMultiply.level,
+      );
+      this.upgrades.autoShopHDDMultiply.level = new Decimal(
+        loaded.upgrades.autoShopHDDMultiply.level,
+      );
+      this.upgrades.autoShopRAMMultiply.level = new Decimal(
+        loaded.upgrades.autoShopRAMMultiply.level,
+      );
     },
   },
 });

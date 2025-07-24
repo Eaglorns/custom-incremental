@@ -5,6 +5,7 @@ import { useStoreAutomatic } from 'stores/automatic';
 import { useStoreShop } from 'stores/shop';
 import { useStoreAchievement } from 'stores/achievement';
 import { useStoreStats } from 'stores/stats';
+import { useStorePrestige } from 'stores/prestige';
 
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
@@ -35,6 +36,7 @@ export const useStoreGame = defineStore('storeGame', {
       const storeStats = useStoreStats();
       const storeData = useStoreData();
       const storeAchievement = useStoreAchievement();
+      const storePrestige = useStorePrestige();
       const now = Date.now();
       const delta = now - this.lastTick;
       this.lastTick = now;
@@ -47,6 +49,7 @@ export const useStoreGame = defineStore('storeGame', {
         storeResearch.processResearch();
         storeAutomatic.processHelpersShop();
         storeResearch.processScientists();
+        storePrestige.processUpgradeAddShop();
         storeData.processGiveEpicNumber();
         storeAchievement.processUpdate();
         storeStats.processUpdate();
