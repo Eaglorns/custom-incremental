@@ -1,11 +1,11 @@
-export interface HelperMeta {
+export interface PrestigeUpgradeType {
   key: string;
   icon: string;
   title: string;
   description: string;
 }
 
-export const helpersMeta: HelperMeta[] = [
+export const prestigeUpgradeMeta: PrestigeUpgradeType[] = [
   {
     key: 'prestigeBonus',
     icon: 'fa-duotone fa-arrow-up-right-dots',

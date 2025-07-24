@@ -1,4 +1,11 @@
-export const researchMeta = [
+export interface ResearchBaseType {
+  key: string;
+  icon: string;
+  title: string;
+  description: string;
+}
+
+export const researchBaseMeta: ResearchBaseType[] = [
   {
     key: 'cpuPow',
     icon: 'fa-duotone fa-microchip',

@@ -84,7 +84,7 @@ export const useStoreData = defineStore('storeData', {
       const storeResearch = useStoreResearch();
       const base = state.multiplierEpicNumber;
       if (base.lt(1)) return new Decimal(1);
-      const research = storeResearch.list.epicNumberMultiplierDecrease;
+      const research = storeResearch.base.epicNumberMultiplierDecrease;
       const bonus = research.level.gt(0) ? research.bonus.pow(research.level) : new Decimal(1);
       const reduced = base.log(3).div(new Decimal(250).div(bonus));
       return Decimal.max(new Decimal(1), new Decimal(1).add(reduced));
@@ -107,7 +107,7 @@ export const useStoreData = defineStore('storeData', {
       const storeAchievement = useStoreAchievement();
       const storePrestige = useStorePrestige();
       const parShopCPU = storeShop.list.cpu.value;
-      const parResearchCPU = storeResearch.list.cpuPow;
+      const parResearchCPU = storeResearch.base.cpuPow;
       const prestigeMul = storePrestige.points.mul(0.01).add(1);
       const result = parShopCPU
         .pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1))

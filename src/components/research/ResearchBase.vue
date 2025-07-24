@@ -1,7 +1,7 @@
 <template>
   <div class="q-gutter-md row wrap items-stretch q-pa-md" style="overflow-y: auto">
     <q-card
-      v-for="meta in researchMeta"
+      v-for="meta in researchBaseMeta"
       :key="meta.key"
       flat
       bordered
@@ -103,8 +103,8 @@
 import { computed, onMounted } from 'vue';
 import { useStoreData } from 'stores/data';
 import Decimal from 'break_eternity.js';
-import type { Research } from 'src/constants/models';
-import { researchMeta } from 'src/constants/researchMeta';
+import type { ResearchBase } from 'src/constants/models';
+import { researchBaseMeta } from 'src/constants/researchBaseMeta';
 import { useStoreResearch } from 'stores/research';
 
 const storeData = useStoreData();
@@ -112,7 +112,7 @@ const storeResearch = useStoreResearch();
 
 const formatNumber = storeData.formatNumber;
 
-const researchList = storeResearch.list as Record<string, Research>;
+const researchList = storeResearch.base as Record<string, ResearchBase>;
 
 function getResearch(key: string) {
   if (!researchList[key])

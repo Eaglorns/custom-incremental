@@ -1,13 +1,25 @@
 import { computed } from 'vue';
 import { useStoreAchievement } from 'stores/achievement';
+import type Decimal from 'break_eternity.js';
 
 const storeAchievement = useStoreAchievement();
 
 const achievementLevels = computed(() => storeAchievement.list);
 
-export const achievements = computed(() => [
+export interface AchievementsType {
+  key: string;
+  title: string;
+  description: string;
+  icon: string;
+  color: string;
+  level: Decimal;
+  unlocked: boolean;
+  hint: string;
+}
+
+export const achievements = computed<AchievementsType[]>(() => [
   {
-    id: 'epicNumberValue',
+    key: 'epicNumberValue',
     title: 'Экспонента',
     description: 'Получайте новые уровни за экспоненциальный рост основной валюты',
     icon: 'fa-duotone fa-arrow-up-right-dots',
@@ -17,7 +29,7 @@ export const achievements = computed(() => [
     hint: 'Копите число. Каждый новый уровень требует в 1 000 раз больше.',
   },
   {
-    id: 'shopCpuValue',
+    key: 'shopCpuValue',
     title: 'Коллекционер CPU',
     description: 'Получайте новые уровни за большее количество CPU',
     icon: 'fa-duotone fa-microchip',
@@ -27,7 +39,7 @@ export const achievements = computed(() => [
     hint: 'Покупайте CPU, чтобы повышать уровень достижения. Каждый новый уровень требует в 10 раз больше CPU.',
   },
   {
-    id: 'shopHddValue',
+    key: 'shopHddValue',
     title: 'Коллекционер HDD',
     description: 'Получайте новые уровни за большее количество HDD',
     icon: 'fa-duotone fa-hard-drive',
@@ -37,7 +49,7 @@ export const achievements = computed(() => [
     hint: 'Покупайте HDD, чтобы повышать уровень достижения. Каждый новый уровень требует в 10 раз больше HDD.',
   },
   {
-    id: 'shopRamValue',
+    key: 'shopRamValue',
     title: 'Коллекционер RAM',
     description: 'Получайте новые уровни за большее количество RAM',
     icon: 'fa-duotone fa-memory',
@@ -47,7 +59,7 @@ export const achievements = computed(() => [
     hint: 'Покупайте RAM, чтобы повышать уровень достижения. Каждый новый уровень требует в 10 раз больше RAM.',
   },
   {
-    id: 'prestigePoints',
+    key: 'prestigePoints',
     title: 'Мастер сброса',
     description: 'Получайте новые уровни за большее количество очков престижа',
     icon: 'fa-duotone fa-trophy',
@@ -57,7 +69,7 @@ export const achievements = computed(() => [
     hint: 'Получайте очки престижа, чтобы повышать уровень достижения. Каждый новый уровень требует в 3 раз больше очков престижа.',
   },
   {
-    id: 'researchPoints',
+    key: 'researchPoints',
     title: 'Учёный',
     description: 'Получайте новые уровни за большее количество очков исследований',
     icon: 'fa-duotone fa-flask',
@@ -67,7 +79,7 @@ export const achievements = computed(() => [
     hint: 'Получайте очки исследований, чтобы повышать уровень достижения. Каждый новый уровень требует в 5 раз больше очков исследований.',
   },
   {
-    id: 'shopPoints',
+    key: 'shopPoints',
     title: 'Магнат',
     description: 'Получайте новые уровни за большее количество монет.',
     icon: 'fa-duotone fa-store',

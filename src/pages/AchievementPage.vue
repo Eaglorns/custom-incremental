@@ -14,7 +14,7 @@
     >
       <q-card
         v-for="ach in achievements"
-        :key="ach.id"
+        :key="ach.key"
         class="q-pa-sm q-mb-xs achievement-card-fixed"
         :class="achievementCardClass(ach)"
         flat
@@ -64,7 +64,7 @@ const storeAchievement = useStoreAchievement();
 const formatNumber = storeData.formatNumber;
 
 interface Achievement {
-  id: string;
+  key: string;
   title: string;
   description: string;
   icon: string;

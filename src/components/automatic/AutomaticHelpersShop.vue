@@ -117,8 +117,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { helpersMeta } from 'src/constants/helpersMeta';
-import type { HelperState } from 'src/constants/models';
+import { automaticShopHelpersMeta } from 'src/constants/automaticShopHelpersMeta';
+import type { AutomaticShopHelpers } from 'src/constants/models';
 import { useStoreData } from 'stores/data';
 import Decimal from 'break_eternity.js';
 import { useStoreAutomatic } from 'stores/automatic';
@@ -132,7 +132,7 @@ const helperKeys = computed(() => Object.keys(storeAutomatic.helpersShop));
 
 const getHelper = (key: string) =>
   computed(() => {
-    const meta = helpersMeta.find((m) => m.key === key)!;
+    const meta = automaticShopHelpersMeta.find((m) => m.key === key)!;
     const state = storeAutomatic.helpersShop[key as keyof typeof storeAutomatic.helpersShop];
     return {
       ...meta,
@@ -140,27 +140,27 @@ const getHelper = (key: string) =>
     };
   });
 
-const costCount = (helper: HelperState) => {
+const costCount = (helper: AutomaticShopHelpers) => {
   return computed(() => {
     return helper.cost.count.mul(helper.cost.countMultiply.pow(helper.count));
   });
 };
 
-const costPercent = (helper: HelperState) => {
+const costPercent = (helper: AutomaticShopHelpers) => {
   return computed(() => {
     return helper.cost.percent.mul(helper.cost.percentMultiply.pow(helper.percent));
   });
 };
 
-const canHireHelper = (helper: HelperState) => {
+const canHireHelper = (helper: AutomaticShopHelpers) => {
   return computed(() => storeData.epicNumber.gte(costCount(helper).value));
 };
 
-const canUpgradeHelperChance = (helper: HelperState) => {
+const canUpgradeHelperChance = (helper: AutomaticShopHelpers) => {
   return computed(() => helper.count.gt(0) && storeData.epicNumber.gte(costPercent(helper).value));
 };
 
-function hireHelper(helper: HelperState) {
+function hireHelper(helper: AutomaticShopHelpers) {
   const cost = costCount(helper).value;
   if (storeData.epicNumber.gte(cost)) {
     storeData.epicNumber = storeData.epicNumber.minus(cost);
@@ -169,7 +169,7 @@ function hireHelper(helper: HelperState) {
   }
 }
 
-function upgradeHelperChance(helper: HelperState) {
+function upgradeHelperChance(helper: AutomaticShopHelpers) {
   const cost = costPercent(helper).value;
   if (storeData.epicNumber.gte(cost)) {
     storeData.epicNumber = storeData.epicNumber.minus(cost);

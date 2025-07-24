@@ -46,7 +46,7 @@ export const useStoreShop = defineStore('storeShop', {
   }),
   getters: {
     costMultiplierDecrease() {
-      const costMultiplierDecrease = useStoreResearch().list.shopCostMultiplierDecrease;
+      const costMultiplierDecrease = useStoreResearch().base.shopCostMultiplierDecrease;
       return costMultiplierDecrease.level.gt(0)
         ? costMultiplierDecrease.bonus.mul(costMultiplierDecrease.level)
         : new Decimal(1);
@@ -120,7 +120,7 @@ export const useStoreShop = defineStore('storeShop', {
       const storeResearch = useStoreResearch();
       const canBuyMultiply = storeData.epicNumber.gte(this.list[key].cost.multiply);
       if (!canBuyMultiply) return;
-      const researchMultiplierChance = storeResearch.list.shopMultiplierChanceReturn;
+      const researchMultiplierChance = storeResearch.base.shopMultiplierChanceReturn;
       if (researchMultiplierChance.level.mul(researchMultiplierChance.bonus).lt(Math.random()))
         storeData.epicNumber = storeData.epicNumber.minus(this.costMultiply(key));
       this.list[key].multiply = this.list[key].multiply.plus(1);

@@ -1,6 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import Decimal from 'break_eternity.js';
-import type { Scientist } from 'src/constants/models';
+import type { ResearchScientist } from 'src/constants/models';
 import { useStoreShop } from 'stores/shop';
 
 interface ResearchList {
@@ -19,7 +19,7 @@ interface ResearchLoadData {
     intellect: string;
     efficiency: string;
   }[];
-  list: {
+  base: {
     cpuPow: ResearchList;
     hddPow: ResearchList;
     ramPow: ResearchList;
@@ -37,8 +37,8 @@ export const useStoreResearch = defineStore('storeResearch', {
   state: () => ({
     points: new Decimal(0),
     speed: new Decimal(1),
-    scientists: [] as Scientist[],
-    list: {
+    scientists: [] as ResearchScientist[],
+    base: {
       cpuPow: {
         isActive: false,
         cost: new Decimal(1000),
@@ -155,7 +155,7 @@ export const useStoreResearch = defineStore('storeResearch', {
     getResearchSpeed: (store): Decimal => {
       const base = store.speed;
       if (base.lt(1)) return new Decimal(1);
-      const research = store.list.researchTimeMultiplierDecrease;
+      const research = store.base.researchTimeMultiplierDecrease;
       const bonus = research.level.gt(0) ? research.bonus.pow(research.level) : new Decimal(1);
       const reduced = base.log(5).div(new Decimal(1000).div(bonus));
       return Decimal.max(new Decimal(1), new Decimal(1).add(reduced));
@@ -174,54 +174,54 @@ export const useStoreResearch = defineStore('storeResearch', {
         })),
         list: {
           cpuPow: {
-            isActive: store.list.cpuPow.isActive,
-            currentTime: store.list.cpuPow.currentTime,
-            level: store.list.cpuPow.level,
+            isActive: store.base.cpuPow.isActive,
+            currentTime: store.base.cpuPow.currentTime,
+            level: store.base.cpuPow.level,
           },
           hddPow: {
-            isActive: store.list.hddPow.isActive,
-            currentTime: store.list.hddPow.currentTime,
-            level: store.list.hddPow.level,
+            isActive: store.base.hddPow.isActive,
+            currentTime: store.base.hddPow.currentTime,
+            level: store.base.hddPow.level,
           },
           ramPow: {
-            isActive: store.list.ramPow.isActive,
-            currentTime: store.list.ramPow.currentTime,
-            level: store.list.ramPow.level,
+            isActive: store.base.ramPow.isActive,
+            currentTime: store.base.ramPow.currentTime,
+            level: store.base.ramPow.level,
           },
           shopCostMultiplierDecrease: {
-            isActive: store.list.shopCostMultiplierDecrease.isActive,
-            currentTime: store.list.shopCostMultiplierDecrease.currentTime,
-            level: store.list.shopCostMultiplierDecrease.level,
+            isActive: store.base.shopCostMultiplierDecrease.isActive,
+            currentTime: store.base.shopCostMultiplierDecrease.currentTime,
+            level: store.base.shopCostMultiplierDecrease.level,
           },
           epicNumberMultiplierDecrease: {
-            isActive: store.list.epicNumberMultiplierDecrease.isActive,
-            currentTime: store.list.epicNumberMultiplierDecrease.currentTime,
-            level: store.list.epicNumberMultiplierDecrease.level,
+            isActive: store.base.epicNumberMultiplierDecrease.isActive,
+            currentTime: store.base.epicNumberMultiplierDecrease.currentTime,
+            level: store.base.epicNumberMultiplierDecrease.level,
           },
           researchTimeMultiplierDecrease: {
-            isActive: store.list.researchTimeMultiplierDecrease.isActive,
-            currentTime: store.list.researchTimeMultiplierDecrease.currentTime,
-            level: store.list.researchTimeMultiplierDecrease.level,
+            isActive: store.base.researchTimeMultiplierDecrease.isActive,
+            currentTime: store.base.researchTimeMultiplierDecrease.currentTime,
+            level: store.base.researchTimeMultiplierDecrease.level,
           },
           researchScientistsChance: {
-            isActive: store.list.researchScientistsChance.isActive,
-            currentTime: store.list.researchScientistsChance.currentTime,
-            level: store.list.researchScientistsChance.level,
+            isActive: store.base.researchScientistsChance.isActive,
+            currentTime: store.base.researchScientistsChance.currentTime,
+            level: store.base.researchScientistsChance.level,
           },
           researchScientistsMultiplierStats: {
-            isActive: store.list.researchScientistsMultiplierStats.isActive,
-            currentTime: store.list.researchScientistsMultiplierStats.currentTime,
-            level: store.list.researchScientistsMultiplierStats.level,
+            isActive: store.base.researchScientistsMultiplierStats.isActive,
+            currentTime: store.base.researchScientistsMultiplierStats.currentTime,
+            level: store.base.researchScientistsMultiplierStats.level,
           },
           researchScientistsMultiplierExperience: {
-            isActive: store.list.researchScientistsMultiplierExperience.isActive,
-            currentTime: store.list.researchScientistsMultiplierExperience.currentTime,
-            level: store.list.researchScientistsMultiplierExperience.level,
+            isActive: store.base.researchScientistsMultiplierExperience.isActive,
+            currentTime: store.base.researchScientistsMultiplierExperience.currentTime,
+            level: store.base.researchScientistsMultiplierExperience.level,
           },
           shopMultiplierChanceReturn: {
-            isActive: store.list.shopMultiplierChanceReturn.isActive,
-            currentTime: store.list.shopMultiplierChanceReturn.currentTime,
-            level: store.list.shopMultiplierChanceReturn.level,
+            isActive: store.base.shopMultiplierChanceReturn.isActive,
+            currentTime: store.base.shopMultiplierChanceReturn.currentTime,
+            level: store.base.shopMultiplierChanceReturn.level,
           },
         },
       };
@@ -229,7 +229,7 @@ export const useStoreResearch = defineStore('storeResearch', {
   },
   actions: {
     processResearch() {
-      Object.values(this.list).forEach((research) => {
+      Object.values(this.base).forEach((research) => {
         if (research.isActive && research.currentTime.gt(0)) {
           research.currentTime = research.currentTime.minus(1);
           if (research.currentTime.lte(0)) {
@@ -239,9 +239,9 @@ export const useStoreResearch = defineStore('storeResearch', {
         }
       });
     },
-    randomUpgrade(scientist: Scientist) {
-      const statsResearch = this.list.researchScientistsMultiplierStats;
-      const chanceResearch = this.list.researchScientistsChance;
+    randomUpgrade(scientist: ResearchScientist) {
+      const statsResearch = this.base.researchScientistsMultiplierStats;
+      const chanceResearch = this.base.researchScientistsChance;
 
       const addNew = statsResearch.level.mul(statsResearch.bonus).plus(1);
       const chance = chanceResearch.level.plus(1).mul(0.01);
@@ -273,7 +273,7 @@ export const useStoreResearch = defineStore('storeResearch', {
         if (Math.random() < 0.01) this.randomUpgrade(s);
       });
 
-      const { level, bonus } = this.list.researchScientistsMultiplierExperience;
+      const { level, bonus } = this.base.researchScientistsMultiplierExperience;
       const expMultiplier = level.gte(1) ? level.mul(bonus).plus(1) : new Decimal(1);
 
       let totalResearch = new Decimal(0);
@@ -291,7 +291,7 @@ export const useStoreResearch = defineStore('storeResearch', {
     processGiveResearchSpeed() {
       const storeShop = useStoreShop();
       const parRAM = storeShop.list.ram.value;
-      const parResearchRam = this.list.ramPow;
+      const parResearchRam = this.base.ramPow;
       const result = parRAM.pow(parResearchRam.bonus.mul(parResearchRam.level).plus(1));
       this.speed = this.speed.plus(result);
     },
@@ -305,69 +305,69 @@ export const useStoreResearch = defineStore('storeResearch', {
         intellect: new Decimal(s.intellect),
         efficiency: new Decimal(s.efficiency),
       }));
-      this.list.cpuPow.isActive = loaded.list.cpuPow.isActive;
-      this.list.cpuPow.currentTime = new Decimal(loaded.list.cpuPow.currentTime);
-      this.list.cpuPow.level = new Decimal(loaded.list.cpuPow.level);
-      this.list.hddPow.isActive = loaded.list.hddPow.isActive;
-      this.list.hddPow.currentTime = new Decimal(loaded.list.hddPow.currentTime);
-      this.list.hddPow.level = new Decimal(loaded.list.hddPow.level);
-      this.list.ramPow.isActive = loaded.list.ramPow.isActive;
-      this.list.ramPow.currentTime = new Decimal(loaded.list.ramPow.currentTime);
-      this.list.ramPow.level = new Decimal(loaded.list.ramPow.level);
-      this.list.shopCostMultiplierDecrease.isActive =
-        loaded.list.shopCostMultiplierDecrease.isActive;
-      this.list.shopCostMultiplierDecrease.currentTime = new Decimal(
-        loaded.list.shopCostMultiplierDecrease.currentTime,
+      this.base.cpuPow.isActive = loaded.base.cpuPow.isActive;
+      this.base.cpuPow.currentTime = new Decimal(loaded.base.cpuPow.currentTime);
+      this.base.cpuPow.level = new Decimal(loaded.base.cpuPow.level);
+      this.base.hddPow.isActive = loaded.base.hddPow.isActive;
+      this.base.hddPow.currentTime = new Decimal(loaded.base.hddPow.currentTime);
+      this.base.hddPow.level = new Decimal(loaded.base.hddPow.level);
+      this.base.ramPow.isActive = loaded.base.ramPow.isActive;
+      this.base.ramPow.currentTime = new Decimal(loaded.base.ramPow.currentTime);
+      this.base.ramPow.level = new Decimal(loaded.base.ramPow.level);
+      this.base.shopCostMultiplierDecrease.isActive =
+        loaded.base.shopCostMultiplierDecrease.isActive;
+      this.base.shopCostMultiplierDecrease.currentTime = new Decimal(
+        loaded.base.shopCostMultiplierDecrease.currentTime,
       );
-      this.list.shopCostMultiplierDecrease.level = new Decimal(
-        loaded.list.shopCostMultiplierDecrease.level,
+      this.base.shopCostMultiplierDecrease.level = new Decimal(
+        loaded.base.shopCostMultiplierDecrease.level,
       );
-      this.list.epicNumberMultiplierDecrease.currentTime = new Decimal(
-        loaded.list.epicNumberMultiplierDecrease.currentTime,
+      this.base.epicNumberMultiplierDecrease.currentTime = new Decimal(
+        loaded.base.epicNumberMultiplierDecrease.currentTime,
       );
-      this.list.epicNumberMultiplierDecrease.isActive =
-        loaded.list.epicNumberMultiplierDecrease.isActive;
-      this.list.epicNumberMultiplierDecrease.level = new Decimal(
-        loaded.list.epicNumberMultiplierDecrease.level,
+      this.base.epicNumberMultiplierDecrease.isActive =
+        loaded.base.epicNumberMultiplierDecrease.isActive;
+      this.base.epicNumberMultiplierDecrease.level = new Decimal(
+        loaded.base.epicNumberMultiplierDecrease.level,
       );
-      this.list.researchTimeMultiplierDecrease.isActive =
-        loaded.list.researchTimeMultiplierDecrease.isActive;
-      this.list.researchTimeMultiplierDecrease.currentTime = new Decimal(
-        loaded.list.researchTimeMultiplierDecrease.currentTime,
+      this.base.researchTimeMultiplierDecrease.isActive =
+        loaded.base.researchTimeMultiplierDecrease.isActive;
+      this.base.researchTimeMultiplierDecrease.currentTime = new Decimal(
+        loaded.base.researchTimeMultiplierDecrease.currentTime,
       );
-      this.list.researchTimeMultiplierDecrease.level = new Decimal(
-        loaded.list.researchTimeMultiplierDecrease.level,
+      this.base.researchTimeMultiplierDecrease.level = new Decimal(
+        loaded.base.researchTimeMultiplierDecrease.level,
       );
-      this.list.researchScientistsChance.isActive = loaded.list.researchScientistsChance.isActive;
-      this.list.researchScientistsChance.currentTime = new Decimal(
-        loaded.list.researchScientistsChance.currentTime,
+      this.base.researchScientistsChance.isActive = loaded.base.researchScientistsChance.isActive;
+      this.base.researchScientistsChance.currentTime = new Decimal(
+        loaded.base.researchScientistsChance.currentTime,
       );
-      this.list.researchScientistsChance.level = new Decimal(
-        loaded.list.researchScientistsChance.level,
+      this.base.researchScientistsChance.level = new Decimal(
+        loaded.base.researchScientistsChance.level,
       );
-      this.list.researchScientistsMultiplierStats.isActive =
-        loaded.list.researchScientistsMultiplierStats.isActive;
-      this.list.researchScientistsMultiplierStats.currentTime = new Decimal(
-        loaded.list.researchScientistsMultiplierStats.currentTime,
+      this.base.researchScientistsMultiplierStats.isActive =
+        loaded.base.researchScientistsMultiplierStats.isActive;
+      this.base.researchScientistsMultiplierStats.currentTime = new Decimal(
+        loaded.base.researchScientistsMultiplierStats.currentTime,
       );
-      this.list.researchScientistsMultiplierStats.level = new Decimal(
-        loaded.list.researchScientistsMultiplierStats.level,
+      this.base.researchScientistsMultiplierStats.level = new Decimal(
+        loaded.base.researchScientistsMultiplierStats.level,
       );
-      this.list.researchScientistsMultiplierExperience.isActive =
-        loaded.list.researchScientistsMultiplierExperience.isActive;
-      this.list.researchScientistsMultiplierExperience.currentTime = new Decimal(
-        loaded.list.researchScientistsMultiplierExperience.currentTime,
+      this.base.researchScientistsMultiplierExperience.isActive =
+        loaded.base.researchScientistsMultiplierExperience.isActive;
+      this.base.researchScientistsMultiplierExperience.currentTime = new Decimal(
+        loaded.base.researchScientistsMultiplierExperience.currentTime,
       );
-      this.list.researchScientistsMultiplierExperience.level = new Decimal(
-        loaded.list.researchScientistsMultiplierExperience.level,
+      this.base.researchScientistsMultiplierExperience.level = new Decimal(
+        loaded.base.researchScientistsMultiplierExperience.level,
       );
-      this.list.shopMultiplierChanceReturn.isActive =
-        loaded.list.shopMultiplierChanceReturn.isActive;
-      this.list.shopMultiplierChanceReturn.currentTime = new Decimal(
-        loaded.list.shopMultiplierChanceReturn.currentTime,
+      this.base.shopMultiplierChanceReturn.isActive =
+        loaded.base.shopMultiplierChanceReturn.isActive;
+      this.base.shopMultiplierChanceReturn.currentTime = new Decimal(
+        loaded.base.shopMultiplierChanceReturn.currentTime,
       );
-      this.list.shopMultiplierChanceReturn.level = new Decimal(
-        loaded.list.shopMultiplierChanceReturn.level,
+      this.base.shopMultiplierChanceReturn.level = new Decimal(
+        loaded.base.shopMultiplierChanceReturn.level,
       );
     },
   },

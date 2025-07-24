@@ -19,7 +19,7 @@ export const useStoreGame = defineStore('storeGame', {
       const storeResearch = useStoreResearch();
       const storeAchievement = useStoreAchievement();
       const parShopCPU = storeShop.list.cpu.value;
-      const parResearchCPU = storeResearch.list.cpuPow;
+      const parResearchCPU = storeResearch.base.cpuPow;
       const result = parShopCPU
         .pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1))
         .mul(storeAchievement.achievementBonus);

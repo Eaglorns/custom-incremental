@@ -1,10 +1,10 @@
-export interface HelperMeta {
+export interface AutomaticShopHelpersType {
   key: string;
   icon: string;
   title: string;
 }
 
-export const helpersMeta: HelperMeta[] = [
+export const automaticShopHelpersMeta: AutomaticShopHelpersType[] = [
   {
     key: 'cpu',
     icon: 'fa-duotone fa-microchip',

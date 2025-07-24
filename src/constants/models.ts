@@ -1,6 +1,6 @@
 import type Decimal from 'break_eternity.js';
 
-export interface Research {
+export interface ResearchBase {
   isActive: boolean;
   cost: Decimal;
   currentTime: Decimal;
@@ -12,7 +12,7 @@ export interface Research {
   maxLevel: Decimal;
 }
 
-export interface Scientist {
+export interface ResearchScientist {
   id: string;
   level: Decimal;
   exp: Decimal;
@@ -20,7 +20,7 @@ export interface Scientist {
   efficiency: Decimal;
 }
 
-export interface HelperState {
+export interface AutomaticShopHelpers {
   key: string;
   icon: string;
   title: string;
@@ -32,4 +32,15 @@ export interface HelperState {
     percent: Decimal;
     percentMultiply: Decimal;
   };
+}
+
+export interface PrestigeUpgrade {
+  key: string;
+  icon: string;
+  title: string;
+  description: string;
+  cost: Decimal;
+  level: Decimal;
+  costGrowth: Decimal;
+  maxLevel: number;
 }
