@@ -23,25 +23,25 @@ export const useStorePrestige = defineStore('storePrestige', {
       autoShopCPUValue: {
         cost: new Decimal(1),
         level: new Decimal(0),
-        costGrowth: new Decimal(1.5),
+        costGrowth: new Decimal(1.1),
         maxLevel: -1,
       },
       autoShopHDDValue: {
-        cost: new Decimal(5),
+        cost: new Decimal(1),
         level: new Decimal(0),
-        costGrowth: new Decimal(2),
+        costGrowth: new Decimal(1.1),
         maxLevel: -1,
       },
       autoShopRAMValue: {
-        cost: new Decimal(20),
+        cost: new Decimal(2),
         level: new Decimal(0),
-        costGrowth: new Decimal(2.5),
+        costGrowth: new Decimal(1.1),
         maxLevel: -1,
       },
       autoShopCPUMultiply: {
-        cost: new Decimal(8),
+        cost: new Decimal(3),
         level: new Decimal(0),
-        costGrowth: new Decimal(3.0),
+        costGrowth: new Decimal(1.1),
         maxLevel: -1,
       },
       autoShopHDDMultiply: {
