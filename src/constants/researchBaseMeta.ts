@@ -28,7 +28,7 @@ export const researchBaseMeta: ResearchBaseType[] = [
   },
   {
     key: 'workerPow',
-    icon: 'fa-duotone fa-memory',
+    icon: 'fa-duotone fa-users',
     title: 'Увеличение штата работников',
     description: 'Увеличивает прирост работников в степени. За каждое улучшение +0.00001',
   },

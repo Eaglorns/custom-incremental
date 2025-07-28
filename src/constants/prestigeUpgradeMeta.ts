@@ -37,6 +37,12 @@ export const prestigeUpgradeMeta: PrestigeUpgradeType[] = [
     description: 'Автоматически повышает значение RAM в магазине каждый тик.',
   },
   {
+    key: 'autoShopWorkerValue',
+    icon: 'fa-duotone fa-users',
+    title: 'Прирост работников',
+    description: 'Автоматически повышает значение работников в магазине каждый тик.',
+  },
+  {
     key: 'autoShopCPUMultiply',
     icon: 'fa-duotone fa-microchip',
     title: 'Умножение CPU',
@@ -53,5 +59,11 @@ export const prestigeUpgradeMeta: PrestigeUpgradeType[] = [
     icon: 'fa-duotone fa-memory',
     title: 'Умножение RAM',
     description: 'Автоматически повышает множитель RAM в магазине каждый тик.',
+  },
+  {
+    key: 'autoShopWorkerMultiply',
+    icon: 'fa-duotone fa-users',
+    title: 'Умножение работников',
+    description: 'Автоматически повышает множитель работников в магазине каждый тик.',
   },
 ];

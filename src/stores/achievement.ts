@@ -12,6 +12,7 @@ export const useStoreAchievement = defineStore('storeAchievement', {
       shopCpuValue: new Decimal(0),
       shopHddValue: new Decimal(0),
       shopRamValue: new Decimal(0),
+      shopWorkerValue: new Decimal(0),
       prestigePoints: new Decimal(0),
       researchPoints: new Decimal(0),
       shopPoints: new Decimal(0),
@@ -36,6 +37,7 @@ export const useStoreAchievement = defineStore('storeAchievement', {
         shopCpuValue: state.list.shopCpuValue,
         shopHddValue: state.list.shopHddValue,
         shopRamValue: state.list.shopRamValue,
+        shopWorkerValue: state.list.shopWorkerValue,
         prestigePoints: state.list.prestigePoints,
         researchPoints: state.list.researchPoints,
         shopPoints: state.list.shopPoints,
@@ -62,6 +64,9 @@ export const useStoreAchievement = defineStore('storeAchievement', {
       const ramLevel = this.getLevel(storeShop.list.ram.value, new Decimal(10));
       if (ramLevel.gt(this.list.shopRamValue)) this.list.shopRamValue = ramLevel;
 
+      const workerLevel = this.getLevel(storeShop.list.worker.value, new Decimal(5));
+      if (workerLevel.gt(this.list.shopWorkerValue)) this.list.shopWorkerValue = workerLevel;
+
       const prestigePointsLevel = this.getLevel(storePrestige.points, new Decimal(3));
       if (prestigePointsLevel.gt(this.list.prestigePoints))
         this.list.prestigePoints = prestigePointsLevel;
@@ -79,6 +84,7 @@ export const useStoreAchievement = defineStore('storeAchievement', {
       shopCpuValue: string;
       shopHddValue: string;
       shopRamValue: string;
+      shopWorkerValue: string;
       prestigePoints: string;
       researchPoints: string;
       shopPoints: string;
@@ -87,6 +93,7 @@ export const useStoreAchievement = defineStore('storeAchievement', {
       this.list.shopCpuValue = new Decimal(loaded.shopCpuValue);
       this.list.shopHddValue = new Decimal(loaded.shopHddValue);
       this.list.shopRamValue = new Decimal(loaded.shopRamValue);
+      this.list.shopWorkerValue = new Decimal(loaded.shopWorkerValue);
       this.list.prestigePoints = new Decimal(loaded.prestigePoints);
       this.list.researchPoints = new Decimal(loaded.researchPoints);
       this.list.shopPoints = new Decimal(loaded.shopPoints);

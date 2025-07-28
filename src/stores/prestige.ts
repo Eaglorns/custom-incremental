@@ -6,7 +6,7 @@ import { useStoreResearch } from 'stores/research';
 
 export const useStorePrestige = defineStore('storePrestige', {
   state: () => ({
-    points: new Decimal(1000),
+    points: new Decimal(10),
     upgrades: {
       prestigeBonus: {
         cost: new Decimal(5),
@@ -38,6 +38,12 @@ export const useStorePrestige = defineStore('storePrestige', {
         costGrowth: new Decimal(1.1),
         maxLevel: -1,
       },
+      autoShopWorkerValue: {
+        cost: new Decimal(5),
+        level: new Decimal(0),
+        costGrowth: new Decimal(1.3),
+        maxLevel: -1,
+      },
       autoShopCPUMultiply: {
         cost: new Decimal(2),
         level: new Decimal(0),
@@ -54,6 +60,12 @@ export const useStorePrestige = defineStore('storePrestige', {
         cost: new Decimal(5),
         level: new Decimal(0),
         costGrowth: new Decimal(2.5),
+        maxLevel: -1,
+      },
+      autoShopWorkerMultiply: {
+        cost: new Decimal(20),
+        level: new Decimal(0),
+        costGrowth: new Decimal(4.0),
         maxLevel: -1,
       },
     },
@@ -83,9 +95,11 @@ export const useStorePrestige = defineStore('storePrestige', {
           autoShopCPUValue: { level: state.upgrades.autoShopCPUValue.level },
           autoShopHDDValue: { level: state.upgrades.autoShopHDDValue.level },
           autoShopRAMValue: { level: state.upgrades.autoShopRAMValue.level },
+          autoShopWorkerValue: { level: state.upgrades.autoShopWorkerValue.level },
           autoShopCPUMultiply: { level: state.upgrades.autoShopCPUMultiply.level },
           autoShopHDDMultiply: { level: state.upgrades.autoShopHDDMultiply.level },
           autoShopRAMMultiply: { level: state.upgrades.autoShopRAMMultiply.level },
+          autoShopWorkerMultiply: { level: state.upgrades.autoShopWorkerMultiply.level },
         },
       };
     },
@@ -106,6 +120,8 @@ export const useStorePrestige = defineStore('storePrestige', {
       storeShop.list.hdd.multiply = new Decimal(1);
       storeShop.list.ram.value = new Decimal(1);
       storeShop.list.ram.multiply = new Decimal(1);
+      storeShop.list.worker.value = new Decimal(1);
+      storeShop.list.worker.multiply = new Decimal(1);
       storeShop.points = new Decimal(0);
     },
 
@@ -116,6 +132,7 @@ export const useStorePrestige = defineStore('storePrestige', {
         { key: 'autoShopCPUValue', shopKey: 'cpu' },
         { key: 'autoShopHDDValue', shopKey: 'hdd' },
         { key: 'autoShopRAMValue', shopKey: 'ram' },
+        { key: 'autoShopWorkerValue', shopKey: 'worker' },
       ];
       upgradesValue.forEach(({ key, shopKey }) => {
         const level = storePrestige.upgrades[key as keyof typeof storePrestige.upgrades].level;
@@ -128,6 +145,7 @@ export const useStorePrestige = defineStore('storePrestige', {
         { key: 'autoShopCPUMultiply', shopKey: 'cpu' },
         { key: 'autoShopHDDMultiply', shopKey: 'hdd' },
         { key: 'autoShopRAMMultiply', shopKey: 'ram' },
+        { key: 'autoShopWorkerMultiply', shopKey: 'worker' },
       ];
       upgradesMultiply.forEach(({ key, shopKey }) => {
         const level = storePrestige.upgrades[key as keyof typeof storePrestige.upgrades].level;
@@ -146,9 +164,11 @@ export const useStorePrestige = defineStore('storePrestige', {
         autoShopCPUValue: { level: string };
         autoShopHDDValue: { level: string };
         autoShopRAMValue: { level: string };
+        autoShopWorkerValue: { level: string };
         autoShopCPUMultiply: { level: string };
         autoShopHDDMultiply: { level: string };
         autoShopRAMMultiply: { level: string };
+        autoShopWorkerMultiply: { level: string };
       };
     }) {
       this.points = new Decimal(loaded.points);
@@ -157,6 +177,9 @@ export const useStorePrestige = defineStore('storePrestige', {
       this.upgrades.autoShopCPUValue.level = new Decimal(loaded.upgrades.autoShopCPUValue.level);
       this.upgrades.autoShopHDDValue.level = new Decimal(loaded.upgrades.autoShopHDDValue.level);
       this.upgrades.autoShopRAMValue.level = new Decimal(loaded.upgrades.autoShopRAMValue.level);
+      this.upgrades.autoShopWorkerValue.level = new Decimal(
+        loaded.upgrades.autoShopWorkerValue.level,
+      );
       this.upgrades.autoShopCPUMultiply.level = new Decimal(
         loaded.upgrades.autoShopCPUMultiply.level,
       );
@@ -165,6 +188,9 @@ export const useStorePrestige = defineStore('storePrestige', {
       );
       this.upgrades.autoShopRAMMultiply.level = new Decimal(
         loaded.upgrades.autoShopRAMMultiply.level,
+      );
+      this.upgrades.autoShopWorkerMultiply.level = new Decimal(
+        loaded.upgrades.autoShopWorkerMultiply.level,
       );
     },
   },

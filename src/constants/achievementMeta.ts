@@ -59,6 +59,16 @@ export const achievements = computed<AchievementsType[]>(() => [
     hint: 'Покупайте RAM, чтобы повышать уровень достижения. Каждый новый уровень требует в 10 раз больше RAM.',
   },
   {
+    key: 'shopRamValue',
+    title: 'Коллекционер работников',
+    description: 'Получайте новые уровни за большее количество работников',
+    icon: 'fa-duotone fa-memory',
+    color: 'deep-orange',
+    level: achievementLevels.value.shopWorkerValue,
+    unlocked: achievementLevels.value.shopWorkerValue.gt(0),
+    hint: 'Покупайте работников, чтобы повышать уровень достижения. Каждый новый уровень требует в 5 раз больше работников.',
+  },
+  {
     key: 'prestigePoints',
     title: 'Мастер сброса',
     description: 'Получайте новые уровни за большее количество очков престижа',

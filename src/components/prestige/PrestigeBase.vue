@@ -18,24 +18,19 @@
         />
       </div>
       <div class="prestige-progress-info flex items-center justify-between">
-        <q-icon
-          name="fa-duotone fa-arrow-rotate-right"
-          color="secondary"
-          size="22px"
-          class="prestige-progress-icon-modern q-mr-xs"
-        />
+        <div />
         <span class="prestige-possible-modern">+{{ formatNumber(prestigeGain) }}</span>
       </div>
     </div>
     <q-btn
-      color="primary"
+      color="brown-5"
       size="md"
       icon="fa-duotone fa-arrow-rotate-right"
       label="Получить"
       unelevated
+      rounded
       :disabled="!canPrestige"
       @click="onPrestige"
-      :class="{ 'prestige-btn-glow-modern': canPrestige }"
       class="prestige-btn-modern"
     />
   </div>
@@ -70,16 +65,16 @@ const onPrestige = () => {
 
 <style lang="sass" scoped>
 // --- Новый современный стиль ---
+
 .prestige-card-modern
   min-height: 240px
   max-width: 270px
   margin: 0 auto
   border-radius: 22px
   background: linear-gradient(135deg, #20222e 80%, #2c2d4a 100%)
-  box-shadow: 0 8px 32px 0 #23243a66, 0 2px 12px 0 #6bbf6b22
   color: #f8fafc
   position: relative
-  transition: box-shadow 0.3s, background 0.3s
+  transition: background 0.3s
 
 .prestige-header-modern
   letter-spacing: 0.3px
@@ -88,8 +83,7 @@ const onPrestige = () => {
   align-items: center
   justify-content: center
 
-.prestige-icon-modern
-  filter: drop-shadow(0 0 6px #6bbf6b88)
+
 
 .prestige-main-value-modern
   font-size: 1.7rem
@@ -110,12 +104,12 @@ const onPrestige = () => {
   flex-direction: column
   gap: 6px
 
+
 .prestige-progress-bar-bg
   width: 100%
   height: 18px
   background: rgba(35,36,58,0.96)
   border-radius: 12px
-  box-shadow: 0 2px 8px #23243a44, 0 0 2px #6bbf6b22
   position: relative
   overflow: hidden
 
@@ -129,8 +123,7 @@ const onPrestige = () => {
   border-radius: 12px
   z-index: 1
   transition: width 0.4s
-.prestige-progress-bar-can
-  box-shadow: 0 0 8px 2px #6bbf6b44
+
 
 .prestige-progress-info
   width: 100%
@@ -156,9 +149,4 @@ const onPrestige = () => {
   margin-top: 8px
   width: 100%
   max-width: 180px
-
-.prestige-btn-glow-modern
-  box-shadow: 0 0 12px 3px #6bbf6b44
-  transition: box-shadow 0.2s, transform 0.2s
-  transform: scale(1.05)
 </style>

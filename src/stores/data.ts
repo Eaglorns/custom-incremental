@@ -8,13 +8,18 @@ import { useStorePrestige } from 'stores/prestige';
 export const useStoreData = defineStore('storeData', {
   state: () => ({
     version: '0.0.0',
-    epicNumber: new Decimal('0'),
+    epicNumber: new Decimal('2500'),
     multiplierEpicNumber: new Decimal(0),
     currentTab: 'shop',
   }),
 
   getters: {
     formatNumber: () => {
+      function cleanExp(str: string) {
+        str = str.replace(/\.0+([e[])/, '$1').replace(/(\.\d*[1-9])0+([e[])/, '$1$2');
+        return str.replace(/e(-?\d{4,})/, (m, p1) => `e${Number(p1).toExponential(2)}`);
+      }
+
       function formatSmall(num: Decimal, fixed?: boolean) {
         if (fixed) return num.toFixed(3);
         if (num.eq(num.floor())) return num.toFixed(0);
@@ -24,9 +29,12 @@ export const useStoreData = defineStore('storeData', {
       function formatScientific(num: Decimal) {
         const exp = num.log10().floor();
         const mantissa = num.div(Decimal.pow(10, exp));
-        return mantissa.eq(mantissa.floor())
-          ? `${mantissa.toFixed(0)}e${exp.toFixed(0)}`
-          : `${mantissa.toFixed(3)}e${exp.toFixed(0)}`;
+        const expStr =
+          Math.abs(exp.toNumber()) >= 1000 ? exp.toNumber().toExponential(2) : exp.toFixed(0);
+        const str = mantissa.eq(mantissa.floor())
+          ? `${mantissa.toFixed(0)}e${expStr}`
+          : `${mantissa.toFixed(2)}e${expStr}`;
+        return cleanExp(str);
       }
 
       function formatE(num: Decimal, value: Decimal) {
@@ -35,15 +43,19 @@ export const useStoreData = defineStore('storeData', {
         if (Math.abs(mantissa10 - 1) < 1e-6) {
           return `e${exp.toFixed(0)}`;
         }
-        return Number.isInteger(mantissa10)
-          ? `${mantissa10.toFixed(0)}e${exp.toFixed(0)}`
-          : `${mantissa10.toFixed(3)}e${exp.toFixed(0)}`;
+        const expStr =
+          Math.abs(exp.toNumber()) >= 1000 ? exp.toNumber().toExponential(2) : exp.toFixed(0);
+        const str = Number.isInteger(mantissa10)
+          ? `${mantissa10.toFixed(0)}e${expStr}`
+          : `${mantissa10.toFixed(2)}e${expStr}`;
+        return cleanExp(str);
       }
 
       function formatTetration(value: Decimal, tetration: number) {
-        return value.eq(value.floor())
+        const str = value.eq(value.floor())
           ? `${value.toFixed(0)}[↑↑${tetration + 1}]`
-          : `${value.toFixed(4)}[↑↑${tetration + 1}]`;
+          : `${value.toFixed(2)}[↑↑${tetration + 1}]`;
+        return cleanExp(str);
       }
 
       function formatSuperTetration(tetration: number) {
@@ -53,9 +65,10 @@ export const useStoreData = defineStore('storeData', {
           t = Math.log10(t);
           superTetration++;
         }
-        return Number.isInteger(t)
+        const str = Number.isInteger(t)
           ? `${t.toFixed(0)}[↑↑↑${superTetration + 1}]`
-          : `${t.toFixed(4)}[↑↑↑${superTetration + 1}]`;
+          : `${t.toFixed(2)}[↑↑↑${superTetration + 1}]`;
+        return cleanExp(str);
       }
 
       return (num: Decimal, fixed?: boolean) => {
@@ -102,7 +115,6 @@ export const useStoreData = defineStore('storeData', {
 
   actions: {
     processGiveEpicNumber() {
-      const storeData = useStoreData();
       const storeShop = useStoreShop();
       const storeResearch = useStoreResearch();
       const storeAchievement = useStoreAchievement();
@@ -116,7 +128,8 @@ export const useStoreData = defineStore('storeData', {
         .mul(prestigeMul)
         .mul(prestigeUpgradeBonus)
         .mul(storeAchievement.achievementBonus);
-      storeData.epicNumber = storeData.epicNumber.plus(result);
+      this.epicNumber = this.epicNumber.plus(result);
+      console.log(this.epicNumber.toString());
     },
 
     load(loaded: { version: string; epicNumber: string; multiplierEpicNumber: string }) {
