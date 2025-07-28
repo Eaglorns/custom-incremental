@@ -50,16 +50,20 @@
         align="justify"
         class="text-grey"
       >
-        <q-tab name="shop" icon="fa-duotone fa-store" label="Магазин" />
-        <q-tab name="prestige" icon="fa-duotone fa-arrow-up-right-dots" label="Престиж" />
-        <q-tab name="research" icon="fa-duotone fa-flask-vial" label="Исследования" />
-        <q-tab name="automatic" icon="fa-duotone fa-microchip-ai" label="Автоматизация" />
-        <q-tab name="eternity" icon="fa-duotone fa-hourglass-end" label="Вечность" />
-        <q-tab name="infinity" icon="fa-duotone fa-infinity" label="Бесконечность" />
-        <q-tab name="achievement" icon="fa-duotone fa-trophy-star" label="Достижения" />
-        <q-tab name="stats" icon="fa-duotone fa-chart-line" label="Статистика" />
-        <q-tab name="help" icon="fa-duotone fa-circle-question" label="Помощь" />
-        <q-tab name="setting" icon="fa-duotone fa-gear-complex" label="Настройки" />
+        <q-tab name="shop" icon="fa-duotone fa-store" :label="tabLabels.shop" />
+        <q-tab
+          name="prestige"
+          icon="fa-duotone fa-arrow-up-right-dots"
+          :label="tabLabels.prestige"
+        />
+        <q-tab name="research" icon="fa-duotone fa-flask-vial" :label="tabLabels.research" />
+        <q-tab name="automatic" icon="fa-duotone fa-microchip-ai" :label="tabLabels.automatic" />
+        <q-tab name="eternity" icon="fa-duotone fa-hourglass-end" :label="tabLabels.eternity" />
+        <q-tab name="infinity" icon="fa-duotone fa-infinity" :label="tabLabels.infinity" />
+        <q-tab name="achievement" icon="fa-duotone fa-trophy-star" :label="tabLabels.achievement" />
+        <q-tab name="stats" icon="fa-duotone fa-chart-line" :label="tabLabels.stats" />
+        <q-tab name="help" icon="fa-duotone fa-circle-question" :label="tabLabels.help" />
+        <q-tab name="setting" icon="fa-duotone fa-gear-complex" :label="tabLabels.setting" />
       </q-tabs>
       <q-separator />
       <q-tab-panels v-model="tab">
@@ -68,8 +72,13 @@
             <template v-slot:before>
               <q-tabs v-model="innerShop" vertical class="text-teal" align="left">
                 <q-tab name="innerShopCPU" icon="fa-duotone fa-microchip" label="CPU" />
-                <q-tab name="innerShopHdd" icon="fa-duotone fa-hard-drive" label="RAM" />
-                <q-tab name="innerShopRAM" icon="fa-duotone fa-memory" label="HDD" />
+                <q-tab name="innerShopHDD" icon="fa-duotone fa-hard-drive" label="HDD" />
+                <q-tab name="innerShopRAM" icon="fa-duotone fa-memory" label="RAM" />
+                <q-tab
+                  name="innerShopWorker"
+                  icon="fa-duotone fa-users"
+                  :label="innerShopLabels.innerShopWorker"
+                />
               </q-tabs>
             </template>
             <template v-slot:after>
@@ -79,13 +88,16 @@
                 transition-next="slide-up"
               >
                 <q-tab-panel name="innerShopCPU"
-                  ><ShopTemplate name="cpu" label="Процессор" icon="fa-duotone fa-microchip"
+                  ><ShopTemplate name="cpu" label="CPU" icon="fa-duotone fa-microchip"
                 /></q-tab-panel>
-                <q-tab-panel name="innerShopHdd"
-                  ><ShopTemplate name="hdd" label="Жёсткий диск" icon="fa-duotone fa-hard-drive"
+                <q-tab-panel name="innerShopHDD"
+                  ><ShopTemplate name="hdd" label="HDD" icon="fa-duotone fa-hard-drive"
                 /></q-tab-panel>
                 <q-tab-panel name="innerShopRAM"
-                  ><ShopTemplate name="ram" label="Оперативная память" icon="fa-duotone fa-memory"
+                  ><ShopTemplate name="ram" label="RAM" icon="fa-duotone fa-memory"
+                /></q-tab-panel>
+                <q-tab-panel name="innerShopWorker"
+                  ><ShopTemplate name="worker" label="Работники" icon="fa-duotone fa-users"
                 /></q-tab-panel>
               </q-tab-panels>
             </template>
@@ -98,12 +110,12 @@
                 <q-tab
                   name="innerPrestigeBase"
                   icon="fa-duotone fa-arrow-up-from-dotted-line"
-                  label="Основа"
+                  :label="innerPrestigeLabels.innerPrestigeBase"
                 />
                 <q-tab
                   name="innerPrestigeUpgrade"
                   icon="fa-duotone fa-sparkles"
-                  label="Улучшения"
+                  :label="innerPrestigeLabels.innerPrestigeUpgrade"
                 />
               </q-tabs>
             </template>
@@ -126,9 +138,13 @@
                 <q-tab
                   name="innerResearchScientist"
                   icon="fa-duotone fa-user-astronaut"
-                  label="Учёные"
+                  :label="innerResearchLabels.innerResearchScientist"
                 />
-                <q-tab name="innerResearchBase" icon="fa-duotone fa-flask" label="Базовые" />
+                <q-tab
+                  name="innerResearchBase"
+                  icon="fa-duotone fa-flask"
+                  :label="innerResearchLabels.innerResearchBase"
+                />
               </q-tabs>
             </template>
             <template v-slot:after>
@@ -150,7 +166,7 @@
                 <q-tab
                   name="innerAutomaticHelpersShop"
                   icon="fa-duotone fa-cart-shopping"
-                  label="Скупщики комплектующих"
+                  :label="innerAutomaticLabels.innerAutomaticHelpersShop"
                 />
               </q-tabs>
             </template>
@@ -239,6 +255,39 @@ const epicRef = ref<HTMLElement | null>(null);
 const shopRef = ref<HTMLElement | null>(null);
 const prestigeRef = ref<HTMLElement | null>(null);
 const researchRef = ref<HTMLElement | null>(null);
+
+const isMobile = computed(() => window.innerWidth < 700);
+
+const tabLabels = computed(() => ({
+  shop: isMobile.value ? 'Ма' : 'Магазин',
+  prestige: isMobile.value ? 'Пр' : 'Престиж',
+  research: isMobile.value ? 'Ис' : 'Исследования',
+  automatic: isMobile.value ? 'Ав' : 'Автоматизация',
+  eternity: isMobile.value ? 'Ве' : 'Вечность',
+  infinity: isMobile.value ? 'Бе' : 'Бесконечность',
+  achievement: isMobile.value ? 'До' : 'Достижения',
+  stats: isMobile.value ? 'Ст' : 'Статистика',
+  help: isMobile.value ? 'По' : 'Помощь',
+  setting: isMobile.value ? 'На' : 'Настройки',
+}));
+
+const innerShopLabels = computed(() => ({
+  innerShopWorker: isMobile.value ? 'Работ' : 'Работники',
+}));
+
+const innerPrestigeLabels = computed(() => ({
+  innerPrestigeBase: isMobile.value ? 'Основ' : 'Основа',
+  innerPrestigeUpgrade: isMobile.value ? 'Улучш' : 'Улучшения',
+}));
+
+const innerResearchLabels = computed(() => ({
+  innerResearchScientist: isMobile.value ? 'Учёны' : 'Учён.',
+  innerResearchBase: isMobile.value ? 'Базов' : 'Базовые',
+}));
+
+const innerAutomaticLabels = computed(() => ({
+  innerAutomaticHelpersShop: isMobile.value ? 'Скупщ' : 'Скупщики комплектующих',
+}));
 
 function animateColorEl(el: HTMLElement | null, fast: boolean = false) {
   if (!el) return;

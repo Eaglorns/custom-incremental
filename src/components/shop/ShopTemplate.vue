@@ -89,7 +89,7 @@
             class="full-width"
             @click="
               storeShop.onBuyValue(props.name);
-              storeSetting.playSound('ShopOnBuyValue');
+              storeSetting.playSound('ShopOnBuyValue', 2);
             "
             size="lg"
             :disable="!storeShop.canBuyValue(props.name)"
@@ -103,7 +103,7 @@
             class="full-width"
             @click="
               storeShop.onBuyMultiply(props.name);
-              storeSetting.playSound('ShopOnBuyMultiplier', 2);
+              storeSetting.playSound('ShopOnBuyMultiplier', 10);
             "
             size="lg"
             :disable="!storeShop.canBuyMultiply(props.name)"

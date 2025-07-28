@@ -12,7 +12,7 @@ interface ShopItem {
   };
 }
 
-type ShopKey = 'cpu' | 'hdd' | 'ram';
+type ShopKey = 'cpu' | 'hdd' | 'ram' | 'worker';
 
 export const useStoreShop = defineStore('storeShop', {
   state: () => ({
@@ -40,6 +40,14 @@ export const useStoreShop = defineStore('storeShop', {
         cost: {
           value: new Decimal(250),
           multiply: new Decimal(1000000),
+        },
+      },
+      worker: {
+        value: new Decimal(1),
+        multiply: new Decimal(1),
+        cost: {
+          value: new Decimal('1e10'),
+          multiply: new Decimal('1e15'),
         },
       },
     },
@@ -78,26 +86,18 @@ export const useStoreShop = defineStore('storeShop', {
           cpu: {
             value: state.list.cpu.value,
             multiply: state.list.cpu.multiply,
-            cost: {
-              value: state.list.cpu.cost.value,
-              multiply: state.list.cpu.cost.multiply,
-            },
           },
           hdd: {
             value: state.list.hdd.value,
             multiply: state.list.hdd.multiply,
-            cost: {
-              value: state.list.hdd.cost.value,
-              multiply: state.list.hdd.cost.multiply,
-            },
           },
           ram: {
             value: state.list.ram.value,
             multiply: state.list.ram.multiply,
-            cost: {
-              value: state.list.ram.cost.value,
-              multiply: state.list.ram.cost.multiply,
-            },
+          },
+          worker: {
+            value: state.list.worker.value,
+            multiply: state.list.worker.multiply,
           },
         },
       };
@@ -105,7 +105,12 @@ export const useStoreShop = defineStore('storeShop', {
   },
   actions: {
     processGivePoints() {
-      this.points = this.points.add(1);
+      const storeResearch = useStoreResearch();
+      const parResearchWorker = storeResearch.base.workerPow;
+      const give = this.list.worker.value.pow(
+        parResearchWorker.bonus.mul(parResearchWorker.level).plus(1),
+      );
+      this.points = this.points.add(give);
     },
 
     onBuyValue(key: ShopKey) {
@@ -132,6 +137,7 @@ export const useStoreShop = defineStore('storeShop', {
         cpu: ShopItem;
         hdd: ShopItem;
         ram: ShopItem;
+        worker: ShopItem;
       };
     }) {
       this.points = new Decimal(loaded.points);
@@ -141,6 +147,8 @@ export const useStoreShop = defineStore('storeShop', {
       this.list.hdd.multiply = new Decimal(loaded.list.hdd.multiply);
       this.list.ram.value = new Decimal(loaded.list.ram.value);
       this.list.ram.multiply = new Decimal(loaded.list.ram.multiply);
+      this.list.worker.value = new Decimal(loaded.list.worker.value);
+      this.list.worker.multiply = new Decimal(loaded.list.worker.multiply);
     },
   },
 });

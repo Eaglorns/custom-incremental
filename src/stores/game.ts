@@ -58,8 +58,13 @@ export const useStoreGame = defineStore('storeGame', {
     },
 
     processGiveMultiplierEpicNumber() {
+      const storeShop = useStoreShop();
+      const storeResearch = useStoreResearch();
+      const parShopHDD = storeShop.list.hdd.value;
+      const parResearchHDD = storeResearch.base.hddPow;
       const storeData = useStoreData();
-      storeData.multiplierEpicNumber = storeData.multiplierEpicNumber.plus(this.generateEpicNumber);
+      const result = parShopHDD.pow(parResearchHDD.bonus.mul(parResearchHDD.level).plus(1));
+      storeData.multiplierEpicNumber = storeData.multiplierEpicNumber.plus(result);
     },
   },
 });

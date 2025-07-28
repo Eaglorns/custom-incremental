@@ -4,11 +4,13 @@
 
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount } from 'vue';
-import { useStoreGame } from 'src/stores/game';
-import { useStoreSaveLoad } from 'src/stores/saveLoad';
+import { useStoreGame } from 'stores/game';
+import { useStoreSaveLoad } from 'stores/saveLoad';
+import { useStoreSetting } from 'src/stores/setting';
 
 const storeGame = useStoreGame();
 const storeSaveLoad = useStoreSaveLoad();
+const storeSetting = useStoreSetting();
 
 let timerIdGameTick: ReturnType<typeof setInterval> | null = null;
 let timerIdGameSave: ReturnType<typeof setInterval> | null = null;
@@ -23,6 +25,8 @@ const startGameSaveTimer = () => {
   if (timerIdGameSave) clearInterval(timerIdGameSave);
   timerIdGameSave = setInterval(() => storeSaveLoad.saveGame(), storeSaveLoad.timerSave);
 };
+
+storeSetting.preload();
 
 onMounted(() => {
   storeSaveLoad.loadGame();

@@ -19,9 +19,22 @@ export const useStoreSetting = defineStore('storeSetting', {
     },
   },
   actions: {
+    preload() {
+      const sounds = ['ShopOnBuyValue', 'ShopOnBuyMultiplier'];
+      sounds.forEach((file) => {
+        new Howl({
+          src: [`sounds/${file}.mp3`],
+          preload: true,
+        }).load();
+      });
+    },
+
     playSound(name: string, divider: number = 1) {
       if (this.audio.enabled)
-        new Howl({ src: [`sounds/${name}.mp3`], volume: this.audio.volume / divider }).play();
+        new Howl({
+          src: [`sounds/${name}.mp3`],
+          volume: this.audio.volume / divider,
+        }).play();
     },
 
     load(loaded: { audio: { enabled: boolean; volume: number } }) {

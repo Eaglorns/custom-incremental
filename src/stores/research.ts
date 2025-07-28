@@ -23,6 +23,7 @@ interface ResearchLoadData {
     cpuPow: ResearchList;
     hddPow: ResearchList;
     ramPow: ResearchList;
+    workerPow: ResearchList;
     shopCostMultiplierDecrease: ResearchList;
     epicNumberMultiplierDecrease: ResearchList;
     researchTimeMultiplierDecrease: ResearchList;
@@ -36,7 +37,7 @@ interface ResearchLoadData {
 export const useStoreResearch = defineStore('storeResearch', {
   state: () => ({
     points: new Decimal(0),
-    speed: new Decimal(1),
+    speed: new Decimal(0),
     scientists: [] as ResearchScientist[],
     base: {
       cpuPow: {
@@ -71,6 +72,17 @@ export const useStoreResearch = defineStore('storeResearch', {
         costMultiply: new Decimal(1.6),
         timeMultiply: new Decimal(1.3),
         maxLevel: new Decimal(1000),
+      },
+      workerPow: {
+        isActive: false,
+        cost: new Decimal('1e10'),
+        currentTime: new Decimal(0),
+        time: new Decimal(50),
+        bonus: new Decimal(0.001),
+        level: new Decimal(0),
+        costMultiply: new Decimal(5),
+        timeMultiply: new Decimal(3),
+        maxLevel: new Decimal(10000),
       },
       shopCostMultiplierDecrease: {
         isActive: false,
@@ -157,7 +169,7 @@ export const useStoreResearch = defineStore('storeResearch', {
       if (base.lt(1)) return new Decimal(1);
       const research = store.base.researchTimeMultiplierDecrease;
       const bonus = research.level.gt(0) ? research.bonus.pow(research.level) : new Decimal(1);
-      const reduced = base.log(5).div(new Decimal(1000).div(bonus));
+      const reduced = base.log(1.05).div(new Decimal(1000).div(bonus));
       return Decimal.max(new Decimal(1), new Decimal(1).add(reduced));
     },
 
@@ -187,6 +199,11 @@ export const useStoreResearch = defineStore('storeResearch', {
             isActive: store.base.ramPow.isActive,
             currentTime: store.base.ramPow.currentTime,
             level: store.base.ramPow.level,
+          },
+          workerPow: {
+            isActive: store.base.workerPow.isActive,
+            currentTime: store.base.workerPow.currentTime,
+            level: store.base.workerPow.level,
           },
           shopCostMultiplierDecrease: {
             isActive: store.base.shopCostMultiplierDecrease.isActive,
@@ -314,6 +331,9 @@ export const useStoreResearch = defineStore('storeResearch', {
       this.base.ramPow.isActive = loaded.base.ramPow.isActive;
       this.base.ramPow.currentTime = new Decimal(loaded.base.ramPow.currentTime);
       this.base.ramPow.level = new Decimal(loaded.base.ramPow.level);
+      this.base.workerPow.isActive = loaded.base.workerPow.isActive;
+      this.base.workerPow.currentTime = new Decimal(loaded.base.workerPow.currentTime);
+      this.base.workerPow.level = new Decimal(loaded.base.workerPow.level);
       this.base.shopCostMultiplierDecrease.isActive =
         loaded.base.shopCostMultiplierDecrease.isActive;
       this.base.shopCostMultiplierDecrease.currentTime = new Decimal(

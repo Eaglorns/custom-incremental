@@ -48,6 +48,16 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
           percentMultiply: new Decimal(340),
         },
       },
+      worker: {
+        count: new Decimal(0),
+        percent: new Decimal(0),
+        cost: {
+          count: new Decimal('1e10'),
+          countMultiply: new Decimal(150),
+          percent: new Decimal('1e15'),
+          percentMultiply: new Decimal(1250),
+        },
+      },
       cpuMultiplier: {
         count: new Decimal(0),
         percent: new Decimal(0),
@@ -78,6 +88,16 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
           percentMultiply: new Decimal(3400),
         },
       },
+      workerMultiplier: {
+        count: new Decimal(0),
+        percent: new Decimal(0),
+        cost: {
+          count: new Decimal('1e12'),
+          countMultiply: new Decimal(1650),
+          percent: new Decimal('1e17'),
+          percentMultiply: new Decimal(13500),
+        },
+      },
     },
   }),
   getters: {
@@ -106,6 +126,10 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
             count: state.helpersShop.ram.count,
             percent: state.helpersShop.ram.percent,
           },
+          worker: {
+            count: state.helpersShop.worker.count,
+            percent: state.helpersShop.worker.percent,
+          },
           cpuMultiplier: {
             count: state.helpersShop.cpuMultiplier.count,
             percent: state.helpersShop.cpuMultiplier.percent,
@@ -118,6 +142,10 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
             count: state.helpersShop.ramMultiplier.count,
             percent: state.helpersShop.ramMultiplier.percent,
           },
+          workerMultiplier: {
+            count: state.helpersShop.workerMultiplier.count,
+            percent: state.helpersShop.workerMultiplier.percent,
+          },
         },
       };
     },
@@ -127,8 +155,13 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
       const storeShop = useStoreShop();
       const storeData = useStoreData();
       const rand = Math.random() * 100;
-      const valueKeys = ['cpu', 'hdd', 'ram'] as const;
-      const multiplierKeys = ['cpuMultiplier', 'hddMultiplier', 'ramMultiplier'] as const;
+      const valueKeys = ['cpu', 'hdd', 'ram', 'worker'] as const;
+      const multiplierKeys = [
+        'cpuMultiplier',
+        'hddMultiplier',
+        'ramMultiplier',
+        'workerMultiplier',
+      ] as const;
 
       valueKeys.forEach((key) => {
         const helper = this.helpersShop[key];
@@ -167,9 +200,11 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
         cpu: Helper;
         hdd: Helper;
         ram: Helper;
+        worker: Helper;
         cpuMultiplier: Helper;
         hddMultiplier: Helper;
         ramMultiplier: Helper;
+        workerMultiplier: Helper;
       };
     }) {
       this.helpersShop.cpu.count = new Decimal(loaded.helpersShop.cpu.count);
@@ -178,6 +213,8 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
       this.helpersShop.hdd.percent = new Decimal(loaded.helpersShop.hdd.percent);
       this.helpersShop.ram.count = new Decimal(loaded.helpersShop.ram.count);
       this.helpersShop.ram.percent = new Decimal(loaded.helpersShop.ram.percent);
+      this.helpersShop.worker.count = new Decimal(loaded.helpersShop.worker.count);
+      this.helpersShop.worker.percent = new Decimal(loaded.helpersShop.worker.percent);
       this.helpersShop.cpuMultiplier.count = new Decimal(loaded.helpersShop.cpuMultiplier.count);
       this.helpersShop.cpuMultiplier.percent = new Decimal(
         loaded.helpersShop.cpuMultiplier.percent,
@@ -189,6 +226,12 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
       this.helpersShop.ramMultiplier.count = new Decimal(loaded.helpersShop.ramMultiplier.count);
       this.helpersShop.ramMultiplier.percent = new Decimal(
         loaded.helpersShop.ramMultiplier.percent,
+      );
+      this.helpersShop.workerMultiplier.count = new Decimal(
+        loaded.helpersShop.workerMultiplier.count,
+      );
+      this.helpersShop.workerMultiplier.percent = new Decimal(
+        loaded.helpersShop.workerMultiplier.percent,
       );
     },
   },
