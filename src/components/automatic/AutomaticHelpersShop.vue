@@ -17,6 +17,14 @@
               <span class="text-body1 text-weight-bold helper-title text-blue-4">
                 {{ getHelper(key).value.title }}
               </span>
+              <q-toggle
+                v-model="getHelper(key).value.enabled"
+                color="primary"
+                size="sm"
+                class="q-ml-md"
+                :label="getHelper(key).value.enabled ? 'Вкл.' : 'Выкл.'"
+                @update:model-value="(val) => setHelperEnabled(key, val)"
+              />
             </div>
           </div>
           <div class="column justify-end helper-content">
@@ -139,6 +147,11 @@ const getHelper = (key: string) =>
       ...state,
     };
   });
+
+function setHelperEnabled(key: string, val: boolean) {
+  const helper = storeAutomatic.helpersShop[key as keyof typeof storeAutomatic.helpersShop];
+  helper.enabled = val;
+}
 
 const costCount = (helper: AutomaticShopHelpers) => {
   return computed(() => {
