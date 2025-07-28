@@ -7,7 +7,10 @@
         class="col-12 col-sm-6 col-md-4 flex flex-center helper-wrapper"
       >
         <q-card flat bordered class="q-pa-sm helper-card-custom flex column helper-card">
-          <div class="helper-header">
+          <div
+            class="helper-header"
+            :class="!getHelper(key).value.enabled ? 'helper-card--disabled' : ''"
+          >
             <div class="row items-center q-mb-sm helper-title-row">
               <q-icon
                 :name="getHelper(key).value.icon"
@@ -23,7 +26,7 @@
                 size="sm"
                 class="q-ml-md"
                 :label="getHelper(key).value.enabled ? 'Вкл.' : 'Выкл.'"
-                @update:model-value="(val) => setHelperEnabled(key, val)"
+                @update:model-value="(val: any) => setHelperEnabled(key, val)"
               />
             </div>
           </div>
@@ -197,103 +200,139 @@ function getHelperChanceWithCount(percent: Decimal, count: Decimal): Decimal {
 }
 </script>
 
-<style lang="sass">
-.helper-wrapper
-  max-width: 280px
-  min-width: 240px
-  flex: 0 0 260px
+<style lang="scss">
+.helper-wrapper {
+  max-width: 280px;
+  min-width: 240px;
+  flex: 0 0 260px;
+}
 
-.helper-card
-  min-height: 250px
-  display: flex
-  flex-direction: column
-  width: 100%
-  box-sizing: border-box
-  max-width: 100%
-  height: auto
+.helper-card--disabled {
+  opacity: 0.3;
+  .upgrade-btn-custom,
+  .q-btn,
+  .btn-equal-width {
+    opacity: 1 !important;
+    filter: none !important;
+  }
+}
 
-.helper-header
-  flex: 0 0 auto
+.helper-card {
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+  height: auto;
+}
 
-.helper-title-row
-  min-height: 24px
-  flex-wrap: nowrap
+.helper-header {
+  flex: 0 0 auto;
+}
 
-.helper-icon
-  flex: 0 0 20px
+.helper-title-row {
+  min-height: 24px;
+  flex-wrap: nowrap;
+}
 
-.helper-title
-  overflow: hidden
-  text-overflow: ellipsis
-  word-break: break-word
-  white-space: normal
-  flex: 1 1 0
-  min-width: 0
-  font-size: 14px
-  line-height: 1.2
-  max-height: 2.4em
+.helper-icon {
+  flex: 0 0 20px;
+}
 
-.helper-description
-  min-height: 42px
-  font-size: 11px
-  line-height: 1.3
+.helper-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  white-space: normal;
+  flex: 1 1 0;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.2;
+  max-height: 2.4em;
+}
 
-.helper-content
-  flex: 1 1 auto
+.helper-description {
+  min-height: 42px;
+  font-size: 11px;
+  line-height: 1.3;
+}
 
-.upgrade-cost-chip-wide
-  flex: 1 1 auto
-  font-size: 14px
-  min-width: 0
-  max-width: 100%
-  box-sizing: border-box
+.helper-content {
+  flex: 1 1 auto;
+}
 
-.upgrade-btn-narrow
-  flex: 0 0 auto
+.upgrade-cost-chip-wide {
+  flex: 1 1 auto;
+  font-size: 14px;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
 
-.upgrade-btn-custom
-  background: #d3d6de !important
-  color: #2563eb !important
-  border: 2px solid #c2cbe0
-  border-radius: 8px
-  box-shadow: 0 2px 8px 0 rgba(80,100,200,0.10)
-  font-weight: 700
-  letter-spacing: 0.02em
-  transition: background 0.2s, color 0.2s, border 0.2s
-  &:hover:not(:disabled)
-    background: #bfc3ce !important
-    color: #1e40af !important
-    border-color: #aab3c8
+.upgrade-btn-narrow {
+  flex: 0 0 auto;
+  min-width: 90px;
+  max-width: 100%;
+  width: 90px;
+  justify-content: center;
+}
 
-.btn-equal-width
-  min-width: 90px
-  max-width: 100%
-  width: 90px
-  justify-content: center
-  box-sizing: border-box
+.upgrade-btn-custom {
+  background: #d3d6de !important;
+  color: #2563eb !important;
+  border: 2px solid #c2cbe0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px 0 rgba(80, 100, 200, 0.1);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border 0.2s;
+  &:hover:not(:disabled) {
+    background: #bfc3ce !important;
+    color: #1e40af !important;
+    border-color: #aab3c8;
+  }
+}
 
-@media (max-width: 700px)
-  .helper-wrapper
-    max-width: 100% !important
-    min-width: 0 !important
-    flex: 1 1 100% !important
-    padding: 2px !important
-  .helper-card
-    min-height: 120px !important
-    max-width: 100% !important
-    width: 100% !important
-    padding: 4px !important
-    font-size: 12px !important
-  .helper-title
-    font-size: 12px !important
-    max-height: none !important
-  .upgrade-cost-chip-wide
-    font-size: 11px !important
-    min-width: 0 !important
-    padding: 1px 4px !important
-  .btn-equal-width
-    font-size: 11px !important
-    min-width: 0 !important
-    width: 100px !important
-    padding: 2px 4px !important
+.btn-equal-width {
+  min-width: 90px;
+  max-width: 100%;
+  width: 90px;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  .helper-wrapper {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex: 1 1 100% !important;
+    padding: 2px !important;
+  }
+  .helper-card {
+    min-height: 120px !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 4px !important;
+    font-size: 12px !important;
+  }
+  .helper-title {
+    font-size: 12px !important;
+    max-height: none !important;
+  }
+  .upgrade-cost-chip-wide {
+    font-size: 11px !important;
+    min-width: 0 !important;
+    padding: 1px 4px !important;
+  }
+  .btn-equal-width {
+    font-size: 11px !important;
+    min-width: 0 !important;
+    width: 100px !important;
+    padding: 2px 4px !important;
+  }
+}
 </style>

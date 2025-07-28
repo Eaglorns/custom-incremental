@@ -26,6 +26,7 @@ export interface AutomaticShopHelpers {
   title: string;
   count: Decimal;
   percent: Decimal;
+  enabled: boolean;
   cost: {
     count: Decimal;
     countMultiply: Decimal;

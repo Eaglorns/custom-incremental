@@ -106,7 +106,7 @@ const volumeIcon = computed(() => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .settings-container {
   max-width: 800px;
   margin: 0 auto;

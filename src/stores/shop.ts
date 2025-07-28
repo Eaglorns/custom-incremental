@@ -38,15 +38,15 @@ export const useStoreShop = defineStore('storeShop', {
         value: new Decimal(0),
         multiply: new Decimal(1),
         cost: {
-          value: new Decimal(250),
-          multiply: new Decimal(1000000),
+          value: new Decimal(50),
+          multiply: new Decimal(170000),
         },
       },
       worker: {
         value: new Decimal(1),
         multiply: new Decimal(1),
         cost: {
-          value: new Decimal('1e10'),
+          value: new Decimal(1000),
           multiply: new Decimal('1e15'),
         },
       },

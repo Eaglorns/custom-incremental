@@ -64,8 +64,6 @@ const onPrestige = () => {
 </script>
 
 <style lang="sass" scoped>
-// --- Новый современный стиль ---
-
 .prestige-card-modern
   min-height: 240px
   max-width: 270px

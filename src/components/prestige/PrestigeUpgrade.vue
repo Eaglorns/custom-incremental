@@ -96,7 +96,7 @@ const buyUpgrade = (key: string) => {
 };
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 .prestige-tooltip-large
   font-size: 1.25rem
   font-weight: 600

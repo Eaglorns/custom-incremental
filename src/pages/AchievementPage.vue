@@ -115,7 +115,7 @@ const achievementBonus = computed(() => {
 });
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 .achievement-card-fixed
   width: 140px
   min-height: 220px

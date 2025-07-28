@@ -40,7 +40,8 @@ const localeOptions = [
   { value: 'en', label: 'English' },
 ];
 </script>
-<style lang="sass">
+
+<style lang="sass" scoped>
 .q-bar.q-electron-drag
   display: flex
   flex-direction: row

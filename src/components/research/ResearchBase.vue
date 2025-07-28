@@ -198,8 +198,7 @@ onMounted(() => {
 });
 </script>
 
-<style lang="sass">
-
+<style lang="sass" scoped>
 .research-card
   background: var(--color-card-bg)
   border: 1.5px solid var(--color-card-border)

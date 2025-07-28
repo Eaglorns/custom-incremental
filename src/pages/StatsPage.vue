@@ -97,7 +97,7 @@ const stats = computed(() => [
 ]);
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .bg-grey-9 :deep(.q-field__label) {
   color: #92e6b5 !important;
   font-weight: bold !important;
