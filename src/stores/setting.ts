@@ -24,7 +24,6 @@ export const useStoreSetting = defineStore('storeSetting', {
       sounds.forEach((file) => {
         new Howl({
           src: [`sounds/${file}.mp3`],
-          preload: true,
         }).load();
       });
     },

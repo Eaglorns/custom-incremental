@@ -80,33 +80,57 @@
           </q-input>
         </div>
       </div>
-      <div class="row q-mt-md">
-        <div class="col-6">
-          <q-btn
+      <div class="shop-group">
+        <div class="col-12">
+          <q-slider
+            v-model="buyModeValue"
+            :min="1"
+            :max="100"
+            :step="10"
+            markers
+            snap
             color="primary"
-            outline
-            label="Купить"
-            class="full-width"
-            @click="
-              storeShop.onBuyValue(props.name);
-              storeSetting.playSound('ShopOnBuyValue', 2);
-            "
-            size="lg"
-            :disable="!storeShop.canBuyValue(props.name)"
+            label
+            :label-value="formatNumber(storeShop.getBuyAmount(props.name, 'value'))"
+            label-always
           />
         </div>
-        <div class="col-6">
+        <div class="col-12">
           <q-btn
             color="primary"
             outline
-            label="Умножить"
+            :label="buyLabel('Купить', props.name, 'value')"
             class="full-width"
-            @click="
-              storeShop.onBuyMultiply(props.name);
-              storeSetting.playSound('ShopOnBuyMultiplier', 10);
-            "
+            @click="onBuyValueCustom(props.name)"
             size="lg"
-            :disable="!storeShop.canBuyMultiply(props.name)"
+            :disable="!canBuyValue"
+          />
+        </div>
+      </div>
+      <div class="shop-group">
+        <div class="col-12">
+          <q-slider
+            v-model="buyModeMultiply"
+            :min="1"
+            :max="100"
+            :step="10"
+            markers
+            snap
+            color="primary"
+            label
+            :label-value="formatNumber(storeShop.getBuyAmount(props.name, 'multiply'))"
+            label-always
+          />
+        </div>
+        <div class="col-12">
+          <q-btn
+            color="primary"
+            outline
+            :label="buyLabel('Умножить', props.name, 'multiply')"
+            class="full-width"
+            @click="onBuyMultiplyCustom(props.name)"
+            size="lg"
+            :disable="!canBuyMultiply"
           />
         </div>
       </div>
@@ -115,6 +139,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useStoreData } from 'stores/data';
 import { useStoreShop } from 'stores/shop';
 import { useStoreSetting } from 'stores/setting';
@@ -128,9 +153,71 @@ const storeShop = useStoreShop();
 const storeSetting = useStoreSetting();
 
 const formatNumber = storeData.formatNumber;
+
+const buyModeValue = computed({
+  get: () => storeShop.list[props.name].buyModeValue,
+  set: (val) => (storeShop.list[props.name].buyModeValue = val),
+});
+
+const buyModeMultiply = computed({
+  get: () => storeShop.list[props.name].buyModeMultiply,
+  set: (val) => (storeShop.list[props.name].buyModeMultiply = val),
+});
+
+function buyLabel(base: string, name: ShopItemName, type: 'value' | 'multiply') {
+  const points = type === 'value' ? storeShop.points : storeData.epicNumber;
+  const cost = storeShop.list[name].cost[type];
+  const amount = storeShop.getBuyAmount(name, type);
+  const result = storeShop.buyMax(points, cost, amount);
+  return `${base} ${formatNumber(result.bought)}`;
+}
+
+function onBuyValueCustom(name: ShopItemName) {
+  const amount = storeShop.getBuyAmount(name, 'value');
+  if (amount.gt(0)) {
+    storeShop.onBuyValue(name, amount);
+    storeSetting.playSound('ShopOnBuyValue', 2);
+  }
+}
+
+function onBuyMultiplyCustom(name: ShopItemName) {
+  const amount = storeShop.getBuyAmount(name, 'multiply');
+  if (amount.gt(0)) {
+    storeShop.onBuyMultiply(name, amount);
+    storeSetting.playSound('ShopOnBuyMultiplier', 10);
+  }
+}
+
+const canBuyValue = computed(() => {
+  const result = storeShop.buyMax(
+    storeShop.points,
+    storeShop.list[props.name].cost.value,
+    storeShop.getBuyAmount(props.name, 'value'),
+  );
+  if (result.bought.gt(0)) {
+    return true;
+  }
+  return false;
+});
+
+const canBuyMultiply = computed(() => {
+  const result = storeShop.buyMax(
+    storeData.epicNumber,
+    storeShop.list[props.name].cost.multiply,
+    storeShop.getBuyAmount(props.name, 'multiply'),
+  );
+  if (result.bought.gt(0)) {
+    return true;
+  }
+  return false;
+});
 </script>
 
 <style lang="sass" scoped>
+.q-slider
+  margin-top: 35px !important
+  padding-left: 15px !important
+  padding-right: 15px !important
 @media (max-width: 700px)
   .row.q-col-gutter-lg > .col-12
     margin-bottom: 1px !important

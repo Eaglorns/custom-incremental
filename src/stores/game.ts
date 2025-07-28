@@ -10,7 +10,7 @@ import { useStorePrestige } from 'stores/prestige';
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     name: 'cIncremental',
-    version: '0.1.1',
+    version: '0.1.2',
     timerTick: 1000,
     lastTick: Date.now(),
   }),
@@ -41,7 +41,8 @@ export const useStoreGame = defineStore('storeGame', {
       const delta = now - this.lastTick;
       this.lastTick = now;
 
-      const steps = Math.floor(delta / this.timerTick) || 1;
+      let steps = Math.floor(delta / this.timerTick) || 1;
+      if (steps > 1000) steps = 1000;
       for (let i = 0; i < steps; i++) {
         this.processGiveMultiplierEpicNumber();
         storeShop.processGivePoints();

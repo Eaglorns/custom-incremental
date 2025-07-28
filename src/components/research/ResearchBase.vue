@@ -150,7 +150,7 @@ function getResearchTime(key: string) {
   const research = researchList[key];
   if (!research) return computed(() => new Decimal(0));
   return computed(() => {
-    const divTime = storeResearch.speed;
+    const divTime = storeResearch.speed.gt(0) ? storeResearch.speed : new Decimal(1);
     return research.level.eq(0)
       ? research.time.div(divTime)
       : research.time.mul(research.timeMultiply.pow(research.level)).div(divTime);

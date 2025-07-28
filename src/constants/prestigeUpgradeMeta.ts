@@ -19,6 +19,18 @@ export const prestigeUpgradeMeta: PrestigeUpgradeType[] = [
     description: 'Смягчает формулу престижа, делая прирост более плавным.',
   },
   {
+    key: 'prestigeBuyValueCount',
+    icon: 'fa-duotone fa-cart-plus',
+    title: 'Увеличение максимального количества покупки значения за клик.',
+    description: 'Увеличивает максимальное количество покупок значения за клик.',
+  },
+  {
+    key: 'prestigeBuyValueMultiply',
+    icon: 'fa-duotone fa-xmark',
+    title: 'Увеличение максимального количества покупки множителя за клик.',
+    description: 'Увеличивает максимальное количество покупок множителя за клик.',
+  },
+  {
     key: 'autoShopCPUValue',
     icon: 'fa-duotone fa-microchip',
     title: 'Прирост CPU',

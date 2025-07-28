@@ -6,7 +6,7 @@ import { useStoreResearch } from 'stores/research';
 
 export const useStorePrestige = defineStore('storePrestige', {
   state: () => ({
-    points: new Decimal(10),
+    points: new Decimal(1000),
     upgrades: {
       prestigeBonus: {
         cost: new Decimal(5),
@@ -18,6 +18,18 @@ export const useStorePrestige = defineStore('storePrestige', {
         cost: new Decimal(5),
         level: new Decimal(0),
         costGrowth: new Decimal(1.05),
+        maxLevel: -1,
+      },
+      prestigeBuyValueCount: {
+        cost: new Decimal(0.1),
+        level: new Decimal('0'),
+        costGrowth: new Decimal(1.15),
+        maxLevel: -1,
+      },
+      prestigeBuyValueMultiply: {
+        cost: new Decimal(0.5),
+        level: new Decimal('0'),
+        costGrowth: new Decimal(1.3),
         maxLevel: -1,
       },
       autoShopCPUValue: {
@@ -92,6 +104,8 @@ export const useStorePrestige = defineStore('storePrestige', {
         upgrades: {
           prestigeBonus: { level: state.upgrades.prestigeBonus.level },
           prestigeSoftening: { level: state.upgrades.prestigeSoftening.level },
+          prestigeBuyValueCount: { level: state.upgrades.prestigeBuyValueCount.level },
+          prestigeBuyValueMultiply: { level: state.upgrades.prestigeBuyValueMultiply.level },
           autoShopCPUValue: { level: state.upgrades.autoShopCPUValue.level },
           autoShopHDDValue: { level: state.upgrades.autoShopHDDValue.level },
           autoShopRAMValue: { level: state.upgrades.autoShopRAMValue.level },
@@ -161,6 +175,8 @@ export const useStorePrestige = defineStore('storePrestige', {
       upgrades: {
         prestigeBonus: { level: string };
         prestigeSoftening: { level: string };
+        prestigeBuyValueCount: { level: string };
+        prestigeBuyValueMultiply: { level: string };
         autoShopCPUValue: { level: string };
         autoShopHDDValue: { level: string };
         autoShopRAMValue: { level: string };
@@ -174,6 +190,12 @@ export const useStorePrestige = defineStore('storePrestige', {
       this.points = new Decimal(loaded.points);
       this.upgrades.prestigeBonus.level = new Decimal(loaded.upgrades.prestigeBonus.level);
       this.upgrades.prestigeSoftening.level = new Decimal(loaded.upgrades.prestigeSoftening.level);
+      this.upgrades.prestigeBuyValueCount.level = new Decimal(
+        loaded.upgrades.prestigeBuyValueCount.level,
+      );
+      this.upgrades.prestigeBuyValueMultiply.level = new Decimal(
+        loaded.upgrades.prestigeBuyValueMultiply.level,
+      );
       this.upgrades.autoShopCPUValue.level = new Decimal(loaded.upgrades.autoShopCPUValue.level);
       this.upgrades.autoShopHDDValue.level = new Decimal(loaded.upgrades.autoShopHDDValue.level);
       this.upgrades.autoShopRAMValue.level = new Decimal(loaded.upgrades.autoShopRAMValue.level);

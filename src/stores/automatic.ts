@@ -2,6 +2,7 @@ import Decimal from 'break_eternity.js';
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { useStoreShop } from 'stores/shop';
 import { useStoreData } from 'stores/data';
+import { useStorePrestige } from 'stores/prestige';
 
 interface Helper {
   count: string;
@@ -171,6 +172,7 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
     processHelpersShop() {
       const storeShop = useStoreShop();
       const storeData = useStoreData();
+      const storePrestige = useStorePrestige();
       const rand = Math.random() * 100;
       const valueKeys = ['cpu', 'hdd', 'ram', 'worker'] as const;
       const multiplierKeys = [
@@ -184,7 +186,15 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
         const helper = this.helpersShop[key];
         if (!helper.enabled) return;
         if (helper.count.gt(0) && this.getHelperChance(helper.percent).gte(rand)) {
-          const buyResult = buyMax(storeShop.points, storeShop.list[key].cost.value, helper.count);
+          const buyResult = buyMax(
+            storeShop.points,
+            storeShop.list[key].cost.value,
+            helper.count.mul(
+              storePrestige.upgrades.prestigeBuyValueCount.level.gt(0)
+                ? storePrestige.upgrades.prestigeBuyValueCount.level
+                : 1,
+            ),
+          );
           if (buyResult.bought.gt(0)) {
             storeShop.list[key].value = storeShop.list[key].value.plus(
               buyResult.bought.mul(storeShop.list[key].multiply),
@@ -202,7 +212,11 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
           const buyResult = buyMax(
             storeData.epicNumber,
             storeShop.costMultiply(baseKey),
-            helper.count,
+            helper.count.mul(
+              storePrestige.upgrades.prestigeBuyValueMultiply.level.gt(0)
+                ? storePrestige.upgrades.prestigeBuyValueMultiply.level
+                : 1,
+            ),
           );
           if (buyResult.bought.gt(0)) {
             storeShop.list[baseKey].multiply = storeShop.list[baseKey].multiply.plus(

@@ -68,118 +68,218 @@
       <q-separator />
       <q-tab-panels v-model="tab">
         <q-tab-panel name="shop" class="panel-flex">
-          <q-splitter v-model="splitterModel">
-            <template v-slot:before>
-              <q-tabs v-model="innerShop" vertical class="text-teal" align="left">
-                <q-tab name="innerShopCPU" icon="fa-duotone fa-microchip" label="CPU" />
-                <q-tab name="innerShopHDD" icon="fa-duotone fa-hard-drive" label="HDD" />
-                <q-tab name="innerShopRAM" icon="fa-duotone fa-memory" label="RAM" />
-                <q-tab
-                  name="innerShopWorker"
-                  icon="fa-duotone fa-users"
-                  :label="innerShopLabels.innerShopWorker"
-                />
-              </q-tabs>
-            </template>
-            <template v-slot:after>
-              <q-tab-panels
-                v-model="innerShop"
-                transition-prev="slide-down"
-                transition-next="slide-up"
-              >
-                <q-tab-panel name="innerShopCPU"
-                  ><ShopTemplate name="cpu" label="CPU" icon="fa-duotone fa-microchip"
-                /></q-tab-panel>
-                <q-tab-panel name="innerShopHDD"
-                  ><ShopTemplate name="hdd" label="HDD" icon="fa-duotone fa-hard-drive"
-                /></q-tab-panel>
-                <q-tab-panel name="innerShopRAM"
-                  ><ShopTemplate name="ram" label="RAM" icon="fa-duotone fa-memory"
-                /></q-tab-panel>
-                <q-tab-panel name="innerShopWorker"
-                  ><ShopTemplate name="worker" label="Работники" icon="fa-duotone fa-users"
-                /></q-tab-panel>
-              </q-tab-panels>
-            </template>
-          </q-splitter>
+          <template v-if="isMobile">
+            <q-tabs v-model="innerShop" align="justify" class="text-teal">
+              <q-tab name="innerShopCPU" icon="fa-duotone fa-microchip" label="CPU" />
+              <q-tab name="innerShopHDD" icon="fa-duotone fa-hard-drive" label="HDD" />
+              <q-tab name="innerShopRAM" icon="fa-duotone fa-memory" label="RAM" />
+              <q-tab
+                name="innerShopWorker"
+                icon="fa-duotone fa-users"
+                :label="innerShopLabels.innerShopWorker"
+              />
+            </q-tabs>
+            <q-tab-panels
+              v-model="innerShop"
+              transition-prev="slide-down"
+              transition-next="slide-up"
+            >
+              <q-tab-panel name="innerShopCPU"
+                ><ShopTemplate name="cpu" label="CPU" icon="fa-duotone fa-microchip"
+              /></q-tab-panel>
+              <q-tab-panel name="innerShopHDD"
+                ><ShopTemplate name="hdd" label="HDD" icon="fa-duotone fa-hard-drive"
+              /></q-tab-panel>
+              <q-tab-panel name="innerShopRAM"
+                ><ShopTemplate name="ram" label="RAM" icon="fa-duotone fa-memory"
+              /></q-tab-panel>
+              <q-tab-panel name="innerShopWorker"
+                ><ShopTemplate name="worker" label="Работники" icon="fa-duotone fa-users"
+              /></q-tab-panel>
+            </q-tab-panels>
+          </template>
+          <template v-else>
+            <q-splitter v-model="splitterModel">
+              <template v-slot:before>
+                <q-tabs v-model="innerShop" vertical align="left" class="text-teal">
+                  <q-tab name="innerShopCPU" icon="fa-duotone fa-microchip" label="CPU" />
+                  <q-tab name="innerShopHDD" icon="fa-duotone fa-hard-drive" label="HDD" />
+                  <q-tab name="innerShopRAM" icon="fa-duotone fa-memory" label="RAM" />
+                  <q-tab
+                    name="innerShopWorker"
+                    icon="fa-duotone fa-users"
+                    :label="innerShopLabels.innerShopWorker"
+                  />
+                </q-tabs>
+              </template>
+              <template v-slot:after>
+                <q-tab-panels
+                  v-model="innerShop"
+                  transition-prev="slide-down"
+                  transition-next="slide-up"
+                >
+                  <q-tab-panel name="innerShopCPU"
+                    ><ShopTemplate name="cpu" label="CPU" icon="fa-duotone fa-microchip"
+                  /></q-tab-panel>
+                  <q-tab-panel name="innerShopHDD"
+                    ><ShopTemplate name="hdd" label="HDD" icon="fa-duotone fa-hard-drive"
+                  /></q-tab-panel>
+                  <q-tab-panel name="innerShopRAM"
+                    ><ShopTemplate name="ram" label="RAM" icon="fa-duotone fa-memory"
+                  /></q-tab-panel>
+                  <q-tab-panel name="innerShopWorker"
+                    ><ShopTemplate name="worker" label="Работники" icon="fa-duotone fa-users"
+                  /></q-tab-panel>
+                </q-tab-panels>
+              </template>
+            </q-splitter>
+          </template>
         </q-tab-panel>
         <q-tab-panel name="prestige" class="panel-flex">
-          <q-splitter v-model="splitterModel">
-            <template v-slot:before>
-              <q-tabs v-model="innerPrestige" vertical class="text-teal">
-                <q-tab
-                  name="innerPrestigeBase"
-                  icon="fa-duotone fa-arrow-up-from-dotted-line"
-                  :label="innerPrestigeLabels.innerPrestigeBase"
-                />
-                <q-tab
-                  name="innerPrestigeUpgrade"
-                  icon="fa-duotone fa-sparkles"
-                  :label="innerPrestigeLabels.innerPrestigeUpgrade"
-                />
-              </q-tabs>
-            </template>
-            <template v-slot:after>
-              <q-tab-panels
-                v-model="innerPrestige"
-                transition-prev="slide-down"
-                transition-next="slide-up"
-              >
-                <q-tab-panel name="innerPrestigeBase"><PrestigeBase /></q-tab-panel>
-                <q-tab-panel name="innerPrestigeUpgrade"><PrestigeUpgrade /></q-tab-panel>
-              </q-tab-panels>
-            </template>
-          </q-splitter>
+          <template v-if="isMobile">
+            <q-tabs v-model="innerPrestige" align="justify" class="text-teal">
+              <q-tab
+                name="innerPrestigeBase"
+                icon="fa-duotone fa-arrow-up-from-dotted-line"
+                :label="innerPrestigeLabels.innerPrestigeBase"
+              />
+              <q-tab
+                name="innerPrestigeUpgrade"
+                icon="fa-duotone fa-sparkles"
+                :label="innerPrestigeLabels.innerPrestigeUpgrade"
+              />
+            </q-tabs>
+            <q-tab-panels
+              v-model="innerPrestige"
+              transition-prev="slide-down"
+              transition-next="slide-up"
+            >
+              <q-tab-panel name="innerPrestigeBase"><PrestigeBase /></q-tab-panel>
+              <q-tab-panel name="innerPrestigeUpgrade"><PrestigeUpgrade /></q-tab-panel>
+            </q-tab-panels>
+          </template>
+          <template v-else>
+            <q-splitter v-model="splitterModel">
+              <template v-slot:before>
+                <q-tabs v-model="innerPrestige" vertical class="text-teal">
+                  <q-tab
+                    name="innerPrestigeBase"
+                    icon="fa-duotone fa-arrow-up-from-dotted-line"
+                    :label="innerPrestigeLabels.innerPrestigeBase"
+                  />
+                  <q-tab
+                    name="innerPrestigeUpgrade"
+                    icon="fa-duotone fa-sparkles"
+                    :label="innerPrestigeLabels.innerPrestigeUpgrade"
+                  />
+                </q-tabs>
+              </template>
+              <template v-slot:after>
+                <q-tab-panels
+                  v-model="innerPrestige"
+                  transition-prev="slide-down"
+                  transition-next="slide-up"
+                >
+                  <q-tab-panel name="innerPrestigeBase"><PrestigeBase /></q-tab-panel>
+                  <q-tab-panel name="innerPrestigeUpgrade"><PrestigeUpgrade /></q-tab-panel>
+                </q-tab-panels>
+              </template>
+            </q-splitter>
+          </template>
         </q-tab-panel>
         <q-tab-panel name="research" class="panel-flex">
-          <q-splitter v-model="splitterModel">
-            <template v-slot:before>
-              <q-tabs v-model="innerResearch" vertical class="text-teal">
-                <q-tab
-                  name="innerResearchScientist"
-                  icon="fa-duotone fa-user-astronaut"
-                  :label="innerResearchLabels.innerResearchScientist"
-                />
-                <q-tab
-                  name="innerResearchBase"
-                  icon="fa-duotone fa-flask"
-                  :label="innerResearchLabels.innerResearchBase"
-                />
-              </q-tabs>
-            </template>
-            <template v-slot:after>
-              <q-tab-panels
-                v-model="innerResearch"
-                transition-prev="slide-down"
-                transition-next="slide-up"
-              >
-                <q-tab-panel name="innerResearchScientist"><ResearchScientist /></q-tab-panel>
-                <q-tab-panel name="innerResearchBase"><ResearchBase /></q-tab-panel>
-              </q-tab-panels>
-            </template>
-          </q-splitter>
+          <template v-if="isMobile">
+            <q-tabs v-model="innerResearch" align="justify" class="text-teal">
+              <q-tab
+                name="innerResearchScientist"
+                icon="fa-duotone fa-user-astronaut"
+                :label="innerResearchLabels.innerResearchScientist"
+              />
+              <q-tab
+                name="innerResearchBase"
+                icon="fa-duotone fa-flask"
+                :label="innerResearchLabels.innerResearchBase"
+              />
+            </q-tabs>
+            <q-tab-panels
+              v-model="innerResearch"
+              transition-prev="slide-down"
+              transition-next="slide-up"
+            >
+              <q-tab-panel name="innerResearchScientist"><ResearchScientist /></q-tab-panel>
+              <q-tab-panel name="innerResearchBase"><ResearchBase /></q-tab-panel>
+            </q-tab-panels>
+          </template>
+          <template v-else>
+            <q-splitter v-model="splitterModel">
+              <template v-slot:before>
+                <q-tabs v-model="innerResearch" vertical class="text-teal">
+                  <q-tab
+                    name="innerResearchScientist"
+                    icon="fa-duotone fa-user-astronaut"
+                    :label="innerResearchLabels.innerResearchScientist"
+                  />
+                  <q-tab
+                    name="innerResearchBase"
+                    icon="fa-duotone fa-flask"
+                    :label="innerResearchLabels.innerResearchBase"
+                  />
+                </q-tabs>
+              </template>
+              <template v-slot:after>
+                <q-tab-panels
+                  v-model="innerResearch"
+                  transition-prev="slide-down"
+                  transition-next="slide-up"
+                >
+                  <q-tab-panel name="innerResearchScientist"><ResearchScientist /></q-tab-panel>
+                  <q-tab-panel name="innerResearchBase"><ResearchBase /></q-tab-panel>
+                </q-tab-panels>
+              </template>
+            </q-splitter>
+          </template>
         </q-tab-panel>
         <q-tab-panel name="automatic" class="panel-flex">
-          <q-splitter v-model="splitterModel">
-            <template v-slot:before>
-              <q-tabs v-model="innerAutomatic" vertical class="text-teal">
-                <q-tab
-                  name="innerAutomaticHelpersShop"
-                  icon="fa-duotone fa-cart-shopping"
-                  :label="innerAutomaticLabels.innerAutomaticHelpersShop"
-                />
-              </q-tabs>
-            </template>
-            <template v-slot:after>
-              <q-tab-panels
-                v-model="innerAutomatic"
-                transition-prev="slide-down"
-                transition-next="slide-up"
-              >
-                <q-tab-panel name="innerAutomaticHelpersShop"><AutomaticHelpersShop /></q-tab-panel>
-              </q-tab-panels>
-            </template>
-          </q-splitter>
+          <template v-if="isMobile">
+            <q-tabs v-model="innerAutomatic" align="justify" class="text-teal">
+              <q-tab
+                name="innerAutomaticHelpersShop"
+                icon="fa-duotone fa-cart-shopping"
+                :label="innerAutomaticLabels.innerAutomaticHelpersShop"
+              />
+            </q-tabs>
+            <q-tab-panels
+              v-model="innerAutomatic"
+              transition-prev="slide-down"
+              transition-next="slide-up"
+            >
+              <q-tab-panel name="innerAutomaticHelpersShop"><AutomaticHelpersShop /></q-tab-panel>
+            </q-tab-panels>
+          </template>
+          <template v-else>
+            <q-splitter v-model="splitterModel">
+              <template v-slot:before>
+                <q-tabs v-model="innerAutomatic" vertical class="text-teal">
+                  <q-tab
+                    name="innerAutomaticHelpersShop"
+                    icon="fa-duotone fa-cart-shopping"
+                    :label="innerAutomaticLabels.innerAutomaticHelpersShop"
+                  />
+                </q-tabs>
+              </template>
+              <template v-slot:after>
+                <q-tab-panels
+                  v-model="innerAutomatic"
+                  transition-prev="slide-down"
+                  transition-next="slide-up"
+                >
+                  <q-tab-panel name="innerAutomaticHelpersShop"
+                    ><AutomaticHelpersShop
+                  /></q-tab-panel>
+                </q-tab-panels>
+              </template>
+            </q-splitter>
+          </template>
         </q-tab-panel>
         <q-tab-panel name="eternity" class="panel-flex"></q-tab-panel>
         <q-tab-panel name="infinity" class="panel-flex"></q-tab-panel>
@@ -251,12 +351,16 @@ const innerAutomatic = ref('innerAutomaticHelpersShop');
 const innerPrestige = ref('innerPrestigeBase');
 const splitterModel = ref(20);
 
+const isMobile = computed(() => window.innerWidth < 700);
+
+watch(isMobile, (val) => {
+  splitterModel.value = val ? 0 : 20;
+});
+
 const epicRef = ref<HTMLElement | null>(null);
 const shopRef = ref<HTMLElement | null>(null);
 const prestigeRef = ref<HTMLElement | null>(null);
 const researchRef = ref<HTMLElement | null>(null);
-
-const isMobile = computed(() => window.innerWidth < 700);
 
 const tabLabels = computed(() => ({
   shop: isMobile.value ? 'Ма' : 'Магазин',
