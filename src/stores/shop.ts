@@ -19,7 +19,7 @@ type ShopKey = 'cpu' | 'hdd' | 'ram' | 'worker';
 
 export const useStoreShop = defineStore('storeShop', {
   state: () => ({
-    points: new Decimal('50'),
+    points: new Decimal(0),
     list: {
       cpu: {
         value: new Decimal(1),

@@ -8,7 +8,7 @@ import { useStorePrestige } from 'stores/prestige';
 export const useStoreData = defineStore('storeData', {
   state: () => ({
     version: '0.0.0',
-    epicNumber: new Decimal('2500'),
+    epicNumber: new Decimal(0),
     multiplierEpicNumber: new Decimal(0),
     currentTab: 'shop',
   }),
@@ -129,7 +129,6 @@ export const useStoreData = defineStore('storeData', {
         .mul(prestigeUpgradeBonus)
         .mul(storeAchievement.achievementBonus);
       this.epicNumber = this.epicNumber.plus(result);
-      console.log(this.epicNumber.toString());
     },
 
     load(loaded: { version: string; epicNumber: string; multiplierEpicNumber: string }) {

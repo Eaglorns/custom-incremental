@@ -6,7 +6,7 @@ import { useStoreResearch } from 'stores/research';
 
 export const useStorePrestige = defineStore('storePrestige', {
   state: () => ({
-    points: new Decimal(1000),
+    points: new Decimal(0),
     upgrades: {
       prestigeBonus: {
         cost: new Decimal(5),

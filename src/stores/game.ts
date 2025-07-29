@@ -44,6 +44,7 @@ export const useStoreGame = defineStore('storeGame', {
       let steps = Math.floor(delta / this.timerTick) || 1;
       if (steps > 1000) steps = 1000;
       for (let i = 0; i < steps; i++) {
+        storeStats.gameTime++;
         this.processGiveMultiplierEpicNumber();
         storeShop.processGivePoints();
         storeResearch.processGiveResearchSpeed();

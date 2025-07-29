@@ -1,13 +1,10 @@
 <template>
-  <q-page class="q-pa-lg bg-dark text-white">
-    <q-card flat bordered class="bg-grey-10 text-white">
+  <q-page class="q-pa-md bg-dark text-white">
+    <q-card flat bordered class="bg-grey-10 text-white stat-card">
       <q-card-section>
-        <q-separator style="margin-top: 5px; margin-bottom: 5px" />
-        <template v-for="stat in stats" :key="stat.label">
-          <div v-if="Array.isArray(stat.value)">
-            <div class="q-mb-xs text-primary text-weight-bold" style="font-size: 1.08em">
-              {{ stat.label }}
-            </div>
+        <div v-for="stat in stats" :key="stat.label" class="stat-row">
+          <template v-if="Array.isArray(stat.value)">
+            <div class="stat-label">{{ stat.label }}</div>
             <div class="row items-center">
               <q-input
                 v-for="(item, idx) in stat.value"
@@ -18,13 +15,11 @@
                 dense
                 filled
                 color="primary"
-                class="bg-grey-9 text-accent text-weight-bold"
-                :style="
-                  'width: ' + (stat.widths ? stat.widths[idx] : stat.width) + '; margin-right: 5px;'
-                "
+                class="bg-grey-9 text-accent stat-input"
+                :style="'width:' + (stat.widths ? stat.widths[idx] : stat.width) + ';'"
               />
             </div>
-          </div>
+          </template>
           <q-input
             v-else
             :label="stat.label"
@@ -33,11 +28,10 @@
             dense
             filled
             color="primary"
-            class="bg-grey-9 text-accent text-weight-bold"
-            :style="'width: ' + stat.width + ';'"
+            class="bg-grey-9 text-accent stat-input"
+            :style="'width:' + stat.width + ';'"
           />
-          <q-separator style="margin-top: 5px; margin-bottom: 5px" />
-        </template>
+        </div>
       </q-card-section>
     </q-card>
   </q-page>
@@ -46,27 +40,54 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useStoreData } from 'stores/data';
-import { useStoreGame } from 'stores/game';
 import { useStoreResearch } from 'stores/research';
 import { useStoreStats } from 'stores/stats';
+import { Duration } from 'luxon';
 
 const storeData = useStoreData();
-const storeGame = useStoreGame();
 const storeResearch = useStoreResearch();
 const storeStats = useStoreStats();
 
 const formatNumber = storeData.formatNumber;
 
+function formatGameTime(seconds: number) {
+  const dur = Duration.fromObject({ seconds })
+    .shiftTo('years', 'days', 'hours', 'minutes', 'seconds')
+    .normalize();
+  const parts = [];
+  if (dur.years) parts.push(`${dur.years}г`);
+  if (dur.days || dur.years) parts.push(`${dur.days}д`);
+  if (dur.hours || dur.days || dur.years) parts.push(`${dur.hours}ч`);
+  if (dur.minutes || dur.hours || dur.days || dur.years) parts.push(`${dur.minutes}м`);
+  parts.push(`${dur.seconds}с`);
+  return parts.join(' ');
+}
+
 const stats = computed(() => [
   {
-    label: 'Максимально набранное число',
+    label: 'Проведено времени в игре',
+    value: formatGameTime(storeStats.gameTime),
+    width: '200px',
+  },
+  {
+    label: 'Максимальное ЧИСЛО',
     value: formatNumber(storeStats.maxEpicNumber),
     width: '200px',
   },
   {
-    label: 'Генерация числа за тик (CPU).',
-    value: formatNumber(storeGame.generateEpicNumber),
-    width: '200px',
+    label: 'Максимальные монеты',
+    value: formatNumber(storeStats.maxShopPoints),
+    width: '275px',
+  },
+  {
+    label: 'Максимальные очки престижа',
+    value: formatNumber(storeStats.maxPrestigePoints),
+    width: '275px',
+  },
+  {
+    label: 'Максимальные очки исследований',
+    value: formatNumber(storeStats.maxResearchPoints),
+    width: '275px',
   },
   {
     label: 'Множитель прироста числа',
@@ -74,12 +95,7 @@ const stats = computed(() => [
       { label: 'Значение', value: formatNumber(storeData.multiplierEpicNumber) },
       { label: 'Результат', value: formatNumber(storeData.getMultiplierEpicNumber) },
     ],
-    widths: ['115px', '115px'],
-  },
-  {
-    label: 'Максимально набранные очки исследований',
-    value: formatNumber(storeStats.maxResearchPoints),
-    width: '280px',
+    widths: ['100px', '100px'],
   },
   {
     label: 'Множитель ускорения исследований',
@@ -87,20 +103,58 @@ const stats = computed(() => [
       { label: 'Значение', value: formatNumber(storeResearch.speed) },
       { label: 'Результат', value: formatNumber(storeResearch.getResearchSpeed) },
     ],
-    widths: ['115px', '115px'],
-  },
-  {
-    label: 'Максимально набранные очки престижа',
-    value: formatNumber(storeStats.maxPrestigePoints),
-    width: '250px',
+    widths: ['100px', '100px'],
   },
 ]);
 </script>
 
 <style lang="scss" scoped>
-.bg-grey-9 :deep(.q-field__label) {
+.stat-card {
+  max-width: 480px;
+  margin: 0 auto;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+.stat-row {
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+}
+.stat-label {
+  color: #7be0b7;
+  font-weight: 600;
+  font-size: 1.04em;
+  margin-bottom: 2px;
+}
+.stat-input :deep(.q-field__label) {
   color: #92e6b5 !important;
   font-weight: bold !important;
   font-size: 1.01em;
+}
+.stat-input {
+  margin-right: 8px;
+  margin-bottom: 2px;
+}
+@media (max-width: 600px) {
+  .stat-card {
+    max-width: 100%;
+    border-radius: 7px;
+    padding: 0;
+  }
+  .stat-row {
+    margin-bottom: 7px;
+    padding-bottom: 3px;
+  }
+  .stat-label {
+    font-size: 0.98em;
+  }
+  .stat-input {
+    margin-right: 4px;
+    font-size: 0.97em;
+  }
 }
 </style>

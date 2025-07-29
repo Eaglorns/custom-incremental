@@ -51,31 +51,31 @@ export const useStoreAchievement = defineStore('storeAchievement', {
       const storePrestige = useStorePrestige();
       const storeResearch = useStoreResearch();
 
-      const epicNumberLevel = this.getLevel(storeData.epicNumber, new Decimal(100));
+      const epicNumberLevel = this.getLevel(storeData.epicNumber, new Decimal(10));
       if (epicNumberLevel.gt(this.list.epicNumberValue))
         this.list.epicNumberValue = epicNumberLevel;
 
-      const cpuLevel = this.getLevel(storeShop.list.cpu.value, new Decimal(10));
+      const cpuLevel = this.getLevel(storeShop.list.cpu.value, new Decimal(5));
       if (cpuLevel.gt(this.list.shopCpuValue)) this.list.shopCpuValue = cpuLevel;
 
-      const hddLevel = this.getLevel(storeShop.list.hdd.value, new Decimal(10));
+      const hddLevel = this.getLevel(storeShop.list.hdd.value, new Decimal(4));
       if (hddLevel.gt(this.list.shopHddValue)) this.list.shopHddValue = hddLevel;
 
-      const ramLevel = this.getLevel(storeShop.list.ram.value, new Decimal(10));
+      const ramLevel = this.getLevel(storeShop.list.ram.value, new Decimal(3));
       if (ramLevel.gt(this.list.shopRamValue)) this.list.shopRamValue = ramLevel;
 
-      const workerLevel = this.getLevel(storeShop.list.worker.value, new Decimal(5));
+      const workerLevel = this.getLevel(storeShop.list.worker.value, new Decimal(2));
       if (workerLevel.gt(this.list.shopWorkerValue)) this.list.shopWorkerValue = workerLevel;
 
-      const prestigePointsLevel = this.getLevel(storePrestige.points, new Decimal(3));
+      const prestigePointsLevel = this.getLevel(storePrestige.points, new Decimal(1.5));
       if (prestigePointsLevel.gt(this.list.prestigePoints))
         this.list.prestigePoints = prestigePointsLevel;
 
-      const researchPointsLevel = this.getLevel(storeResearch.points, new Decimal(5));
+      const researchPointsLevel = this.getLevel(storeResearch.points, new Decimal(2));
       if (researchPointsLevel.gt(this.list.researchPoints))
         this.list.researchPoints = researchPointsLevel;
 
-      const shopPointsLevel = this.getLevel(storeShop.points, new Decimal(2));
+      const shopPointsLevel = this.getLevel(storeShop.points, new Decimal(4));
       if (shopPointsLevel.gt(this.list.shopPoints)) this.list.shopPoints = shopPointsLevel;
     },
 
