@@ -17,8 +17,8 @@
           :style="{ width: progress.toNumber() * 100 + '%' }"
         />
       </div>
-      <div class="prestige-progress-info flex items-center justify-between">
-        <div />
+      <div class="prestige-progress-info flex items-center justify-between row">
+        <div v-if="prestigeTimeLeft" class="prestige-time-left">~{{ prestigeTimeLeft }}</div>
         <span class="prestige-possible-modern">+{{ formatNumber(prestigeGain) }}</span>
       </div>
     </div>
@@ -55,6 +55,17 @@ const prestigeGain = computed(() => {
 const target = computed(() => new Decimal(1));
 const canPrestige = computed(() => storePrestige.prestigeCan);
 const progress = computed(() => Decimal.min(prestigeGain.value.div(target.value), 1));
+
+const prestigeTimeLeft = computed(() => {
+  const epic = storeData.epicNumber;
+  const gain = storeData.epicNumberGain;
+  if (canPrestige.value || epic.lte(0) || gain.lte(0)) return null;
+
+  const seconds = storePrestige.getEpicNumberToPrestige.minus(epic).div(storeData.epicNumberGain);
+
+  if (seconds.lt(1)) return null;
+  return storeData.formatTime(seconds);
+});
 
 const onPrestige = () => {
   if (canPrestige.value) {
@@ -129,6 +140,13 @@ const onPrestige = () => {
   align-items: center
   justify-content: space-between
   margin-top: 2px
+
+.prestige-time-left
+  color: #b2ffb2
+  font-size: 0.98em
+  font-weight: 500
+  opacity: 0.85
+  margin-left: 2px
 
 .prestige-progress-icon-modern
   z-index: 2

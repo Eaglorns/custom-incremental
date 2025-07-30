@@ -83,6 +83,14 @@ export const useStorePrestige = defineStore('storePrestige', {
     },
   }),
   getters: {
+    getEpicNumberToPrestige: (): Decimal => {
+      const storePrestige = useStorePrestige();
+      const prestigeUpgradeSoftening = storePrestige.upgrades.prestigeSoftening.level.gt(0)
+        ? storePrestige.upgrades.prestigeSoftening.level
+        : new Decimal(1);
+      return new Decimal(1.3).div(new Decimal(0.00001).mul(prestigeUpgradeSoftening));
+    },
+
     prestigeGain: (): Decimal => {
       const storeData = useStoreData();
       const storePrestige = useStorePrestige();
@@ -90,7 +98,7 @@ export const useStorePrestige = defineStore('storePrestige', {
       const prestigeUpgradeSoftening = storePrestige.upgrades.prestigeSoftening.level.gt(0)
         ? storePrestige.upgrades.prestigeSoftening.level
         : new Decimal(1);
-      return storeData.epicNumber.mul(0.00001).mul(prestigeUpgradeSoftening).log10();
+      return storeData.epicNumber.mul(0.00001).mul(prestigeUpgradeSoftening).log(1.3);
     },
 
     prestigeCan: (): boolean => {

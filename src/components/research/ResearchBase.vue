@@ -47,9 +47,9 @@
           </div>
           <div class="row items-center">
             <q-icon name="fa-duotone fa-clock" size="15px" class="q-mr-xs text-grey-7" />
-            <q-badge class="q-pa-xs text-bold bg-grey-3 text-primary" style="font-size: 11px"
-              >{{ formatNumber(getResearchTime(meta.key).value) }} сек</q-badge
-            >
+            <q-badge class="q-pa-xs text-bold bg-grey-3 text-primary" style="font-size: 11px">{{
+              storeData.formatTime(getResearchTime(meta.key).value)
+            }}</q-badge>
           </div>
         </div>
         <div v-if="getResearch(meta.key).maxLevel.gt(1)">
@@ -81,7 +81,7 @@
           dense
           :label="
             getResearch(meta.key).currentTime.gt(0)
-              ? `Отменить (${formatNumber(getResearch(meta.key).currentTime)} сек.)`
+              ? `Отменить (${storeData.formatTime(getResearch(meta.key).currentTime)})`
               : 'Улучшить'
           "
           @click="startResearch(meta.key, false)"
@@ -150,10 +150,11 @@ function getResearchTime(key: string) {
   const research = researchList[key];
   if (!research) return computed(() => new Decimal(0));
   return computed(() => {
-    const divTime = storeResearch.speed.gt(0) ? storeResearch.speed : new Decimal(1);
-    return research.level.eq(0)
+    const divTime = storeResearch.speed.gt(0) ? storeResearch.getResearchSpeed : new Decimal(1);
+    const result = research.level.lt(1)
       ? research.time.div(divTime)
       : research.time.mul(research.timeMultiply.pow(research.level)).div(divTime);
+    return result;
   });
 }
 

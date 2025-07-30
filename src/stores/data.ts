@@ -4,6 +4,7 @@ import { useStoreResearch } from 'stores/research';
 import { useStoreShop } from 'stores/shop';
 import { useStoreAchievement } from 'stores/achievement';
 import { useStorePrestige } from 'stores/prestige';
+import { Duration } from 'luxon';
 
 export const useStoreData = defineStore('storeData', {
   state: () => ({
@@ -94,6 +95,43 @@ export const useStoreData = defineStore('storeData', {
       };
     },
 
+    formatTime:
+      () =>
+      (seconds: Decimal): string => {
+        const dur = Duration.fromObject({ seconds: seconds.round().toNumber() })
+          .shiftTo('years', 'days', 'hours', 'minutes', 'seconds')
+          .normalize();
+
+        function formatYears(dur: Duration): string {
+          if (dur.years > 10) return `${dur.years} г`;
+          if (dur.days) return `${dur.years} г ${dur.days} д`;
+          return `${dur.years} г`;
+        }
+
+        function formatDays(dur: Duration): string {
+          if (dur.days > 10) return `${dur.days} д`;
+          if (dur.hours) return `${dur.days} д ${dur.hours} ч`;
+          return `${dur.days} д`;
+        }
+
+        function formatHours(dur: Duration): string {
+          if (dur.minutes) return `${dur.hours} ч ${dur.minutes} м`;
+          return `${dur.hours} ч`;
+        }
+
+        function formatMinutes(dur: Duration): string {
+          if (dur.seconds) return `${dur.minutes} м ${dur.seconds} с`;
+          return `${dur.minutes} м`;
+        }
+
+        if (dur.years > 100) return '∞';
+        if (dur.years >= 1) return formatYears(dur);
+        if (dur.days >= 1) return formatDays(dur);
+        if (dur.hours >= 1) return formatHours(dur);
+        if (dur.minutes >= 1) return formatMinutes(dur);
+        return `${dur.seconds} с`;
+      },
+
     getMultiplierEpicNumber: (state): Decimal => {
       const storeResearch = useStoreResearch();
       const base = state.multiplierEpicNumber;
@@ -104,17 +142,7 @@ export const useStoreData = defineStore('storeData', {
       return Decimal.max(new Decimal(1), new Decimal(1).add(reduced));
     },
 
-    save(state) {
-      return {
-        version: state.version,
-        epicNumber: state.epicNumber,
-        multiplierEpicNumber: state.multiplierEpicNumber,
-      };
-    },
-  },
-
-  actions: {
-    processGiveEpicNumber() {
+    epicNumberGain: (): Decimal => {
       const storeShop = useStoreShop();
       const storeResearch = useStoreResearch();
       const storeAchievement = useStoreAchievement();
@@ -128,7 +156,21 @@ export const useStoreData = defineStore('storeData', {
         .mul(prestigeMul)
         .mul(prestigeUpgradeBonus)
         .mul(storeAchievement.achievementBonus);
-      this.epicNumber = this.epicNumber.plus(result);
+      return result;
+    },
+
+    save(state) {
+      return {
+        version: state.version,
+        epicNumber: state.epicNumber,
+        multiplierEpicNumber: state.multiplierEpicNumber,
+      };
+    },
+  },
+
+  actions: {
+    processGiveEpicNumber() {
+      this.epicNumber = this.epicNumber.plus(this.epicNumberGain);
     },
 
     load(loaded: { version: string; epicNumber: string; multiplierEpicNumber: string }) {

@@ -42,31 +42,19 @@ import { computed } from 'vue';
 import { useStoreData } from 'stores/data';
 import { useStoreResearch } from 'stores/research';
 import { useStoreStats } from 'stores/stats';
-import { Duration } from 'luxon';
+import Decimal from 'break_eternity.js';
 
 const storeData = useStoreData();
 const storeResearch = useStoreResearch();
 const storeStats = useStoreStats();
 
 const formatNumber = storeData.formatNumber;
-
-function formatGameTime(seconds: number) {
-  const dur = Duration.fromObject({ seconds })
-    .shiftTo('years', 'days', 'hours', 'minutes', 'seconds')
-    .normalize();
-  const parts = [];
-  if (dur.years) parts.push(`${dur.years}г`);
-  if (dur.days || dur.years) parts.push(`${dur.days}д`);
-  if (dur.hours || dur.days || dur.years) parts.push(`${dur.hours}ч`);
-  if (dur.minutes || dur.hours || dur.days || dur.years) parts.push(`${dur.minutes}м`);
-  parts.push(`${dur.seconds}с`);
-  return parts.join(' ');
-}
+const formatTime = storeData.formatTime;
 
 const stats = computed(() => [
   {
     label: 'Проведено времени в игре',
-    value: formatGameTime(storeStats.gameTime),
+    value: formatTime(new Decimal(storeStats.gameTime)),
     width: '200px',
   },
   {
@@ -88,6 +76,16 @@ const stats = computed(() => [
     label: 'Максимальные очки исследований',
     value: formatNumber(storeStats.maxResearchPoints),
     width: '275px',
+  },
+  {
+    label: 'Максимальное значения магазина',
+    value: [
+      { label: 'CPU', value: formatNumber(storeStats.maxShopBuy.cpu) },
+      { label: 'HDD', value: formatNumber(storeStats.maxShopBuy.hdd) },
+      { label: 'RAM', value: formatNumber(storeStats.maxShopBuy.ram) },
+      { label: 'Работники', value: formatNumber(storeStats.maxShopBuy.worker) },
+    ],
+    widths: ['100px', '100px', '100px', '100px'],
   },
   {
     label: 'Множитель прироста числа',

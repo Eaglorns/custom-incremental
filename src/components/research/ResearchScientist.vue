@@ -111,8 +111,8 @@ function hireScientist() {
       id,
       level: new Decimal(1),
       exp: new Decimal(0),
-      intellect: new Decimal(1),
-      efficiency: new Decimal(1),
+      intellect: new Decimal(0),
+      efficiency: new Decimal(0),
     });
   }
 }

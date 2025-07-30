@@ -166,9 +166,14 @@ const buyModeMultiply = computed({
 
 function buyLabel(base: string, name: ShopItemName, type: 'value' | 'multiply') {
   const points = type === 'value' ? storeShop.points : storeData.epicNumber;
-  const cost = storeShop.list[name].cost[type];
   const amount = storeShop.getBuyAmount(name, type);
-  const result = storeShop.buyMax(points, cost, amount);
+  const result = storeShop.buyMax(
+    points,
+    type === 'multiply'
+      ? storeShop.costMultiply(props.name)
+      : storeShop.list[props.name].cost.value,
+    amount,
+  );
   return `${base} ${formatNumber(result.bought)}`;
 }
 
@@ -201,11 +206,9 @@ const canBuyValue = computed(() => {
 });
 
 const canBuyMultiply = computed(() => {
-  const result = storeShop.buyMax(
-    storeData.epicNumber,
-    storeShop.list[props.name].cost.multiply,
-    storeShop.getBuyAmount(props.name, 'multiply'),
-  );
+  const points = storeData.epicNumber;
+  const amount = storeShop.getBuyAmount(props.name, 'multiply');
+  const result = storeShop.buyMax(points, storeShop.costMultiply(props.name), amount);
   if (result.bought.gt(0)) {
     return true;
   }

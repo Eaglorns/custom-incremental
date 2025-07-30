@@ -70,8 +70,8 @@ export const useStoreShop = defineStore('storeShop', {
       const storePrestige = useStorePrestige();
       let max =
         type === 'value'
-          ? storePrestige.upgrades.prestigeBuyValueCount.level
-          : storePrestige.upgrades.prestigeBuyValueMultiply.level;
+          ? storePrestige.upgrades.prestigeBuyValueCount.level.plus(1)
+          : storePrestige.upgrades.prestigeBuyValueMultiply.level.plus(1);
       if (max.lt(1)) max = max.plus(1);
       switch (buyMode) {
         case 1:
