@@ -169,7 +169,7 @@ export const useStoreResearch = defineStore('storeResearch', {
       if (base.lt(1)) return new Decimal(1);
       const research = store.base.researchTimeMultiplierDecrease;
       const bonus = research.level.gt(0) ? research.bonus.pow(research.level) : new Decimal(1);
-      const reduced = base.log(1.05).div(new Decimal(1000).div(bonus));
+      const reduced = base.log(1.03).div(new Decimal(150).div(bonus));
       return Decimal.max(new Decimal(1), new Decimal(1).add(reduced));
     },
 

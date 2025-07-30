@@ -135,7 +135,6 @@ export const useStorePrestige = defineStore('storePrestige', {
       storePrestige.points = storePrestige.points.add(storePrestige.prestigeGain);
       storeData.epicNumber = new Decimal(1);
       storeResearch.points = new Decimal(0);
-      storeData.multiplierEpicNumber = new Decimal(0);
       storeShop.list.cpu.value = new Decimal(1);
       storeShop.list.cpu.multiply = new Decimal(1);
       storeShop.list.hdd.value = new Decimal(1);
