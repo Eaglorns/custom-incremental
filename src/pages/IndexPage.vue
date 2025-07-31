@@ -59,6 +59,7 @@
         <q-tab name="research" icon="fa-duotone fa-flask-vial" :label="tabLabels.research" />
         <q-tab name="automatic" icon="fa-duotone fa-microchip-ai" :label="tabLabels.automatic" />
         <q-tab name="eternity" icon="fa-duotone fa-hourglass-end" :label="tabLabels.eternity" />
+        <q-tab name="magic" icon="fa-duotone fa-hat-wizard" :label="tabLabels.magic" />
         <q-tab name="infinity" icon="fa-duotone fa-infinity" :label="tabLabels.infinity" />
         <q-tab name="achievement" icon="fa-duotone fa-trophy-star" :label="tabLabels.achievement" />
         <q-tab name="stats" icon="fa-duotone fa-chart-line" :label="tabLabels.stats" />
@@ -282,6 +283,46 @@
           </template>
         </q-tab-panel>
         <q-tab-panel name="eternity" class="panel-flex"></q-tab-panel>
+        <q-tab-panel name="magic" class="panel-flex">
+          <template v-if="isMobile">
+            <q-tabs v-model="innerMagic" align="justify" class="text-teal">
+              <q-tab
+                name="innerMagic"
+                icon="fa-duotone fa-hat-wizard"
+                :label="innerMagicLabels.innerMagicMana"
+              />
+            </q-tabs>
+            <q-tab-panels
+              v-model="innerMagic"
+              transition-prev="slide-down"
+              transition-next="slide-up"
+            >
+              <q-tab-panel name="innerMagicMana"><MagicInventory /></q-tab-panel>
+            </q-tab-panels>
+          </template>
+          <template v-else>
+            <q-splitter v-model="splitterModel">
+              <template v-slot:before>
+                <q-tabs v-model="innerMagic" vertical class="text-teal">
+                  <q-tab
+                    name="innerMagicMana"
+                    icon="fa-duotone fa-hat-wizard"
+                    :label="innerMagicLabels.innerMagicMana"
+                  />
+                </q-tabs>
+              </template>
+              <template v-slot:after>
+                <q-tab-panels
+                  v-model="innerMagic"
+                  transition-prev="slide-down"
+                  transition-next="slide-up"
+                >
+                  <q-tab-panel name="innerMagicMana"><MagicInventory /></q-tab-panel>
+                </q-tab-panels>
+              </template>
+            </q-splitter>
+          </template>
+        </q-tab-panel>
         <q-tab-panel name="infinity" class="panel-flex"></q-tab-panel>
         <q-tab-panel name="achievement" class="panel-flex">
           <Achievement />
@@ -322,6 +363,7 @@ import ResearchScientist from 'src/components/research/ResearchScientist.vue';
 import AutomaticHelpersShop from 'src/components/automatic/AutomaticHelpersShop.vue';
 import PrestigeBase from 'src/components/prestige/PrestigeBase.vue';
 import PrestigeUpgrade from 'src/components/prestige/PrestigeUpgrade.vue';
+import MagicInventory from 'src/components/magic/MagicInventory.vue';
 import Help from 'src/pages/HelpPage.vue';
 import Achievement from 'src/pages/AchievementPage.vue';
 import StatsPage from 'src/pages/StatsPage.vue';
@@ -349,6 +391,7 @@ const innerShop = ref('innerShopCPU');
 const innerResearch = ref('innerResearchScientist');
 const innerAutomatic = ref('innerAutomaticHelpersShop');
 const innerPrestige = ref('innerPrestigeBase');
+const innerMagic = ref('innerMagicMana');
 const splitterModel = ref(20);
 
 const isMobile = computed(() => window.innerWidth < 700);
@@ -368,6 +411,7 @@ const tabLabels = computed(() => ({
   research: isMobile.value ? 'Ис' : 'Исследования',
   automatic: isMobile.value ? 'Ав' : 'Автоматизация',
   eternity: isMobile.value ? 'Ве' : 'Вечность',
+  magic: isMobile.value ? 'Ма' : 'Магия',
   infinity: isMobile.value ? 'Бе' : 'Бесконечность',
   achievement: isMobile.value ? 'До' : 'Достижения',
   stats: isMobile.value ? 'Ст' : 'Статистика',
@@ -391,6 +435,10 @@ const innerResearchLabels = computed(() => ({
 
 const innerAutomaticLabels = computed(() => ({
   innerAutomaticHelpersShop: isMobile.value ? 'Скупщ' : 'Скупщики комплектующих',
+}));
+
+const innerMagicLabels = computed(() => ({
+  innerMagicMana: isMobile.value ? 'Магия' : 'Маги',
 }));
 
 function animateColorEl(el: HTMLElement | null, fast: boolean = false) {
