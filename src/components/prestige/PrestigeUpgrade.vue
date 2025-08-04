@@ -1,12 +1,12 @@
 <template>
-  <q-card flat class="q-pa-lg">
-    <div class="text-h5 text-accent q-mb-md">Улучшения престижа</div>
-    <div class="row q-col-gutter-lg q-gutter-y-md">
+  <q-card flat class="q-pa-md">
+    <div class="text-h5 text-accent q-mb-sm">Улучшения престижа</div>
+    <div class="row q-col-gutter-sm q-gutter-y-sm">
       <div v-for="key in upgradesKeys" :key="key" class="col-12 col-sm-6 col-md-4 flex flex-center">
         <q-card
           flat
           bordered
-          class="q-pa-md q-mb-md prestige-card-dark"
+          class="q-pa-sm q-mb-sm prestige-card-dark"
           style="min-width: 220px; max-width: 320px"
         >
           <div class="row items-center q-mb-sm no-wrap">

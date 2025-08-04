@@ -35,7 +35,7 @@
         class="flex items-center"
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
-        <q-icon name="fa-duotone fa-flask-vial" size="22px" color="secondary" />
+        <q-icon name="fa-duotone fa-swords" size="22px" color="secondary" />
         <span ref="researchRef" class="text-weight-bold text-h5">
           {{ formatNumber(storeResearch.points) }}
         </span>
@@ -287,9 +287,21 @@
           <template v-if="isMobile">
             <q-tabs v-model="innerMagic" align="justify" class="text-teal">
               <q-tab
-                name="innerMagic"
-                icon="fa-duotone fa-hat-wizard"
-                :label="innerMagicLabels.innerMagicMana"
+                name="innerMagicBattle"
+                icon="fa-duotone fa-swords"
+                :label="innerMagicLabels.innerMagicBattle"
+              />
+              <q-tab name="innerMagicMage" icon="fa-duotone fa-hat-wizard" label="Маги" />
+              <q-tab
+                name="innerMagicEssence"
+                icon="fa-duotone fa-flask-vial"
+                :label="innerMagicLabels.innerMagicEssence"
+              />
+              <q-tab name="innerMagicRune" icon="fa-duotone fa-scroll-old" label="Руны" />
+              <q-tab
+                name="innerMagicCraft"
+                icon="fa-duotone fa-hammer-war"
+                :label="innerMagicLabels.innerMagicCraft"
               />
             </q-tabs>
             <q-tab-panels
@@ -297,7 +309,11 @@
               transition-prev="slide-down"
               transition-next="slide-up"
             >
-              <q-tab-panel name="innerMagicMana"><MagicInventory /></q-tab-panel>
+              <q-tab-panel name="innerMagicBattle"><MagicBattle /></q-tab-panel>
+              <q-tab-panel name="innerMagicMage"><MagicMages /></q-tab-panel>
+              <q-tab-panel name="innerMagicEssence"><MagicEssence /></q-tab-panel>
+              <q-tab-panel name="innerMagicRune"><MagicRune /></q-tab-panel>
+              <q-tab-panel name="innerMagicCraft"><MagicCraft /></q-tab-panel>
             </q-tab-panels>
           </template>
           <template v-else>
@@ -305,9 +321,21 @@
               <template v-slot:before>
                 <q-tabs v-model="innerMagic" vertical class="text-teal">
                   <q-tab
-                    name="innerMagicMana"
-                    icon="fa-duotone fa-hat-wizard"
-                    :label="innerMagicLabels.innerMagicMana"
+                    name="innerMagicBattle"
+                    icon="fa-duotone fa-swords"
+                    :label="innerMagicLabels.innerMagicBattle"
+                  />
+                  <q-tab name="innerMagicMage" icon="fa-duotone fa-hat-wizard" label="Маги" />
+                  <q-tab
+                    name="innerMagicEssence"
+                    icon="fa-duotone fa-flask-vial"
+                    :label="innerMagicLabels.innerMagicEssence"
+                  />
+                  <q-tab name="innerMagicRune" icon="fa-duotone fa-scroll-old" label="Руны" />
+                  <q-tab
+                    name="innerMagicCraft"
+                    icon="fa-duotone fa-hammer-war"
+                    :label="innerMagicLabels.innerMagicCraft"
                   />
                 </q-tabs>
               </template>
@@ -317,7 +345,12 @@
                   transition-prev="slide-down"
                   transition-next="slide-up"
                 >
-                  <q-tab-panel name="innerMagicMana"><MagicInventory /></q-tab-panel>
+                  <q-tab-panel name="innerMagicBattle"><MagicBattle /></q-tab-panel>
+                  <q-tab-panel name="innerMagicMage"><MagicMage /></q-tab-panel>
+
+                  <q-tab-panel name="innerMagicEssence"><MagicEssence /></q-tab-panel>
+                  <q-tab-panel name="innerMagicRune"><MagicRune /></q-tab-panel>
+                  <q-tab-panel name="innerMagicCraft"><MagicCraft /></q-tab-panel>
                 </q-tab-panels>
               </template>
             </q-splitter>
@@ -363,7 +396,11 @@ import ResearchScientist from 'src/components/research/ResearchScientist.vue';
 import AutomaticHelpersShop from 'src/components/automatic/AutomaticHelpersShop.vue';
 import PrestigeBase from 'src/components/prestige/PrestigeBase.vue';
 import PrestigeUpgrade from 'src/components/prestige/PrestigeUpgrade.vue';
-import MagicInventory from 'src/components/magic/MagicInventory.vue';
+import MagicEssence from 'src/components/magic/MagicEssence.vue';
+import MagicRune from 'src/components/magic/MagicRune.vue';
+import MagicCraft from 'src/components/magic/MagicCraft.vue';
+import MagicMage from 'src/components/magic/MagicMage.vue';
+import MagicBattle from 'src/components/magic/MagicBattle.vue';
 import Help from 'src/pages/HelpPage.vue';
 import Achievement from 'src/pages/AchievementPage.vue';
 import StatsPage from 'src/pages/StatsPage.vue';
@@ -391,7 +428,7 @@ const innerShop = ref('innerShopCPU');
 const innerResearch = ref('innerResearchScientist');
 const innerAutomatic = ref('innerAutomaticHelpersShop');
 const innerPrestige = ref('innerPrestigeBase');
-const innerMagic = ref('innerMagicMana');
+const innerMagic = ref('innerMagicBattle');
 const splitterModel = ref(20);
 
 const isMobile = computed(() => window.innerWidth < 700);
@@ -438,7 +475,9 @@ const innerAutomaticLabels = computed(() => ({
 }));
 
 const innerMagicLabels = computed(() => ({
-  innerMagicMana: isMobile.value ? 'Магия' : 'Маги',
+  innerMagicBattle: isMobile.value ? 'Битв' : 'Битва',
+  innerMagicEssence: isMobile.value ? 'Эссе' : 'Эссенции',
+  innerMagicCraft: isMobile.value ? 'Созд' : 'Создание',
 }));
 
 function animateColorEl(el: HTMLElement | null, fast: boolean = false) {
