@@ -53,7 +53,9 @@ export const useStoreMagic = defineStore('storeMagic', {
     },
 
     selectRune(rune: Rune) {
-      this.selectedRune = rune;
+      // Всегда получаем актуальную руну из массива
+      const currentRune = this.runes.find((r) => r.id === rune.id);
+      this.selectedRune = currentRune || rune;
     },
 
     getRequiredAmount(requirement: RuneRequirementMeta) {
@@ -89,8 +91,13 @@ export const useStoreMagic = defineStore('storeMagic', {
         }
       });
 
-      // Повышаем уровень руны
-      this.selectedRune.level++;
+      // Находим руну в массиве и повышаем её уровень
+      const runeInArray = this.runes.find((r) => r.id === this.selectedRune!.id);
+      if (runeInArray) {
+        runeInArray.level++;
+        // Обновляем выбранную руну ссылкой на актуальную руну из массива
+        this.selectedRune = runeInArray;
+      }
     },
 
     addEssence(essenceId: string, amount: number) {

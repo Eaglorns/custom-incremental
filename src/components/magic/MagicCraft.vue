@@ -71,8 +71,9 @@ const storeMagic = useStoreMagic();
 const selectedRuneWithMeta = computed(() => {
   if (!storeMagic.selectedRune) return null;
   const meta = RUNE_META.find((m) => m.id === storeMagic.selectedRune!.id);
+  const currentRune = storeMagic.runes.find((r) => r.id === storeMagic.selectedRune!.id);
   return {
-    ...storeMagic.selectedRune,
+    ...(currentRune || storeMagic.selectedRune),
     meta: meta || {
       name: 'Неизвестная руна',
       icon: 'fas fa-question',
@@ -274,38 +275,11 @@ const getEssenceMetaById = (id: string) => {
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   flex: 0 0 auto;
   box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.8s ease;
-  }
-
-  &:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow:
-      0 6px 20px rgba(0, 0, 0, 0.25),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
-
-    &::before {
-      transform: translateX(100%);
-    }
-  }
 
   &.insufficient {
     border-color: #ff6b6b;
@@ -352,7 +326,6 @@ const getEssenceMetaById = (id: string) => {
   font-size: 1rem;
   font-weight: bold;
   border-radius: 20px;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   text-transform: uppercase;
   letter-spacing: 1px;
   background: linear-gradient(135deg, #4ecdc4, #45b7d1);
@@ -362,45 +335,12 @@ const getEssenceMetaById = (id: string) => {
   box-shadow:
     0 6px 20px rgba(76, 205, 196, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.8s ease;
-  }
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow:
-      0 8px 25px rgba(76, 205, 196, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.25);
-    background: linear-gradient(135deg, #5dd9d1, #52c4e0);
-
-    &::before {
-      left: 100%;
-    }
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(-1px) scale(1.01);
-  }
 
   &:disabled {
     opacity: 0.5;
     background: linear-gradient(135deg, #6c757d, #5a6268);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     cursor: not-allowed;
-
-    &:hover {
-      transform: none;
-    }
   }
 
   .fas {

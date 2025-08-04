@@ -64,77 +64,69 @@ const runesWithMeta = computed(() => {
   padding: 10px 6px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.3s ease;
   min-height: 85px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-      45deg,
-      transparent 30%,
-      rgba(255, 255, 255, 0.1) 50%,
-      transparent 70%
-    );
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-  }
-
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-
-    &::before {
-      opacity: 1;
-    }
-  }
 
   &.selected {
     border-color: #007bff;
-    background: linear-gradient(145deg, #cfe2ff, #b6d4fe);
-    box-shadow: 0 0 12px rgba(0, 123, 255, 0.4);
+    border-width: 3px;
+    background: linear-gradient(145deg, #e7f1ff, #cfe2ff);
+    box-shadow:
+      0 0 20px rgba(0, 123, 255, 0.6),
+      inset 0 0 10px rgba(0, 123, 255, 0.2);
+    transform: translateY(-2px);
 
-    &::before {
-      background: linear-gradient(
-        45deg,
-        transparent 30%,
-        rgba(0, 123, 255, 0.2) 50%,
-        transparent 70%
-      );
+    .rune-icon {
+      color: #007bff !important;
+      filter: drop-shadow(0 2px 4px rgba(0, 123, 255, 0.3));
     }
   }
 
   &.owned {
     border-color: #28a745;
-    background: linear-gradient(145deg, #d4edda, #c3e6cb);
+    border-width: 2px;
+    background: linear-gradient(145deg, #e8f5e8, #d4edda);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
 
-    &::before {
-      background: linear-gradient(
-        45deg,
-        transparent 30%,
-        rgba(40, 167, 69, 0.1) 50%,
-        transparent 70%
-      );
+    .rune-icon {
+      filter: drop-shadow(0 2px 4px rgba(40, 167, 69, 0.2));
+    }
+
+    &.selected {
+      border-color: #007bff;
+      border-width: 3px;
+      background: linear-gradient(145deg, #e7f1ff, #cfe2ff);
+      box-shadow:
+        0 0 20px rgba(0, 123, 255, 0.6),
+        inset 0 0 10px rgba(0, 123, 255, 0.2);
+
+      .rune-icon {
+        color: #007bff !important;
+        filter: drop-shadow(0 2px 4px rgba(0, 123, 255, 0.3));
+      }
     }
   }
 
   &.empty {
-    opacity: 0.7;
+    opacity: 0.6;
     border-style: dashed;
-    border-width: 1px;
+    border-width: 2px;
+    border-color: #adb5bd;
+    background: linear-gradient(145deg, #f8f9fa, #e9ecef);
 
-    &:hover {
-      opacity: 0.9;
+    &.selected {
+      opacity: 1;
+      border-style: solid;
+      border-color: #007bff;
+      border-width: 3px;
+      background: linear-gradient(145deg, #e7f1ff, #cfe2ff);
+      box-shadow:
+        0 0 20px rgba(0, 123, 255, 0.6),
+        inset 0 0 10px rgba(0, 123, 255, 0.2);
+      transform: translateY(-2px);
     }
   }
 }
