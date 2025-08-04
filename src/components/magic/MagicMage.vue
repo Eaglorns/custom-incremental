@@ -57,32 +57,31 @@
               <i :class="selectedMage.icon" :style="{ color: selectedMage.iconColor }"></i>
             </div>
             <div class="mage-info">
-              <h6 class="mage-name">{{ selectedMage.name }}</h6>
+              <h6 class="mage-name">
+                {{ selectedMage.name }}
+                <span
+                  class="stat-value rank-badge"
+                  :style="{
+                    background: getRankStyles(getMageRank(selectedMage.level).class).background,
+                    color: getRankStyles(getMageRank(selectedMage.level).class).color,
+                    borderColor: getRankStyles(getMageRank(selectedMage.level).class).borderColor,
+                    boxShadow: getRankStyles(getMageRank(selectedMage.level).class).boxShadow,
+                  }"
+                  >{{ getMageRank(selectedMage.level).name }}</span
+                >
+              </h6>
+
               <div class="mage-level">Уровень {{ selectedMage.level }}</div>
             </div>
           </div>
 
           <div class="mage-stats">
-            <div class="stat-row">
-              <span class="stat-label">Звание:</span>
-              <span
-                class="stat-value rank-badge"
-                :style="{
-                  background: getRankStyles(getMageRank(selectedMage.level).class).background,
-                  color: getRankStyles(getMageRank(selectedMage.level).class).color,
-                  borderColor: getRankStyles(getMageRank(selectedMage.level).class).borderColor,
-                  boxShadow: getRankStyles(getMageRank(selectedMage.level).class).boxShadow,
-                }"
-                >{{ getMageRank(selectedMage.level).name }}</span
-              >
-            </div>
+            <div class="stat-row"></div>
             <div class="experience-section">
               <div class="exp-header">
-                <span class="stat-label">Опыт:</span>
                 <span class="stat-value"
-                  >{{ getExperienceProgress(selectedMage).current }}/{{
-                    getExperienceProgress(selectedMage).max
-                  }}</span
+                  >{{ getExperienceProgress(selectedMage).current }} ->->->
+                  {{ getExperienceProgress(selectedMage).max }}</span
                 >
               </div>
               <div class="exp-bar-container">
@@ -98,12 +97,7 @@
           </div>
 
           <div class="mage-runes">
-            <div class="rune-header">
-              <h6>Уровни рун</h6>
-            </div>
-            <div v-if="selectedMageRunes.length === 0" class="no-runes">
-              <p>Маг пока не изучил ни одной руны</p>
-            </div>
+            <div v-if="selectedMageRunes.length === 0" class="no-runes" />
             <div v-else class="rune-grid">
               <div
                 v-for="rune in selectedMageRunes"
@@ -120,7 +114,7 @@
                 <div class="rune-icon">
                   <i :class="rune.icon"></i>
                 </div>
-                <div class="rune-level">{{ selectedMage.level }}</div>
+                <div class="rune-quantity">{{ selectedMage.runeQuantities[rune.id] || 0 }}</div>
                 <div class="rune-name">{{ rune.name }}</div>
               </div>
             </div>
@@ -143,6 +137,7 @@ interface Mage {
   icon: string;
   iconColor: string;
   runeIds: string[];
+  runeQuantities: Record<string, number>; // Количество каждой руны
 }
 
 const RANKS = [
@@ -363,6 +358,7 @@ const hireMage = () => {
     icon: randomIcon.icon,
     iconColor: randomIcon.color,
     runeIds: [], // Новые маги начинают без рун
+    runeQuantities: {}, // Изначально нет рун
   };
 
   mages.value.push(newMage);
@@ -390,11 +386,16 @@ const addExperience = (mage: Mage, amount: number) => {
     mage.level++;
 
     // При повышении уровня можем добавить случайную руну
-    if (mage.level % 3 === 0 && mage.runeIds.length < 6) {
-      const availableRunes = RUNE_META.filter((rune) => !mage.runeIds.includes(rune.id));
-      if (availableRunes.length > 0) {
-        const randomRune = availableRunes[Math.floor(Math.random() * availableRunes.length)]!;
+    if (mage.level % 3 === 0) {
+      const randomRune = RUNE_META[Math.floor(Math.random() * RUNE_META.length)]!;
+
+      // Если руны еще нет у мага, добавляем в список
+      if (!mage.runeIds.includes(randomRune.id)) {
         mage.runeIds.push(randomRune.id);
+        mage.runeQuantities[randomRune.id] = 1;
+      } else {
+        // Если руна уже есть, увеличиваем количество
+        mage.runeQuantities[randomRune.id] = (mage.runeQuantities[randomRune.id] || 0) + 1;
       }
     }
   }
@@ -819,7 +820,7 @@ onUnmounted(() => {
               border-color: var(--rune-border);
             }
 
-            .rune-level {
+            .rune-quantity {
               font-size: 12px;
               font-weight: bold;
               margin-bottom: 2px;
