@@ -151,18 +151,28 @@ const damageTypes = [
   },
 ];
 
-const monsterTemplates = [
-  { name: 'Огненный дракон', icon: 'fas fa-dragon', color: '#dc2626' },
-  { name: 'Ледяной волк', icon: 'fas fa-wolf', color: '#06b6d4' },
-  { name: 'Земляной голем', icon: 'fas fa-mountain', color: '#a3a3a3' },
-  { name: 'Воздушный элементал', icon: 'fas fa-wind', color: '#10b981' },
-  { name: 'Теневой призрак', icon: 'fas fa-ghost', color: '#8b5cf6' },
-  { name: 'Молниевый змей', icon: 'fas fa-snake', color: '#eab308' },
-  { name: 'Кровавый паук', icon: 'fas fa-spider', color: '#ef4444' },
-  { name: 'Кристальный краб', icon: 'fas fa-crab', color: '#48d1cc' },
-  { name: 'Ядовитая жаба', icon: 'fas fa-frog', color: '#adff2f' },
-  { name: 'Металлический скорпион', icon: 'fas fa-spider-web', color: '#696969' },
-];
+const generateRandomMonster = () => {
+  const prefix = monsterPrefixes[Math.floor(Math.random() * monsterPrefixes.length)];
+  const base = monsterBases[Math.floor(Math.random() * monsterBases.length)];
+  const suffix =
+    Math.random() * 100 > 95
+      ? monsterSuffixes[Math.floor(Math.random() * monsterSuffixes.length)]
+      : null;
+  const icon = monsterIcons[Math.floor(Math.random() * monsterIcons.length)];
+  const color = monsterColors[Math.floor(Math.random() * monsterColors.length)];
+
+  let name = `${prefix} ${base}`;
+  if (suffix) {
+    name += ` ${suffix.name}`;
+  }
+
+  return {
+    name,
+    icon,
+    color,
+    suffix: suffix || null,
+  };
+};
 
 let battleInterval: NodeJS.Timeout | null = null;
 
@@ -189,18 +199,29 @@ const effectiveRegeneration = computed(() => {
 });
 
 const generateMonster = () => {
-  const template = monsterTemplates[Math.floor(Math.random() * monsterTemplates.length)];
-  monsterName.value = template?.name || 'Неизвестный монстр';
-  monsterIcon.value = template?.icon || 'fas fa-question';
-  monsterIconColor.value = template?.color || '#ffffff';
+  const monster = generateRandomMonster();
+  monsterName.value = monster.name;
+  monsterIcon.value = monster.icon || 'fas fa-question';
+  monsterIconColor.value = monster.color || '#ffffff';
   monsterLevel.value = new Decimal(Math.floor(Math.random() * 10) + 1);
-  const baseHealth = new Decimal(monsterLevel.value.mul(50).mul(50000).plus(100));
+
+  // Базовые характеристики
+  let baseHealth = new Decimal(monsterLevel.value.mul(50).mul(15).plus(100));
+  let baseArmor = new Decimal(monsterLevel.value.mul(2)).plus(Math.random() * 10);
+  let baseRegen = new Decimal(monsterLevel.value.mul(1.5)).plus(Math.random() * 15);
+
+  // Применяем бонусы от суффикса
+  if (monster.suffix) {
+    baseHealth = baseHealth.mul(monster.suffix.healthMult);
+    baseArmor = baseArmor.mul(monster.suffix.armorMult);
+    baseRegen = baseRegen.mul(monster.suffix.regenMult);
+  }
+
   monsterMaxHealth.value = baseHealth;
   monsterCurrentHealth.value = baseHealth;
-  monsterArmor.value = new Decimal(monsterLevel.value.mul(2)).plus(Math.random() * 10);
-  monsterRegeneration.value = new Decimal(monsterLevel.value.mul(1.5))
-    .plus(Math.random() * 3)
-    .plus(1000);
+  monsterArmor.value = baseArmor;
+  monsterRegeneration.value = baseRegen;
+
   monsterId.value++;
   damageEffects.value = [];
   generateRewards();
@@ -231,11 +252,11 @@ const applyDamageEffect = (type: DamageEffect['type']) => {
 
   const existingEffect = damageEffects.value.find((effect) => effect.type === type);
   if (existingEffect) {
-    existingEffect.stacks = existingEffect.stacks.plus(1);
+    existingEffect.stacks = existingEffect.stacks.plus(15);
   } else {
     damageEffects.value.push({
       type,
-      stacks: new Decimal(1),
+      stacks: new Decimal(15),
     });
   }
 };
