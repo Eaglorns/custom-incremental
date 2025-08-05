@@ -296,7 +296,7 @@ export const useStoreResearch = defineStore('storeResearch', {
       let totalResearch = new Decimal(0);
       this.scientists.forEach((s) => {
         s.exp = s.exp.add(s.intellect.mul(expMultiplier));
-        while (s.exp.gte(this.expToLevel(s.level))) {
+        if (s.exp.gte(this.expToLevel(s.level))) {
           s.exp = s.exp.sub(this.expToLevel(s.level));
           s.level = s.level.add(1);
         }

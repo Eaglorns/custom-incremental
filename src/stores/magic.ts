@@ -1,5 +1,35 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { ESSENCE_META, RUNE_META, type RuneRequirementMeta } from '../constants/magicMeta';
+import {
+  ESSENCE_META,
+  RUNE_META,
+  type RuneRequirementMeta,
+  RANKS,
+  MAGE_SYLLABLES,
+  MAGE_ICONS,
+  MAGE_RANK_STYLE,
+} from '../constants/magicMeta';
+import Decimal from 'break_eternity.js';
+
+export interface MageRank {
+  id: number;
+  name: string;
+  class: string;
+  minLevel: Decimal;
+  color: string;
+}
+
+export interface Mage {
+  id: number;
+  name: string;
+  level: Decimal;
+  currentExp: Decimal;
+  maxExp: Decimal;
+  icon: string;
+  iconColor: string;
+  runeIds: string[];
+  runeQuantities: Record<string, Decimal>;
+  rank: MageRank;
+}
 
 export interface Essence {
   id: string;
@@ -13,25 +43,123 @@ export interface Rune {
 
 export const useStoreMagic = defineStore('storeMagic', {
   state: () => ({
-    // Эссенции - только количество, остальное в мета
+    mages: [] as Mage[],
+    selectedMage: null as Mage | null,
+    maxMages: 24,
     essences: ESSENCE_META.map((meta) => ({
       id: meta.id,
-      amount: Math.floor(Math.random() * 50) + 10, // Случайное начальное количество
+      amount: Math.floor(Math.random() * 50) + 10,
     })) as Essence[],
-
-    // Руны - только уровень, остальное в мета
     runes: RUNE_META.map((meta) => ({
       id: meta.id,
       level: 0,
     })) as Rune[],
-
-    // Выбранная руна
     selectedRune: null as Rune | null,
   }),
 
-  getters: {},
+  getters: {
+    getMageById: (state) => (id: number) => {
+      return state.mages.find((mage) => mage.id === id);
+    },
+    getMageRank: () => (level: Decimal) => {
+      for (let i = RANKS.length - 1; i >= 0; i--) {
+        const rank = RANKS[i];
+        if (rank && level.gte(rank.minLevel)) {
+          return rank;
+        }
+      }
+      return RANKS[0]!;
+    },
+    getExperienceProgress: () => (mage: Mage) => {
+      if (mage.maxExp.lte(0)) {
+        return {
+          current: mage.currentExp,
+          max: new Decimal(1),
+          percentage: 0,
+        };
+      }
+
+      return {
+        current: mage.currentExp,
+        max: mage.maxExp,
+        percentage: mage.currentExp.div(mage.maxExp).mul(100).round().toNumber(),
+      };
+    },
+    getRequiredExperience: () => (level: Decimal) => {
+      return level.pow(1.5).mul(100);
+    },
+    getRankStyles: () => (rankClass: string) => {
+      return MAGE_RANK_STYLE[rankClass as keyof typeof MAGE_RANK_STYLE] || MAGE_RANK_STYLE.novice;
+    },
+  },
 
   actions: {
+    hireMage() {
+      const generateUniqueName = (): string => {
+        let attempts = 0;
+        const maxAttempts = 100;
+        const syllables = MAGE_SYLLABLES.split(' ');
+        while (attempts < maxAttempts) {
+          const syllable1 = syllables[Math.floor(Math.random() * syllables.length)]!;
+          const syllable2 = syllables[Math.floor(Math.random() * syllables.length)]!;
+          const generatedName =
+            (syllable1 + syllable2).charAt(0).toUpperCase() + (syllable1 + syllable2).slice(1);
+          if (!this.mages.some((mage) => mage.name === generatedName)) {
+            return generatedName;
+          }
+          attempts++;
+        }
+        return `Маг${this.mages.length + 1}`;
+      };
+
+      const newName = generateUniqueName();
+      const randomIcon = MAGE_ICONS[Math.floor(Math.random() * MAGE_ICONS.length)]!;
+
+      const newMage: Mage = {
+        id: Date.now(),
+        name: newName,
+        level: new Decimal(1),
+        currentExp: new Decimal(0),
+        maxExp: this.getRequiredExperience(new Decimal(2)).minus(
+          this.getRequiredExperience(new Decimal(1)),
+        ),
+        icon: randomIcon.icon,
+        iconColor: randomIcon.color,
+        runeIds: [],
+        runeQuantities: {},
+        rank: RANKS[0]!,
+      };
+
+      this.mages.push(newMage);
+      this.selectedMage ??= newMage;
+    },
+
+    updateMageRank(mage: Mage) {
+      mage.rank = this.getMageRank(mage.level);
+    },
+
+    selectMage(mage: Mage) {
+      this.selectedMage = mage;
+    },
+
+    addExperience(mage: Mage, amount: Decimal) {
+      mage.currentExp = mage.currentExp.plus(amount);
+      let totalExpForCurrentLevel = mage.currentExp;
+      let currentLevel = mage.level;
+
+      if (totalExpForCurrentLevel.gte(mage.maxExp)) {
+        totalExpForCurrentLevel = totalExpForCurrentLevel.minus(mage.maxExp);
+        currentLevel = currentLevel.plus(1);
+
+        const currentLevelExp = this.getRequiredExperience(currentLevel);
+        const nextLevelExp = this.getRequiredExperience(currentLevel.plus(1));
+        mage.maxExp = nextLevelExp.minus(currentLevelExp);
+      }
+      mage.level = currentLevel;
+      mage.currentExp = totalExpForCurrentLevel;
+      this.updateMageRank(mage);
+    },
+
     getEssenceById(id: string) {
       return this.essences.find((essence) => essence.id === id);
     },
@@ -53,7 +181,6 @@ export const useStoreMagic = defineStore('storeMagic', {
     },
 
     selectRune(rune: Rune) {
-      // Всегда получаем актуальную руну из массива
       const currentRune = this.runes.find((r) => r.id === rune.id);
       this.selectedRune = currentRune || rune;
     },
@@ -83,7 +210,6 @@ export const useStoreMagic = defineStore('storeMagic', {
       const runeMeta = this.getRuneMeta(this.selectedRune.id);
       if (!runeMeta) return;
 
-      // Тратим эссенции
       runeMeta.requirements.forEach((requirement) => {
         const essence = this.getEssenceById(requirement.essenceId);
         if (essence) {
@@ -91,11 +217,9 @@ export const useStoreMagic = defineStore('storeMagic', {
         }
       });
 
-      // Находим руну в массиве и повышаем её уровень
       const runeInArray = this.runes.find((r) => r.id === this.selectedRune!.id);
       if (runeInArray) {
         runeInArray.level++;
-        // Обновляем выбранную руну ссылкой на актуальную руну из массива
         this.selectedRune = runeInArray;
       }
     },

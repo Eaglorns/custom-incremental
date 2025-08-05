@@ -3,9 +3,11 @@
 
 import { defineConfig } from '#q-app/wrappers';
 import { fileURLToPath } from 'node:url';
+import vueDevTools from 'vite-plugin-vue-devtools';
 
 export default defineConfig((ctx) => {
   return {
+    devtools: vueDevTools(),
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
 

@@ -310,7 +310,7 @@
               transition-next="slide-up"
             >
               <q-tab-panel name="innerMagicBattle"><MagicBattle /></q-tab-panel>
-              <q-tab-panel name="innerMagicMage"><MagicMages /></q-tab-panel>
+              <q-tab-panel name="innerMagicMage"><MagicMage /></q-tab-panel>
               <q-tab-panel name="innerMagicEssence"><MagicEssence /></q-tab-panel>
               <q-tab-panel name="innerMagicRune"><MagicRune /></q-tab-panel>
               <q-tab-panel name="innerMagicCraft"><MagicCraft /></q-tab-panel>
