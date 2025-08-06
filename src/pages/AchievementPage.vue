@@ -1,10 +1,10 @@
 <template>
   <q-page class="q-pa-lg">
     <div class="q-mb-md text-h6 text-bold row items-center">
-      <q-icon name="fa-duotone fa-sparkles" color="amber" size="28px" class="q-mr-sm" />
+      <q-icon :name="iconStyle + 'fa-sparkles'" color="amber" size="28px" class="q-mr-sm" />
       Выполнено: {{ formatNumber(totalAchievements) }}
       <q-chip color="primary" text-color="white" class="q-ml-md">
-        <q-icon name="fa-duotone fa-arrow-trend-up" left size="18px" />
+        <q-icon :name="iconStyle + 'fa-arrow-trend-up'" left size="18px" />
         Бонус: x{{ achievementBonus.toFixed(2) }}
       </q-chip>
     </div>
@@ -57,9 +57,15 @@ import { useStoreData } from 'stores/data';
 import { useStoreAchievement } from 'stores/achievement';
 import Decimal from 'break_eternity.js';
 import { achievements } from 'src/constants/achievementMeta';
+import { useStoreSetting } from 'stores/setting';
 
 const storeData = useStoreData();
 const storeAchievement = useStoreAchievement();
+const storeSetting = useStoreSetting();
+
+const iconStyle = computed(() => {
+  return storeSetting.iconStyle;
+});
 
 const formatNumber = storeData.formatNumber;
 

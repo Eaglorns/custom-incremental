@@ -7,6 +7,7 @@ export const useStoreSetting = defineStore('storeSetting', {
       enabled: true,
       volume: 0.5,
     },
+    iconStyle: 'fa-duotone ',
   }),
   getters: {
     save(state) {

@@ -8,7 +8,7 @@
         :class="{ insufficient: essence.amount.lt(getRequiredEssence(essence.id)) }"
       >
         <div class="essence-icon">
-          <i :class="essence.meta.icon" :style="{ color: essence.meta.color }"></i>
+          <i :class="iconStyle + essence.meta.icon" :style="{ color: essence.meta.color }"></i>
         </div>
         <div class="essence-amount">{{ formatNumber(essence.amount) }}</div>
         <div class="essence-name">{{ essence.meta.name }}</div>
@@ -22,9 +22,15 @@ import { computed } from 'vue';
 import { useStoreMagic } from 'stores/magic';
 import { ESSENCE_META } from 'src/constants/magicMeta';
 import { useStoreData } from 'stores/data';
+import { useStoreSetting } from 'src/stores/setting';
 
 const storeMagic = useStoreMagic();
 const storeData = useStoreData();
+const storeSetting = useStoreSetting();
+
+const iconStyle = computed(() => {
+  return storeSetting.iconStyle;
+});
 
 const formatNumber = storeData.formatNumber;
 
@@ -56,7 +62,7 @@ const getRequiredEssence = (essenceId: string) => {
 }
 
 .essence-item {
-  background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+  background: linear-gradient(145deg, #a8afb6, #e6e6e6);
   border: 1px solid #dee2e6;
   border-radius: 8px;
   padding: 8px 4px;

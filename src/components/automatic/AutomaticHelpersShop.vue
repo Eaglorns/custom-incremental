@@ -13,7 +13,7 @@
           >
             <div class="row items-center q-mb-sm helper-title-row">
               <q-icon
-                :name="getHelper(key).value.icon"
+                :name="iconStyle + getHelper(key).value.icon"
                 size="20px"
                 class="q-mr-sm helper-icon icon-default-custom"
               />
@@ -37,7 +37,7 @@
                 <div class="column q-gutter-xs">
                   <div class="row items-center">
                     <q-icon
-                      name="fa-duotone fa-users"
+                      :name="iconStyle + 'fa-users'"
                       size="16px"
                       class="q-mr-xs icon-default-custom"
                     />
@@ -55,7 +55,7 @@
                       style="min-width: 90px"
                     >
                       <q-icon
-                        name="fa-duotone fa-gauge-high"
+                        :name="iconStyle + 'fa-gauge-high'"
                         size="12px"
                         class="q-mr-xs icon-accent-custom"
                       />
@@ -78,7 +78,7 @@
                 <div class="column q-gutter-xs">
                   <div class="row items-center">
                     <q-icon
-                      name="fa-duotone fa-percent"
+                      :name="iconStyle + 'fa-percent'"
                       size="16px"
                       class="q-mr-xs icon-default-custom"
                     />
@@ -99,7 +99,7 @@
                       style="min-width: 90px"
                     >
                       <q-icon
-                        name="fa-duotone fa-gauge-high"
+                        :name="iconStyle + 'fa-gauge-high'"
                         size="12px"
                         class="q-mr-xs icon-accent-custom"
                       />
@@ -133,9 +133,15 @@ import type { AutomaticShopHelpers } from 'src/constants/models';
 import { useStoreData } from 'stores/data';
 import Decimal from 'break_eternity.js';
 import { useStoreAutomatic } from 'stores/automatic';
+import { useStoreSetting } from 'stores/setting';
 
 const storeData = useStoreData();
 const storeAutomatic = useStoreAutomatic();
+const storeSetting = useStoreSetting();
+
+const iconStyle = computed(() => {
+  return storeSetting.iconStyle;
+});
 
 const formatNumber = storeData.formatNumber;
 

@@ -13,7 +13,7 @@
         @click="storeMagic.selectRune(rune)"
       >
         <div class="rune-icon">
-          <i :class="rune.meta.icon" :style="{ color: rune.meta.color }"></i>
+          <i :class="iconStyle + rune.meta.icon" :style="{ color: rune.meta.color }"></i>
         </div>
         <div v-if="rune.level.gt(0)" class="rune-level">{{ rune.level }}</div>
         <div class="rune-name">{{ rune.meta.name }}</div>
@@ -26,8 +26,14 @@
 import { computed } from 'vue';
 import { useStoreMagic } from 'src/stores/magic';
 import { RUNE_META } from 'src/constants/magicMeta';
+import { useStoreSetting } from 'src/stores/setting';
 
 const storeMagic = useStoreMagic();
+const storeSetting = useStoreSetting();
+
+const iconStyle = computed(() => {
+  return storeSetting.iconStyle;
+});
 
 const runesWithMeta = computed(() => {
   return storeMagic.runes.map((rune) => {

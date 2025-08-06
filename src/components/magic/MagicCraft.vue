@@ -2,7 +2,7 @@
   <div class="magic-craft">
     <div v-if="!storeMagic.selectedRune" class="no-selection">
       <div class="no-selection-icon">
-        <i class="fas fa-hand-pointer"></i>
+        <i :class="iconStyle + 'fa-hand-pointer'"></i>
       </div>
       <div class="no-selection-text">Выберите руну для создания</div>
     </div>
@@ -15,7 +15,7 @@
       </div>
       <div class="selected-rune-icon">
         <i
-          :class="selectedRuneWithMeta?.meta.icon"
+          :class="iconStyle + selectedRuneWithMeta?.meta.icon"
           :style="{ color: selectedRuneWithMeta?.meta.color }"
         ></i>
       </div>
@@ -34,7 +34,7 @@
         >
           <div class="requirement-icon">
             <i
-              :class="getEssenceMetaById(requirement.essenceId)?.icon"
+              :class="iconStyle + getEssenceMetaById(requirement.essenceId)?.icon"
               :style="{ color: getEssenceMetaById(requirement.essenceId)?.color }"
             ></i>
           </div>
@@ -59,7 +59,7 @@
         :disable="!storeMagic.canCraftRune()"
         @click="storeMagic.craftRune()"
       >
-        <i class="fas fa-hammer mr-2"></i>
+        <i :class="iconStyle + 'fa-hammer mr-2'"></i>
         Создать
       </q-btn>
     </div>
@@ -72,6 +72,13 @@ import { useStoreMagic } from 'stores/magic';
 import { useStoreData } from 'stores/data';
 import { RUNE_META, ESSENCE_META } from 'src/constants/magicMeta';
 import Decimal from 'break_eternity.js';
+import { useStoreSetting } from 'src/stores/setting';
+
+const storeSetting = useStoreSetting();
+
+const iconStyle = computed(() => {
+  return storeSetting.iconStyle;
+});
 
 const storeMagic = useStoreMagic();
 const storeData = useStoreData();

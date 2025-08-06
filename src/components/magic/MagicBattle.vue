@@ -6,7 +6,7 @@
           <div class="monster-header">
             <div class="monster-avatar">
               <i
-                :class="storeMagic.monster.icon"
+                :class="iconStyle + storeMagic.monster.icon"
                 :style="{ color: storeMagic.monster.iconColor }"
               ></i>
             </div>
@@ -14,16 +14,16 @@
               <h6 class="monster-name">{{ storeMagic.monster.name }}</h6>
               <div class="monster-level">Уровень {{ storeMagic.monster.level }}</div>
               <div class="monster-kill-counter">
-                <i class="fas fa-skull" style="color: #fbbf24"></i>
+                <i :class="iconStyle + 'fa-skull'" style="color: #fbbf24"></i>
                 До повышения уровня: {{ storeMagic.monsterKillCount }}
               </div>
               <div class="monster-stats">
                 <span class="stat-armor">
-                  <i class="fas fa-shield" style="color: #94a3b8"></i>
+                  <i :class="iconStyle + 'fa-shield'" style="color: #94a3b8"></i>
                   {{ formatNumber(storeMagic.monsterEffectiveArmor) }}
                 </span>
                 <span class="stat-regen">
-                  <i class="fas fa-heart" style="color: #22c55e"></i>
+                  <i :class="iconStyle + 'fa-heart'" style="color: #22c55e"></i>
                   {{ formatNumber(storeMagic.monsterEffectiveRegeneration) }}
                 </span>
               </div>
@@ -48,9 +48,10 @@
                 v-for="(effect, index) in storeMagic.monster.damageEffects"
                 :key="`${storeMagic.monster.id}-effect-${index}`"
                 class="effect-item"
+                :title="`${damageTypes.find((dt) => dt.type === effect.type)?.name}`"
               >
                 <i
-                  :class="damageTypes.find((dt) => dt.type === effect.type)?.icon"
+                  :class="iconStyle + damageTypes.find((dt) => dt.type === effect.type)?.icon"
                   :style="{ color: damageTypes.find((dt) => dt.type === effect.type)?.color }"
                 ></i>
                 <span class="effect-stacks" v-if="effect.stacks.gt(1)">{{
@@ -69,7 +70,7 @@
                 class="reward-item"
                 :title="reward.name"
               >
-                <i :class="reward.icon" :style="{ color: reward.color }"></i>
+                <i :class="iconStyle + reward.icon" :style="{ color: reward.color }"></i>
                 <span>{{
                   formatNumber(
                     reward.amount.mul(
@@ -91,7 +92,14 @@ import { computed } from 'vue';
 import Decimal from 'break_eternity.js';
 import { useStoreData } from 'stores/data';
 import { useStoreMagic } from 'stores/magic';
+import { useStoreSetting } from 'stores/setting';
 import { damageTypes } from 'src/constants/magicMeta';
+
+const storeSetting = useStoreSetting();
+
+const iconStyle = computed(() => {
+  return storeSetting.iconStyle;
+});
 
 const storeData = useStoreData();
 const storeMagic = useStoreMagic();

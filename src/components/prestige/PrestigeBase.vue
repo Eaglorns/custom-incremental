@@ -2,7 +2,7 @@
   <div class="prestige-card-modern flex flex-center column items-center q-pa-xl">
     <div class="prestige-header-modern flex items-center q-mb-lg">
       <q-icon
-        name="fa-duotone fa-arrow-up-right-dots"
+        :name="iconStyle + 'fa-arrow-up-right-dots'"
         color="primary"
         size="36px"
         class="prestige-icon-modern q-mr-md"
@@ -41,9 +41,15 @@ import { computed } from 'vue';
 import { useStorePrestige } from 'stores/prestige';
 import { useStoreData } from 'stores/data';
 import Decimal from 'break_eternity.js';
+import { useStoreSetting } from 'stores/setting';
 
 const storePrestige = useStorePrestige();
 const storeData = useStoreData();
+const storeSetting = useStoreSetting();
+
+const iconStyle = computed(() => {
+  return storeSetting.iconStyle;
+});
 
 const formatNumber = storeData.formatNumber;
 

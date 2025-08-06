@@ -1,10 +1,34 @@
 // app global css in SCSS form
 @import 'theme-colors';
-@import 'fontawesome/css/all.css';
-@import 'fontawesome/css/sharp-light.css';
-@import 'fontawesome/css/sharp-regular.css';
+@import 'fontawesome/css/fontawesome.css';
+@import 'fontawesome/css/brands.css';
+@import 'fontawesome/css/solid.css';
+@import 'fontawesome/css/regular.css';
+@import 'fontawesome/css/light.css';
+@import 'fontawesome/css/thin.css';
+@import 'fontawesome/css/duotone.css';
+@import 'fontawesome/css/duotone-light.css';
+@import 'fontawesome/css/duotone-regular.css';
+@import 'fontawesome/css/duotone-thin.css';
 @import 'fontawesome/css/sharp-solid.css';
+@import 'fontawesome/css/sharp-regular.css';
+@import 'fontawesome/css/sharp-light.css';
 @import 'fontawesome/css/sharp-thin.css';
+@import 'fontawesome/css/sharp-duotone-solid.css';
+@import 'fontawesome/css/sharp-duotone-regular.css';
+@import 'fontawesome/css/sharp-duotone-light.css';
+@import 'fontawesome/css/sharp-duotone-thin.css';
+@import 'fontawesome/css/chisel-regular.css';
+@import 'fontawesome/css/etch-solid.css';
+@import 'fontawesome/css/jelly-regular.css';
+@import 'fontawesome/css/jelly-duo-regular.css';
+@import 'fontawesome/css/jelly-fill-regular.css';
+@import 'fontawesome/css/notdog-solid.css';
+@import 'fontawesome/css/notdog-duo-solid.css';
+@import 'fontawesome/css/slab-regular.css';
+@import 'fontawesome/css/slab-press-regular.css';
+@import 'fontawesome/css/thumbprint-light.css';
+@import 'fontawesome/css/whiteboard-semibold.css';
 
 @font-face {
   font-family: allods;

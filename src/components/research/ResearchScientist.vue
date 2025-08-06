@@ -10,7 +10,7 @@
     >
       <div class="scientist-header-row">
         <div class="scientist-header-left">
-          <q-icon name="fa-solid fa-brain" color="blue-4" size="14px" class="q-mr-xs" />
+          <q-icon :name="iconStyle + 'fa-brain'" color="blue-4" size="14px" class="q-mr-xs" />
           <span class="text-bold scientist-intellect-value">{{
             formatNumber(scientist.intellect)
           }}</span>
@@ -19,16 +19,16 @@
           <span class="text-bold scientist-efficiency-value">{{
             formatNumber(scientist.efficiency)
           }}</span>
-          <q-icon name="fa-solid fa-bolt" color="teal-5" size="14px" class="q-ml-xs" />
+          <q-icon :name="iconStyle + 'fa-bolt'" color="teal-5" size="14px" class="q-ml-xs" />
         </div>
       </div>
       <div class="scientist-avatar-row">
         <q-avatar size="56px" color="blue-grey-7">
-          <q-icon name="fa-duotone fa-user-astronaut" size="40px" color="white" />
+          <q-icon :name="iconStyle + 'fa-user-astronaut'" size="40px" color="white" />
         </q-avatar>
       </div>
       <div class="scientist-level-row">
-        <q-icon name="fa-solid fa-medal" color="blue-grey-3" size="22px" class="q-mr-xs" />
+        <q-icon :name="iconStyle + 'fa-medal'" color="blue-grey-3" size="22px" class="q-mr-xs" />
         <span class="scientist-level-value scientist-level-gold">
           {{ formatNumber(scientist.level) }}
         </span>
@@ -40,7 +40,12 @@
         style="height: 8px"
       />
       <div class="scientist-exp-row">
-        <q-icon name="fa-solid fa-circle-dot" color="deep-orange-4" size="15px" class="q-mr-xs" />
+        <q-icon
+          :name="iconStyle + 'fa-circle-dot'"
+          color="deep-orange-4"
+          size="15px"
+          class="q-mr-xs"
+        />
         <span class="scientist-exp-value scientist-exp-orange">
           {{ formatNumber(scientist.exp) }}
         </span>
@@ -65,11 +70,11 @@
       @click="hireScientist"
     >
       <q-avatar size="56px" class="q-mb-sm scientist-hire-avatar" color="blue-grey-7">
-        <q-icon name="fa-duotone fa-user-plus" size="40px" color="white" />
+        <q-icon :name="iconStyle + 'fa-user-plus'" size="40px" color="white" />
       </q-avatar>
       <div style="flex: 1 1 auto"></div>
       <div class="text-subtitle2 text-center q-mb-xs scientist-hire-cost-row">
-        <q-icon name="fa-solid fa-gauge-high" color="amber-6" size="18px" />
+        <q-icon :name="iconStyle + 'fa-gauge-high'" color="amber-6" size="18px" />
         <span>{{ formatNumber(hireCost) }}</span>
       </div>
     </q-card>
@@ -82,9 +87,15 @@ import Decimal from 'break_eternity.js';
 import { uuidv7 } from 'src/boot/uuid';
 import { useStoreData } from 'stores/data';
 import { useStoreResearch } from 'stores/research';
+import { useStoreSetting } from 'stores/setting';
 
 const storeData = useStoreData();
 const storeResearch = useStoreResearch();
+const storeSetting = useStoreSetting();
+
+const iconStyle = computed(() => {
+  return storeSetting.iconStyle;
+});
 
 const formatNumber = storeData.formatNumber;
 

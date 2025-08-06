@@ -7,42 +7,42 @@ export interface AutomaticShopHelpersType {
 export const automaticShopHelpersMeta: AutomaticShopHelpersType[] = [
   {
     key: 'cpu',
-    icon: 'fa-duotone fa-microchip',
+    icon: 'fa-microchip',
     title: 'Скупщик CPU',
   },
   {
     key: 'hdd',
-    icon: 'fa-duotone fa-hard-drive',
+    icon: 'fa-hard-drive',
     title: 'Скупщик HDD',
   },
   {
     key: 'ram',
-    icon: 'fa-duotone fa-memory',
+    icon: 'fa-memory',
     title: 'Скупщик RAM',
   },
   {
     key: 'worker',
-    icon: 'fa-duotone fa-users',
+    icon: 'fa-users',
     title: 'Скупщик работников',
   },
   {
     key: 'cpuMultiplier',
-    icon: 'fa-duotone fa-gauge-circle-bolt',
+    icon: 'fa-gauge-circle-bolt',
     title: 'Скупщик множителей CPU',
   },
   {
     key: 'hddMultiplier',
-    icon: 'fa-duotone fa-database',
+    icon: 'fa-database',
     title: 'Скупщик множителей HDD',
   },
   {
     key: 'ramMultiplier',
-    icon: 'fa-duotone fa-bolt',
+    icon: 'fa-bolt',
     title: 'Скупщик множителей RAM',
   },
   {
     key: 'workerMultiplier',
-    icon: 'fa-duotone fa-users',
+    icon: 'fa-users',
     title: 'Скупщик множителей работников',
   },
 ];

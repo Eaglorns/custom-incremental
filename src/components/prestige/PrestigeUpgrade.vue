@@ -10,7 +10,12 @@
           style="min-width: 220px; max-width: 320px"
         >
           <div class="row items-center q-mb-sm no-wrap">
-            <q-icon :name="getUpgrade(key).value.icon" size="28px" color="accent" class="q-mr-sm" />
+            <q-icon
+              :name="iconStyle + getUpgrade(key).value.icon"
+              size="28px"
+              color="accent"
+              class="q-mr-sm"
+            />
             <div class="text-h6 text-bold text-white ellipsis" style="max-width: 200px">
               <span :title="getUpgrade(key).value.title">
                 {{ getUpgrade(key).value.title }}
@@ -32,7 +37,7 @@
           <div class="text-body2 text-grey-3 q-mb-sm">{{ getUpgrade(key).value.description }}</div>
           <div class="row items-center q-mb-sm">
             <q-icon
-              name="fa-duotone fa-arrow-up-right-dots"
+              :name="iconStyle + 'fa-arrow-up-right-dots'"
               size="18px"
               color="yellow-4"
               class="q-mr-xs"
@@ -61,9 +66,15 @@ import { computed } from 'vue';
 import { useStoreData } from 'stores/data';
 import { useStorePrestige } from 'stores/prestige';
 import { prestigeUpgradeMeta } from 'src/constants/prestigeUpgradeMeta';
+import { useStoreSetting } from 'stores/setting';
 
 const storeData = useStoreData();
 const storePrestige = useStorePrestige();
+const storeSetting = useStoreSetting();
+
+const iconStyle = computed(() => {
+  return storeSetting.iconStyle;
+});
 
 const formatNumber = storeData.formatNumber;
 

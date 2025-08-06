@@ -32,7 +32,7 @@
       </q-tooltip>
       <q-card-section class="q-pa-xs">
         <div class="text-subtitle2 row items-start no-wrap research-title-row q-mb-sm">
-          <q-icon :name="meta.icon" size="18px" class="text-blue-400 q-mr-xs" />
+          <q-icon :name="iconStyle + meta.icon" size="18px" class="text-blue-400 q-mr-xs" />
           <span class="research-title-text">{{ meta.title }}</span>
         </div>
       </q-card-section>
@@ -46,13 +46,17 @@
         </div>
         <div class="row justify-between items-center q-mb-md research-info-row">
           <div class="row items-center research-cost-info">
-            <q-icon name="fa-duotone fa-flask-vial" size="15px" class="q-mr-xs text-emerald-400" />
+            <q-icon
+              :name="iconStyle + 'fa-flask-vial'"
+              size="15px"
+              class="q-mr-xs text-emerald-400"
+            />
             <q-badge class="q-pa-xs text-bold research-badge">{{
               formatNumber(getResearchCost(meta.key).value)
             }}</q-badge>
           </div>
           <div class="row items-center research-time-info">
-            <q-icon name="fa-duotone fa-clock" size="15px" class="q-mr-xs text-amber-400" />
+            <q-icon :name="iconStyle + 'fa-clock'" size="15px" class="q-mr-xs text-amber-400" />
             <q-badge class="q-pa-xs text-bold research-badge">{{
               storeData.formatTime(getResearchTime(meta.key).value)
             }}</q-badge>
@@ -74,7 +78,6 @@
           >
         </div>
 
-        <!-- Кнопка под progress bar -->
         <div class="research-actions q-mt-sm">
           <q-btn
             :disable="
@@ -114,9 +117,15 @@ import Decimal from 'break_eternity.js';
 import type { ResearchBase } from 'src/constants/models';
 import { researchBaseMeta } from 'src/constants/researchBaseMeta';
 import { useStoreResearch } from 'stores/research';
+import { useStoreSetting } from 'stores/setting';
 
 const storeData = useStoreData();
 const storeResearch = useStoreResearch();
+const storeSetting = useStoreSetting();
+
+const iconStyle = computed(() => {
+  return storeSetting.iconStyle;
+});
 
 const formatNumber = storeData.formatNumber;
 

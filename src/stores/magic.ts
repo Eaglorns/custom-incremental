@@ -187,7 +187,7 @@ export const useStoreMagic = defineStore('storeMagic', {
       const calculateEffectAmount = (mage: Mage, runeId: string, runeLevel: Decimal) => {
         let effectAmount = new Decimal(Decimal.max(1, runeLevel));
         if (mage.runeIds.includes(runeId) && mage.runeQuantities[runeId]) {
-          const runeQuantity = mage.runeQuantities[runeId]?.toNumber() ?? 0;
+          const runeQuantity = mage.runeQuantities[runeId] || new Decimal(0);
           const bonus = effectAmount.mul(runeQuantity).div(100);
           effectAmount = effectAmount.plus(bonus);
         }
@@ -530,7 +530,7 @@ export const useStoreMagic = defineStore('storeMagic', {
         });
       }
     },
-    load(saveData?: {
+    load(loaded?: {
       mages?: Mage[];
       essences?: Essence[];
       runes?: Rune[];
@@ -538,14 +538,50 @@ export const useStoreMagic = defineStore('storeMagic', {
       monsterGeneratedLevel?: number;
       monster?: Monster;
     }) {
-      if (saveData) {
-        this.mages = saveData.mages || [];
-        this.essences = saveData.essences || this.essences;
-        this.runes = saveData.runes || this.runes;
-        this.monsterKillCount = saveData.monsterKillCount ?? 10;
-        this.monsterGeneratedLevel = saveData.monsterGeneratedLevel ?? 1;
-        if (saveData.monster) {
-          this.monster = saveData.monster;
+      if (loaded) {
+        this.mages = (loaded.mages || []).map((mage) => ({
+          ...mage,
+          level: new Decimal(mage.level),
+          currentExp: new Decimal(mage.currentExp),
+          maxExp: new Decimal(mage.maxExp),
+          runeQuantities: Object.fromEntries(
+            Object.entries(mage.runeQuantities || {}).map(([key, value]) => [
+              key,
+              new Decimal(value),
+            ]),
+          ),
+        }));
+
+        this.essences = (loaded.essences || this.essences).map((essence) => ({
+          ...essence,
+          amount: new Decimal(essence.amount),
+        }));
+
+        this.runes = (loaded.runes || this.runes).map((rune) => ({
+          ...rune,
+          level: new Decimal(rune.level),
+        }));
+
+        this.monsterKillCount = loaded.monsterKillCount || 10;
+        this.monsterGeneratedLevel = loaded.monsterGeneratedLevel || 1;
+
+        if (loaded.monster) {
+          this.monster = {
+            ...loaded.monster,
+            level: new Decimal(loaded.monster.level),
+            currentHealth: new Decimal(loaded.monster.currentHealth),
+            maxHealth: new Decimal(loaded.monster.maxHealth),
+            armor: new Decimal(loaded.monster.armor),
+            regeneration: new Decimal(loaded.monster.regeneration),
+            damageEffects: (loaded.monster.damageEffects || []).map((effect) => ({
+              ...effect,
+              stacks: new Decimal(effect.stacks),
+            })),
+            rewards: (loaded.monster.rewards || []).map((reward) => ({
+              ...reward,
+              amount: new Decimal(reward.amount),
+            })),
+          };
         }
       }
       if (this.monster.name === '') {

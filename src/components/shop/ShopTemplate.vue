@@ -6,7 +6,7 @@
     :style="{ background: 'var(--color-card-bg)', borderColor: 'var(--color-card-border)' }"
   >
     <div class="row items-center q-mb-lg">
-      <q-icon :name="props.icon" class="text-primary q-mr-md" size="32px" />
+      <q-icon :name="iconStyle + props.icon" class="text-primary q-mr-md" size="32px" />
       <span class="text-h5 text-weight-bold text-primary">{{ props.label }}</span>
     </div>
     <q-form>
@@ -24,7 +24,7 @@
             outlined
           >
             <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-gauge" class="text-primary" />
+              <q-icon :name="iconStyle + 'fa-gauge'" class="text-primary" />
             </template>
           </q-input>
         </div>
@@ -41,7 +41,7 @@
             outlined
           >
             <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-xmark" class="text-primary" />
+              <q-icon :name="iconStyle + 'fa-xmark'" class="text-primary" />
             </template>
           </q-input>
         </div>
@@ -151,6 +151,10 @@ const props = defineProps<{ name: ShopItemName; label: string; icon: string }>()
 const storeData = useStoreData();
 const storeShop = useStoreShop();
 const storeSetting = useStoreSetting();
+
+const iconStyle = computed(() => {
+  return storeSetting.iconStyle;
+});
 
 const formatNumber = storeData.formatNumber;
 

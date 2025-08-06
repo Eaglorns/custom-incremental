@@ -14,7 +14,7 @@
 
         <div v-if="mages.length === 0" class="no-mages">
           <div class="empty-state">
-            <i class="fas fa-users fa-3x"></i>
+            <i :class="iconStyle + 'fa-users fa-3x'"></i>
             <p>Нет нанятых магов</p>
           </div>
         </div>
@@ -28,7 +28,7 @@
             @click="selectMage(mage)"
           >
             <div class="mage-avatar">
-              <i :class="mage.icon" :style="{ color: mage.iconColor }"></i>
+              <i :class="iconStyle + mage.icon" :style="{ color: mage.iconColor }"></i>
             </div>
             <div class="mage-info">
               <div class="mage-name">{{ mage.name }}</div>
@@ -44,7 +44,7 @@
       <div class="mage-management">
         <div v-if="!selectedMage" class="no-selection">
           <div class="empty-state">
-            <i class="fas fa-hand-pointer fa-3x"></i>
+            <i :class="iconStyle + 'fa-hand-pointer fa-3x'"></i>
             <p>Выберите мага для управления</p>
           </div>
         </div>
@@ -52,7 +52,10 @@
         <div v-else class="selected-mage-info">
           <div class="mage-details">
             <div class="mage-avatar">
-              <i :class="selectedMage.icon" :style="{ color: selectedMage.iconColor }"></i>
+              <i
+                :class="iconStyle + selectedMage.icon"
+                :style="{ color: selectedMage.iconColor }"
+              ></i>
             </div>
             <div class="mage-info">
               <h6 class="mage-name">
@@ -113,7 +116,7 @@
                 }"
               >
                 <div class="rune-icon">
-                  <i :class="rune.icon"></i>
+                  <i :class="iconStyle + rune.icon"></i>
                 </div>
                 <div class="rune-quantity">
                   {{ formatNumber(selectedMage.runeQuantities[rune.id] || new Decimal(0)) }}
@@ -135,9 +138,15 @@ import Decimal from 'break_eternity.js';
 import { useStoreData } from 'stores/data';
 import type { Mage } from 'stores/magic';
 import { useStoreMagic } from 'stores/magic';
+import { useStoreSetting } from 'src/stores/setting';
 
-const storeData = useStoreData();
 const storeMagic = useStoreMagic();
+const storeData = useStoreData();
+const storeSetting = useStoreSetting();
+
+const iconStyle = computed(() => {
+  return storeSetting.iconStyle;
+});
 
 const formatNumber = storeData.formatNumber;
 
