@@ -7,29 +7,53 @@
         class="rune-slot"
         :class="{
           selected: storeMagic.selectedRune?.id === rune.id,
-          owned: rune.level.gt(0),
-          empty: rune.level.equals(0),
+          'yellow-rune': rune.level.equals(0) && !storeMagic.canCraftSpecificRune(rune),
+          'yellow-solid': rune.level.gt(0) && !storeMagic.canCraftSpecificRune(rune),
+          'green-rune': storeMagic.canCraftSpecificRune(rune),
+          crafting: craftingRune?.id === rune.id,
         }"
         @click="storeMagic.selectRune(rune)"
+        @mousedown="startCrafting(rune)"
+        @mouseup="stopCrafting"
+        @mouseleave="stopCrafting"
+        @touchstart="startCrafting(rune)"
+        @touchend="stopCrafting"
+        @touchcancel="stopCrafting"
+        @contextmenu.prevent
       >
         <div class="rune-icon">
           <i :class="iconStyle + rune.meta.icon" :style="{ color: rune.meta.color }"></i>
         </div>
         <div v-if="rune.level.gt(0)" class="rune-level">{{ rune.level }}</div>
+        <div v-if="storeMagic.canCraftSpecificRune(rune)" class="craft-indicator">
+          <i class="fas fa-hammer"></i>
+        </div>
         <div class="rune-name">{{ rune.meta.name }}</div>
+
+        <div
+          v-if="craftingRune?.id === rune.id"
+          class="craft-progress-bar"
+          :style="{ width: craftProgress + '%' }"
+        ></div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, onUnmounted } from 'vue';
 import { useStoreMagic } from 'src/stores/magic';
 import { RUNE_META } from 'src/constants/magicMeta';
 import { useStoreSetting } from 'src/stores/setting';
+import type { Rune } from 'src/stores/magic';
 
 const storeMagic = useStoreMagic();
 const storeSetting = useStoreSetting();
+
+const craftingRune = ref<Rune | null>(null);
+const craftProgress = ref(0);
+const craftTimer = ref<number | null>(null);
+const craftDuration = 500;
 
 const iconStyle = computed(() => {
   return storeSetting.iconStyle;
@@ -48,6 +72,54 @@ const runesWithMeta = computed(() => {
       },
     };
   });
+});
+
+const startCrafting = (rune: Rune) => {
+  if (!storeMagic.canCraftSpecificRune(rune)) {
+    return;
+  }
+
+  storeMagic.selectRune(rune);
+
+  craftingRune.value = rune;
+  craftProgress.value = 0;
+
+  const startTime = Date.now();
+
+  const updateProgress = () => {
+    const elapsed = Date.now() - startTime;
+    const progress = Math.min((elapsed / craftDuration) * 100, 100);
+    craftProgress.value = progress;
+
+    if (progress >= 100) {
+      completeCrafting();
+    } else {
+      craftTimer.value = requestAnimationFrame(updateProgress);
+    }
+  };
+
+  craftTimer.value = requestAnimationFrame(updateProgress);
+};
+
+const stopCrafting = () => {
+  if (craftTimer.value) {
+    cancelAnimationFrame(craftTimer.value);
+    craftTimer.value = null;
+  }
+  craftingRune.value = null;
+  craftProgress.value = 0;
+};
+
+const completeCrafting = () => {
+  if (craftingRune.value && storeMagic.canCraftSpecificRune(craftingRune.value)) {
+    storeMagic.craftRune();
+    storeSetting.playSound('MagicOnRuneCraft', 14);
+  }
+  stopCrafting();
+};
+
+onUnmounted(() => {
+  stopCrafting();
 });
 </script>
 
@@ -91,14 +163,82 @@ const runesWithMeta = computed(() => {
     }
   }
 
-  &.owned {
-    border-color: #28a745;
+  // Жёлтые руны (empty без craftable)
+  &.yellow-rune {
+    opacity: 0.8;
+    border-style: dashed;
     border-width: 2px;
-    background: linear-gradient(145deg, #e8f5e8, #d4edda);
-    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+    border-color: #f39c12;
+    background: linear-gradient(145deg, #ffeaa7, #fdcb6e);
+    box-shadow: 0 4px 8px rgba(243, 156, 18, 0.3);
 
     .rune-icon {
-      filter: drop-shadow(0 2px 4px rgba(40, 167, 69, 0.2));
+      filter: drop-shadow(0 2px 4px rgba(243, 156, 18, 0.3));
+    }
+
+    &.selected {
+      opacity: 1;
+      border-style: solid;
+      border-color: #007bff;
+      border-width: 3px;
+      background: linear-gradient(145deg, #e7f1ff, #cfe2ff);
+      box-shadow:
+        0 0 20px rgba(0, 123, 255, 0.6),
+        inset 0 0 10px rgba(0, 123, 255, 0.2);
+      transform: translateY(-2px);
+
+      .rune-icon {
+        color: #007bff !important;
+        filter: drop-shadow(0 2px 4px rgba(0, 123, 255, 0.3));
+      }
+    }
+  }
+
+  // Жёлтые руны с уровнем (owned)
+  &.yellow-solid {
+    opacity: 1;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #f39c12;
+    background: linear-gradient(145deg, #ffeaa7, #fdcb6e);
+    box-shadow: 0 4px 8px rgba(243, 156, 18, 0.3);
+
+    .rune-icon {
+      filter: drop-shadow(0 2px 4px rgba(243, 156, 18, 0.3));
+    }
+
+    &.selected {
+      border-color: #007bff;
+      border-width: 3px;
+      background: linear-gradient(145deg, #e7f1ff, #cfe2ff);
+      box-shadow:
+        0 0 20px rgba(0, 123, 255, 0.6),
+        inset 0 0 10px rgba(0, 123, 255, 0.2);
+      transform: translateY(-2px);
+
+      .rune-icon {
+        color: #007bff !important;
+        filter: drop-shadow(0 2px 4px rgba(0, 123, 255, 0.3));
+      }
+    }
+  }
+
+  // Зелёные руны (готовые к крафту)
+  &.green-rune {
+    opacity: 1;
+    background: linear-gradient(145deg, #d4e6d4, #c3d9c3);
+    border-color: #1e7e34;
+    border-style: solid;
+    border-width: 2px;
+    box-shadow: 0 4px 8px rgba(30, 126, 52, 0.4);
+    cursor: grab;
+
+    .rune-icon {
+      filter: drop-shadow(0 2px 4px rgba(30, 126, 52, 0.4));
+    }
+
+    &:active {
+      cursor: grabbing;
     }
 
     &.selected {
@@ -116,25 +256,41 @@ const runesWithMeta = computed(() => {
     }
   }
 
-  &.empty {
-    opacity: 0.6;
-    border-style: dashed;
-    border-width: 2px;
-    border-color: #adb5bd;
-    background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+  &.crafting {
+    border-color: #1e7e34;
+    border-width: 3px;
+    background: linear-gradient(145deg, #d4e6d4, #d1ecf1);
+    box-shadow:
+      0 0 15px rgba(30, 126, 52, 0.8),
+      inset 0 0 10px rgba(30, 126, 52, 0.3);
+    transform: scale(1.02);
 
-    &.selected {
-      opacity: 1;
-      border-style: solid;
-      border-color: #007bff;
-      border-width: 3px;
-      background: linear-gradient(145deg, #e7f1ff, #cfe2ff);
-      box-shadow:
-        0 0 20px rgba(0, 123, 255, 0.6),
-        inset 0 0 10px rgba(0, 123, 255, 0.2);
-      transform: translateY(-2px);
+    .rune-icon {
+      filter: drop-shadow(0 2px 6px rgba(30, 126, 52, 0.5));
+      animation: craft-glow 1s ease-in-out infinite alternate;
     }
   }
+}
+
+@keyframes craft-glow {
+  from {
+    filter: drop-shadow(0 2px 6px rgba(30, 126, 52, 0.5));
+  }
+  to {
+    filter: drop-shadow(0 2px 8px rgba(30, 126, 52, 0.9));
+  }
+}
+
+.craft-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1e7e34, #17a2b8);
+  border-radius: 0 0 8px 8px;
+  transition: width 0.1s ease-out;
+  box-shadow: 0 0 8px rgba(30, 126, 52, 0.7);
+  z-index: 10;
 }
 
 .rune-icon {
@@ -162,6 +318,39 @@ const runesWithMeta = computed(() => {
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
 }
 
+.craft-indicator {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: linear-gradient(145deg, #1e7e34, #155a24);
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  animation: craft-pulse 2s infinite;
+
+  i {
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+  }
+}
+
+@keyframes craft-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
 .rune-name {
   font-size: 0.7rem;
   font-weight: bold;
@@ -170,7 +359,6 @@ const runesWithMeta = computed(() => {
   line-height: 1.1;
 }
 
-// Мобильная адаптация
 @media (max-width: 768px) {
   .runes-grid {
     grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
@@ -193,6 +381,14 @@ const runesWithMeta = computed(() => {
     font-size: 0.6rem;
     top: 3px;
     right: 3px;
+  }
+
+  .craft-indicator {
+    width: 14px;
+    height: 14px;
+    font-size: 0.5rem;
+    top: 3px;
+    left: 3px;
   }
 
   .rune-name {
@@ -219,6 +415,12 @@ const runesWithMeta = computed(() => {
     width: 14px;
     height: 14px;
     font-size: 0.55rem;
+  }
+
+  .craft-indicator {
+    width: 12px;
+    height: 12px;
+    font-size: 0.45rem;
   }
 
   .rune-name {

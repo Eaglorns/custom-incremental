@@ -6,8 +6,10 @@ export const useStoreSetting = defineStore('storeSetting', {
     audio: {
       enabled: true,
       volume: 0.5,
+      initialized: false,
     },
     iconStyle: 'fa-duotone ',
+    preloadedSounds: {} as Record<string, Howl>,
   }),
   getters: {
     save(state) {
@@ -21,21 +23,37 @@ export const useStoreSetting = defineStore('storeSetting', {
     },
   },
   actions: {
-    preload() {
-      const sounds = ['ShopOnBuyValue', 'ShopOnBuyMultiplier'];
+    initializeAudio() {
+      if (this.audio.initialized) return;
+      const sounds = ['ShopOnBuyValue', 'ShopOnBuyMultiplier', 'MagicOnRuneCraft'];
       sounds.forEach((file) => {
-        new Howl({
+        this.preloadedSounds[file] = new Howl({
           src: [`sounds/${file}.mp3`],
-        }).load();
+          preload: true,
+        });
       });
+      this.audio.initialized = true;
     },
 
     playSound(name: string, divider: number = 1) {
-      if (this.audio.enabled)
-        new Howl({
-          src: [`sounds/${name}.mp3`],
-          volume: this.audio.volume / divider,
-        }).play();
+      if (!this.audio.enabled) return;
+      if (!this.audio.initialized) {
+        this.initializeAudio();
+      }
+      try {
+        const sound =
+          this.preloadedSounds[name] ||
+          new Howl({
+            src: [`sounds/${name}.mp3`],
+            volume: this.audio.volume / divider,
+          });
+        if (this.preloadedSounds[name]) {
+          sound.volume(this.audio.volume / divider);
+        }
+        sound.play();
+      } catch (error) {
+        console.warn(`Не удалось воспроизвести звук ${name}:`, error);
+      }
     },
 
     load(loaded: { audio: { enabled: boolean; volume: number }; iconStyle: string }) {

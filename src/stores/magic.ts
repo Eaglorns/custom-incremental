@@ -425,6 +425,17 @@ export const useStoreMagic = defineStore('storeMagic', {
       );
     },
 
+    canCraftSpecificRune(rune: Rune) {
+      const runeMeta = this.getRuneMeta(rune.id);
+      if (!runeMeta) return false;
+      return runeMeta.requirements.every((requirement) => {
+        const essence = this.getEssenceById(requirement.essenceId);
+        if (!essence) return false;
+        const requiredAmount = requirement.baseAmount.mul(requirement.multiplier.pow(rune.level));
+        return essence.amount.gte(requiredAmount);
+      });
+    },
+
     craftRune() {
       if (!this.selectedRune || !this.canCraftRune()) return;
       const runeMeta = this.getRuneMeta(this.selectedRune.id);

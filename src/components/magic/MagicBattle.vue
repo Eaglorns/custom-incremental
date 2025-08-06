@@ -71,13 +71,7 @@
                 :title="reward.name"
               >
                 <i :class="iconStyle + reward.icon" :style="{ color: reward.color }"></i>
-                <span>{{
-                  formatNumber(
-                    reward.amount.mul(
-                      new Decimal(reward.baseAmount.mul(saturationBonus).mul(0.01)).plus(1),
-                    ),
-                  )
-                }}</span>
+                <span>{{ formatNumber(reward.amount) }}</span>
               </div>
             </div>
           </div>
@@ -115,11 +109,11 @@ const saturationBonus = computed(() => {
   const saturationEffect = storeMagic.monster.damageEffects.find(
     (effect) => effect.type === 'saturation',
   );
-  return saturationEffect ? saturationEffect.stacks.toNumber() : 0;
+  return saturationEffect ? saturationEffect.stacks : new Decimal(0);
 });
 
 const displayedRewards = computed(() => {
-  const multiplier = 1 + saturationBonus.value * 0.01;
+  const multiplier = saturationBonus.value.mul(0.01).plus(1);
   return storeMagic.monster.rewards.map((reward) => ({
     ...reward,
     baseAmount: reward.amount,

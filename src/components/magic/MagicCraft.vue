@@ -57,7 +57,10 @@
         class="craft-button"
         color="primary"
         :disable="!storeMagic.canCraftRune()"
-        @click="storeMagic.craftRune()"
+        @click="
+          storeMagic.craftRune();
+          storeSetting.playSound('MagicOnRuneCraft', 14);
+        "
       >
         <i :class="iconStyle + 'fa-hammer mr-2'"></i>
         Создать

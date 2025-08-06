@@ -185,7 +185,7 @@ function onBuyValueCustom(name: ShopItemName) {
   const amount = storeShop.getBuyAmount(name, 'value');
   if (amount.gt(0)) {
     storeShop.onBuyValue(name, amount);
-    storeSetting.playSound('ShopOnBuyValue', 2);
+    storeSetting.playSound('ShopOnBuyValue', 14);
   }
 }
 
@@ -193,7 +193,7 @@ function onBuyMultiplyCustom(name: ShopItemName) {
   const amount = storeShop.getBuyAmount(name, 'multiply');
   if (amount.gt(0)) {
     storeShop.onBuyMultiply(name, amount);
-    storeSetting.playSound('ShopOnBuyMultiplier', 10);
+    storeSetting.playSound('ShopOnBuyMultiplier', 14);
   }
 }
 
