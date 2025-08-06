@@ -29,7 +29,7 @@
           :key="requirement.essenceId"
           class="requirement-item"
           :class="{
-            insufficient: !storeMagic.canAffordRequirement(requirement),
+            insufficient: !storeMagic.canAffordEssenceRequirement(requirement),
           }"
         >
           <div class="requirement-icon">
@@ -40,7 +40,7 @@
           </div>
           <div class="requirement-amount">
             {{ storeMagic.getEssenceById(requirement.essenceId)?.amount || 0 }} /
-            {{ storeMagic.getRequiredAmount(requirement) }}
+            {{ storeMagic.getRequiredEssenceAmount(requirement) }}
           </div>
           <div class="requirement-name">
             {{ getEssenceMetaById(requirement.essenceId)?.name }}

@@ -230,7 +230,7 @@ export const RUNE_META: RuneMeta[] = [
   {
     id: 'frost',
     name: 'Мороз',
-    description: 'Замедляет восстановление здоровья врагов',
+    description: 'Замедляет восстановление здоровья врагов на 1% за каждый эффект',
     icon: 'fas fa-icicles',
     color: '#3498db',
     requirements: [
@@ -243,7 +243,7 @@ export const RUNE_META: RuneMeta[] = [
     id: 'poison',
     name: 'Отравление',
     description:
-      'Накладывает яд на врага. Каждое новое наложение усиливает отравление и наносит 30% урона от яда',
+      'Накладывает яд на врага. Каждое новое наложение усиливает отравление и наносит 100% урона от яда',
     icon: 'fas fa-biohazard',
     color: '#8fbc8f',
     requirements: [
@@ -255,7 +255,7 @@ export const RUNE_META: RuneMeta[] = [
   {
     id: 'storm',
     name: 'Буря',
-    description: 'Постоянно разрушает броню врага при каждом попадании',
+    description: 'Постоянно разрушает броню врага на 1% за каждый эффект',
     icon: 'fas fa-cloud-bolt',
     color: '#1e90ff',
     requirements: [
@@ -267,7 +267,7 @@ export const RUNE_META: RuneMeta[] = [
   {
     id: 'ultimate',
     name: 'Превосходство',
-    description: 'Увеличивает получаемый опыт за убийство врага',
+    description: 'Увеличивает получаемый опыт за убийство врага на 1% за каждый эффект',
     icon: 'fas fa-crown',
     color: '#ffd700',
     requirements: [
@@ -280,7 +280,7 @@ export const RUNE_META: RuneMeta[] = [
     id: 'ignite',
     name: 'Поджог',
     description:
-      'Наносит урон и поджигает врага, нанося 10% от изначального урона как горение. Горение ослабевает на 10% каждую секунду',
+      'Наносит урон и поджигает врага, нанося 50% урона. Каждую секунду наносит 10% урона и эффект усиливается на 0.01%',
     icon: 'fas fa-fire-flame-curved',
     color: '#ff6600',
     requirements: [
@@ -293,7 +293,7 @@ export const RUNE_META: RuneMeta[] = [
     id: 'death_curse',
     name: 'Проклятие',
     description:
-      'Накладывает смертельное проклятие. Мгновенно убивает врага, если его здоровье меньше или равно силе проклятия',
+      'Накладывает смертельное проклятие. Мгновенно убивает врага, если его здоровье меньше или равно эффекту проклятия',
     icon: 'fas fa-skull-crossbones',
     color: '#1a1a1a',
     requirements: [
@@ -306,7 +306,7 @@ export const RUNE_META: RuneMeta[] = [
     id: 'bleeding',
     name: 'Кровотечение',
     description:
-      'Вызывает кровотечение, наносящее 5% урона каждую секунду. Кровотечение усиливается на 3% каждую секунду',
+      'Вызывает кровотечение, наносящее 10%. Каждую секунду наносит 50% урона и эффект ослабевает на 0.1%',
     icon: 'fas fa-heart-crack',
     color: '#8b0000',
     requirements: [
@@ -318,7 +318,7 @@ export const RUNE_META: RuneMeta[] = [
   {
     id: 'saturation',
     name: 'Насыщение',
-    description: 'Увеличивает количество эссенций, выпадающее с монстра',
+    description: 'Увеличивает количество эссенций, выпадающее с монстра на 1% за каждый эффект',
     icon: 'fas fa-gem',
     color: '#32cd32',
     requirements: [
@@ -647,4 +647,55 @@ export const monsterColors = [
   '#bc8f8f',
   '#cd853f',
   '#d2691e',
+];
+
+export const damageTypes = [
+  {
+    type: 'poison' as const,
+    name: 'Яд',
+    icon: 'fas fa-biohazard',
+    color: '#8fbc8f',
+  },
+  {
+    type: 'bleeding' as const,
+    name: 'Кровотечение',
+    icon: 'fas fa-heart-crack',
+    color: '#8b0000',
+  },
+  {
+    type: 'death_curse' as const,
+    name: 'Проклятие',
+    icon: 'fas fa-skull-crossbones',
+    color: '#9333ea',
+  },
+  {
+    type: 'ignite' as const,
+    name: 'Горение',
+    icon: 'fas fa-fire-flame-curved',
+    color: '#ff6600',
+  },
+  {
+    type: 'frost' as const,
+    name: 'Слабость',
+    icon: 'fas fa-heart-broken',
+    color: '#6b7280',
+  },
+  {
+    type: 'storm' as const,
+    name: 'Коррозия',
+    icon: 'fas fa-shield-virus',
+    color: '#84cc16',
+  },
+  {
+    type: 'ultimate' as const,
+    name: 'Превосходство',
+    icon: 'fas fa-crown',
+    color: '#ffd700',
+  },
+  {
+    type: 'saturation' as const,
+    name: 'Насыщение',
+    icon: 'fas fa-gem',
+    color: '#32cd32',
+  },
 ];

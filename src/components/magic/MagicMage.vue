@@ -8,10 +8,8 @@
             icon="fas fa-plus"
             label="Нанять мага"
             @click="storeMagic.hireMage"
-            :disable="mages.length >= 24"
             class="hire-button"
           />
-          <div v-if="mages.length >= 24" class="hire-limit">Достигнут лимит магов</div>
         </div>
 
         <div v-if="mages.length === 0" class="no-mages">
@@ -62,10 +60,10 @@
                 <span
                   class="stat-value rank-badge"
                   :style="{
-                    background: storeMagic.getRankStyles(selectedMage.rank.class).background,
-                    color: storeMagic.getRankStyles(selectedMage.rank.class).color,
-                    borderColor: storeMagic.getRankStyles(selectedMage.rank.class).borderColor,
-                    boxShadow: storeMagic.getRankStyles(selectedMage.rank.class).boxShadow,
+                    background: rankStyle.background,
+                    color: rankStyle.color,
+                    borderColor: rankStyle.borderColor,
+                    boxShadow: rankStyle.boxShadow,
                   }"
                   >{{ selectedMage.rank.name }}</span
                 >
@@ -80,15 +78,15 @@
             <div class="experience-section">
               <div class="exp-header">
                 <span class="stat-value">{{
-                  formatNumber(storeMagic.getExperienceProgress(selectedMage).current)
+                  formatNumber(storeMagic.getMageExperienceProgress(selectedMage).current)
                 }}</span>
                 <span class="stat-value">{{
-                  formatNumber(storeMagic.getExperienceProgress(selectedMage).max)
+                  formatNumber(storeMagic.getMageExperienceProgress(selectedMage).max)
                 }}</span>
               </div>
               <div class="exp-bar-container">
                 <q-linear-progress
-                  :value="storeMagic.getExperienceProgress(selectedMage).percentage / 100"
+                  :value="storeMagic.getMageExperienceProgress(selectedMage).percentage / 100"
                   color="primary"
                   track-color="grey-8"
                   size="12px"
@@ -131,7 +129,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from 'vue';
+import { computed } from 'vue';
 import { RUNE_META } from 'src/constants/magicMeta';
 import Decimal from 'break_eternity.js';
 import { useStoreData } from 'stores/data';
@@ -146,7 +144,10 @@ const formatNumber = storeData.formatNumber;
 const mages = computed(() => storeMagic.mages);
 const selectedMage = computed(() => storeMagic.selectedMage);
 
-let levelUpInterval: NodeJS.Timeout | null = null;
+const rankStyle = computed(() => {
+  if (!selectedMage.value) return { background: '', color: '', borderColor: '', boxShadow: '' };
+  return storeMagic.getMageRankStyles(selectedMage.value.rank.class);
+});
 
 const selectedMageRunes = computed(() => {
   if (!selectedMage.value) return [];
@@ -158,32 +159,6 @@ const selectedMageRunes = computed(() => {
 const selectMage = (mage: Mage) => {
   storeMagic.selectedMage = mage;
 };
-
-const levelUpRandomMage = () => {
-  if (storeMagic.mages.length === 0) return;
-  const randomMage = storeMagic.mages[Math.floor(Math.random() * storeMagic.mages.length)]!;
-  const expToAdd = new Decimal(Math.random() * 200 + 50);
-  storeMagic.addExperience(randomMage, expToAdd);
-  const randomRune = RUNE_META[Math.floor(Math.random() * RUNE_META.length)]!;
-  if (!randomMage.runeIds.includes(randomRune.id)) {
-    randomMage.runeIds.push(randomRune.id);
-    randomMage.runeQuantities[randomRune.id] = new Decimal(1);
-  } else {
-    randomMage.runeQuantities[randomRune.id] = (
-      randomMage.runeQuantities[randomRune.id] || new Decimal(1)
-    ).plus(1);
-  }
-};
-
-onMounted(() => {
-  levelUpInterval = setInterval(levelUpRandomMage, 1000);
-});
-
-onUnmounted(() => {
-  if (levelUpInterval) {
-    clearInterval(levelUpInterval);
-  }
-});
 </script>
 
 <style scoped lang="scss">
