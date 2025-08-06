@@ -13,6 +13,10 @@
             <div class="monster-info">
               <h6 class="monster-name">{{ storeMagic.monster.name }}</h6>
               <div class="monster-level">Уровень {{ storeMagic.monster.level }}</div>
+              <div class="monster-rewards" v-if="storeMagic.monster.rewards.length > 1">
+                <i class="fas fa-star" style="color: #f59e0b"></i>
+                {{ storeMagic.monster.rewards.length }} наград
+              </div>
               <div class="monster-kill-counter">
                 <i class="fas fa-skull" style="color: #fbbf24"></i>
                 До повышения уровня: {{ storeMagic.monsterKillCount }}
@@ -62,17 +66,26 @@
           </div>
 
           <div class="essence-rewards">
-            <div class="rewards-label">Награды (Руны):</div>
+            <div class="rewards-label">Награды (Эссенции):</div>
             <div class="rewards-list">
               <div
-                v-for="(reward, index) in storeMagic.monster.rewards"
+                v-for="(reward, index) in displayedRewards"
                 :key="`${storeMagic.monster.id}-${index}`"
                 class="reward-item"
                 :title="reward.name"
               >
                 <i :class="reward.icon" :style="{ color: reward.color }"></i>
                 <span>{{ reward.amount }}</span>
+                <span v-if="saturationBonus > 0" class="saturation-bonus">
+                  (+{{
+                    formatNumber(new Decimal(reward.baseAmount.mul(saturationBonus).mul(0.01)))
+                  }})
+                </span>
               </div>
+            </div>
+            <div v-if="saturationBonus > 0" class="saturation-info">
+              <i class="fas fa-gem" style="color: #32cd32"></i>
+              Насыщение: +{{ saturationBonus }}% к наградам
             </div>
           </div>
         </div>
@@ -97,6 +110,22 @@ const healthPercentage = computed(() =>
     ? storeMagic.monster.currentHealth.div(storeMagic.monster.maxHealth).mul(100)
     : new Decimal(0),
 );
+
+const saturationBonus = computed(() => {
+  const saturationEffect = storeMagic.monster.damageEffects.find(
+    (effect) => effect.type === 'saturation',
+  );
+  return saturationEffect ? saturationEffect.stacks.toNumber() : 0;
+});
+
+const displayedRewards = computed(() => {
+  const multiplier = 1 + saturationBonus.value * 0.01;
+  return storeMagic.monster.rewards.map((reward) => ({
+    ...reward,
+    baseAmount: reward.amount,
+    amount: reward.amount.mul(multiplier),
+  }));
+});
 </script>
 
 <style scoped lang="scss">
@@ -167,6 +196,20 @@ const healthPercentage = computed(() =>
             font-size: 14px;
             font-weight: 500;
             margin-bottom: 4px;
+          }
+
+          .monster-rewards {
+            color: #f59e0b;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            padding: 2px 6px;
+            background: linear-gradient(145deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
           }
 
           .monster-kill-counter {
@@ -321,7 +364,27 @@ const healthPercentage = computed(() =>
               transform: translateY(-1px);
               box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             }
+
+            .saturation-bonus {
+              color: #32cd32;
+              font-size: 10px;
+              font-weight: 600;
+            }
           }
+        }
+
+        .saturation-info {
+          margin-top: 8px;
+          padding: 4px 8px;
+          background: linear-gradient(145deg, rgba(50, 205, 50, 0.1), rgba(50, 205, 50, 0.05));
+          border: 1px solid rgba(50, 205, 50, 0.3);
+          border-radius: 8px;
+          font-size: 11px;
+          color: #32cd32;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 4px;
         }
       }
     }

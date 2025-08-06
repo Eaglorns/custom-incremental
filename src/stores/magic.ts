@@ -39,7 +39,7 @@ export interface Mage {
 
 export interface Essence {
   id: string;
-  amount: number;
+  amount: Decimal;
 }
 
 export interface Rune {
@@ -76,7 +76,7 @@ export interface Monster {
     name: string;
     icon: string;
     color: string;
-    amount: number;
+    amount: Decimal;
   }>;
 }
 
@@ -86,23 +86,23 @@ export const useStoreMagic = defineStore('storeMagic', {
     selectedMage: null as Mage | null,
     essences: ESSENCE_META.map((meta) => ({
       id: meta.id,
-      amount: Math.floor(Math.random() * 50) + 10,
+      amount: new Decimal(0),
     })) as Essence[],
     runes: RUNE_META.map((meta) => ({
       id: meta.id,
       level: 0,
     })) as Rune[],
     selectedRune: null as Rune | null,
-    monsterKillCount: 10, // Счетчик убийств монстров
-    monsterGeneratedLevel: 1, // Уровень генерируемых монстров
+    monsterKillCount: 11,
+    monsterGeneratedLevel: 1,
     monster: {
       id: -1,
       name: '',
       level: new Decimal(1),
       icon: '',
       iconColor: '',
-      currentHealth: new Decimal(0),
-      maxHealth: new Decimal(0),
+      currentHealth: new Decimal(1),
+      maxHealth: new Decimal(1),
       armor: new Decimal(0),
       regeneration: new Decimal(0),
       damageEffects: [] as DamageEffect[],
@@ -111,7 +111,7 @@ export const useStoreMagic = defineStore('storeMagic', {
         name: string;
         icon: string;
         color: string;
-        amount: number;
+        amount: Decimal;
       }>,
     } as Monster,
   }),
@@ -153,7 +153,7 @@ export const useStoreMagic = defineStore('storeMagic', {
     monsterEffectiveArmor(state) {
       const stormEffect = state.monster.damageEffects.find((effect) => effect.type === 'storm');
       if (stormEffect?.stacks.gt(0)) {
-        return state.monster.armor.div(stormEffect.stacks.pow(1 / 3));
+        return state.monster.armor.div(stormEffect.stacks.pow(1 / 10));
       }
       return state.monster.armor;
     },
@@ -161,7 +161,7 @@ export const useStoreMagic = defineStore('storeMagic', {
     monsterEffectiveRegeneration(state) {
       const frostEffect = state.monster.damageEffects.find((effect) => effect.type === 'frost');
       if (frostEffect?.stacks.gt(0)) {
-        return Decimal.max(0, state.monster.regeneration.div(frostEffect.stacks.pow(1 / 3)));
+        return Decimal.max(0, state.monster.regeneration.div(frostEffect.stacks.pow(1 / 10)));
       }
       return state.monster.regeneration;
     },
@@ -267,11 +267,11 @@ export const useStoreMagic = defineStore('storeMagic', {
       const saturationEffect = this.monster.damageEffects.find(
         (effect) => effect.type === 'saturation',
       );
-      const saturationBonus = saturationEffect ? saturationEffect.stacks.toNumber() : 0;
-      const essenceMultiplier = 1 + saturationBonus * 0.01;
+      const saturationBonus = saturationEffect ? saturationEffect.stacks : new Decimal(0);
+      const essenceMultiplier = new Decimal(saturationBonus).mul(0.01).plus(1);
       this.monster.rewards.forEach((reward) => {
         if (reward.id) {
-          const finalAmount = Math.floor(reward.amount * essenceMultiplier);
+          const finalAmount = reward.amount.mul(essenceMultiplier);
           this.addEssence(reward.id, finalAmount);
         }
       });
@@ -415,7 +415,7 @@ export const useStoreMagic = defineStore('storeMagic', {
     canAffordEssenceRequirement(requirement: RuneRequirementMeta) {
       const essence = this.getEssenceById(requirement.essenceId);
       if (!essence) return false;
-      return essence.amount >= this.getRequiredEssenceAmount(requirement);
+      return essence.amount.gte(this.getRequiredEssenceAmount(requirement));
     },
 
     canCraftRune() {
@@ -435,7 +435,7 @@ export const useStoreMagic = defineStore('storeMagic', {
       runeMeta.requirements.forEach((requirement) => {
         const essence = this.getEssenceById(requirement.essenceId);
         if (essence) {
-          essence.amount -= this.getRequiredEssenceAmount(requirement);
+          essence.amount = essence.amount.minus(this.getRequiredEssenceAmount(requirement));
         }
       });
 
@@ -446,20 +446,32 @@ export const useStoreMagic = defineStore('storeMagic', {
       }
     },
 
-    addEssence(essenceId: string, amount: number) {
+    addEssence(essenceId: string, amount: Decimal) {
       const essence = this.getEssenceById(essenceId);
       if (essence) {
-        essence.amount += amount;
+        essence.amount = essence.amount.plus(amount);
       }
+    },
+
+    selectWeightedSuffix() {
+      if (Math.random() > 0.2) {
+        return null;
+      }
+      const totalWeight = monsterSuffixes.reduce((sum, suffix) => sum + suffix.weight, 0);
+      let random = Math.random() * totalWeight;
+      for (const suffix of monsterSuffixes) {
+        random -= suffix.weight;
+        if (random <= 0) {
+          return suffix;
+        }
+      }
+      return monsterSuffixes[monsterSuffixes.length - 1];
     },
 
     generateRandomMonsterName() {
       const prefix = monsterPrefixes[Math.floor(Math.random() * monsterPrefixes.length)];
       const base = monsterBases[Math.floor(Math.random() * monsterBases.length)];
-      const suffix =
-        Math.random() * 100 > 95
-          ? monsterSuffixes[Math.floor(Math.random() * monsterSuffixes.length)]
-          : null;
+      const suffix = this.selectWeightedSuffix();
       const icon = monsterIcons[Math.floor(Math.random() * monsterIcons.length)];
       const color = monsterColors[Math.floor(Math.random() * monsterColors.length)];
 
@@ -481,9 +493,13 @@ export const useStoreMagic = defineStore('storeMagic', {
       this.monster.icon = monster.icon || 'fas fa-question';
       this.monster.iconColor = monster.color || '#ffffff';
       this.monster.level = new Decimal(this.monsterGeneratedLevel);
-      let baseHealth = new Decimal(this.monster.level.mul(50).mul(15).plus(100));
+
+      let baseHealth = new Decimal(this.monster.level.mul(50).plus(100));
       let baseArmor = new Decimal(this.monster.level.mul(2)).plus(Math.random() * 10);
-      let baseRegen = new Decimal(this.monster.level.mul(1.5)).plus(Math.random() * 15);
+      let baseRegen = new Decimal(this.monster.level.mul(7.5)).plus(Math.random() * 15);
+
+      const rewardCount = monster.suffix?.rewardCount || 1;
+
       if (monster.suffix) {
         baseHealth = baseHealth.mul(monster.suffix.healthMult);
         baseArmor = baseArmor.mul(monster.suffix.armorMult);
@@ -497,23 +513,22 @@ export const useStoreMagic = defineStore('storeMagic', {
 
       this.monster.id++;
       this.monster.damageEffects = [];
-      this.generateRewards();
+      this.generateRewards(rewardCount);
     },
-    generateRewards() {
-      const rewardCount = 1;
-      const availableRunes = [...RUNE_META];
+    generateRewards(rewardCount: number = 1) {
+      const availableEssences = [...ESSENCE_META];
       this.monster.rewards = [];
 
-      for (let i = 0; i < rewardCount && availableRunes.length > 0; i++) {
-        const randomIndex = Math.floor(Math.random() * availableRunes.length);
-        const rune = availableRunes.splice(randomIndex, 1)[0];
+      for (let i = 0; i < rewardCount && availableEssences.length > 0; i++) {
+        const randomIndex = Math.floor(Math.random() * availableEssences.length);
+        const essence = availableEssences.splice(randomIndex, 1)[0];
 
         this.monster.rewards.push({
-          id: rune?.id || `rune`,
-          name: rune?.name || 'Неизвестная руна',
-          icon: rune?.icon || 'fas fa-question',
-          color: rune?.color || '#ffffff',
-          amount: 1,
+          id: essence?.id || `essence`,
+          name: essence?.name || 'Неизвестная эссенция',
+          icon: essence?.icon || 'fas fa-question',
+          color: essence?.color || '#ffffff',
+          amount: this.monster.level.mul(Math.random() + 1),
         });
       }
     },
