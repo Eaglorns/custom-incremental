@@ -7,15 +7,15 @@
         class="rune-slot"
         :class="{
           selected: storeMagic.selectedRune?.id === rune.id,
-          owned: rune.level > 0,
-          empty: rune.level === 0,
+          owned: rune.level.gt(0),
+          empty: rune.level.equals(0),
         }"
         @click="storeMagic.selectRune(rune)"
       >
         <div class="rune-icon">
           <i :class="rune.meta.icon" :style="{ color: rune.meta.color }"></i>
         </div>
-        <div v-if="rune.level > 0" class="rune-level">{{ rune.level }}</div>
+        <div v-if="rune.level.gt(0)" class="rune-level">{{ rune.level }}</div>
         <div class="rune-name">{{ rune.meta.name }}</div>
       </div>
     </div>
