@@ -69,9 +69,20 @@
                 class="text-white"
               >
                 <template v-slot:label="opt">
-                  <div class="row items-center q-gutter-sm">
-                    <i :class="opt.value + 'fa-star'" size="20px" />
-                    <span>{{ opt.label }}</span>
+                  <div class="column q-gutter-xs">
+                    <div class="row items-center q-gutter-sm">
+                      <span class="text-weight-medium">{{ opt.label }}</span>
+                    </div>
+                    <div class="row items-center q-gutter-sm">
+                      <i :class="opt.value + 'fa-star'" size="22px" />
+                      <i :class="opt.value + 'fa-heart'" size="22px" />
+                      <i :class="opt.value + 'fa-home'" size="22px" />
+                      <i :class="opt.value + 'fa-user'" size="22px" />
+                      <i :class="opt.value + 'fa-cog'" size="22px" />
+                      <i :class="opt.value + 'fa-chart-line'" size="22px" />
+                      <i :class="opt.value + 'fa-shield'" size="22px" />
+                      <i :class="opt.value + 'fa-lightning-bolt'" size="22px" />
+                    </div>
                   </div>
                 </template>
               </q-option-group>
@@ -135,9 +146,9 @@ const volumeIcon = computed(() => {
 
 const iconStyleOptions = [
   { label: 'Duotone', value: 'fa-duotone ' },
+  { label: 'Sharp Duotone', value: 'fa-sharp-duotone ' },
   { label: 'Classic', value: 'fa-solid ' },
   { label: 'Sharp', value: 'fa-sharp ' },
-  { label: 'Sharp Duotone', value: 'fa-sharp-duotone ' },
 ];
 
 const selectedIconStyle = computed({

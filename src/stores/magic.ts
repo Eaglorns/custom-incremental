@@ -243,7 +243,7 @@ export const useStoreMagic = defineStore('storeMagic', {
         }
         if (effect.type === 'bleeding') {
           effectStack = effect.stacks.div(2);
-          effect.stacks = effect.stacks.div(1.01);
+          effect.stacks = effect.stacks.div(1.001);
         }
         this.monsterDealDamage(effectStack);
       });

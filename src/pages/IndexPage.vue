@@ -50,29 +50,39 @@
         align="justify"
         class="text-grey"
       >
-        <q-tab name="shop" :icon="iconStyle + 'fa-store'" :label="tabLabels.shop" />
-        <q-tab
-          name="prestige"
-          :icon="iconStyle + 'fa-arrow-up-right-dots'"
-          :label="tabLabels.prestige"
-        />
-        <q-tab name="research" :icon="iconStyle + 'fa-flask-vial'" :label="tabLabels.research" />
-        <q-tab
-          name="automatic"
-          :icon="iconStyle + 'fa-microchip-ai'"
-          :label="tabLabels.automatic"
-        />
-        <q-tab name="eternity" :icon="iconStyle + 'fa-hourglass-end'" :label="tabLabels.eternity" />
-        <q-tab name="magic" :icon="iconStyle + 'fa-hat-wizard'" :label="tabLabels.magic" />
-        <q-tab name="infinity" :icon="iconStyle + 'fa-infinity'" :label="tabLabels.infinity" />
-        <q-tab
-          name="achievement"
-          :icon="iconStyle + 'fa-trophy-star'"
-          :label="tabLabels.achievement"
-        />
-        <q-tab name="stats" :icon="iconStyle + 'fa-chart-line'" :label="tabLabels.stats" />
-        <q-tab name="help" :icon="iconStyle + 'fa-circle-question'" :label="tabLabels.help" />
-        <q-tab name="setting" :icon="iconStyle + 'fa-gear-complex'" :label="tabLabels.setting" />
+        <q-tab name="shop" :label="tabLabels.shop">
+          <i :class="iconStyle + 'fa-store'" />
+        </q-tab>
+        <q-tab name="prestige" :label="tabLabels.prestige">
+          <i :class="iconStyle + 'fa-arrow-up-right-dots'" />
+        </q-tab>
+        <q-tab name="research" :label="tabLabels.research">
+          <i :class="iconStyle + 'fa-flask-vial'" />
+        </q-tab>
+        <q-tab name="automatic" :label="tabLabels.automatic">
+          <i :class="iconStyle + 'fa-microchip-ai'" />
+        </q-tab>
+        <q-tab name="eternity" :label="tabLabels.eternity">
+          <i :class="iconStyle + 'fa-hourglass-end'" />
+        </q-tab>
+        <q-tab name="magic" :label="tabLabels.magic">
+          <i :class="iconStyle + 'fa-hat-wizard'" />
+        </q-tab>
+        <q-tab name="infinity" :label="tabLabels.infinity">
+          <i :class="iconStyle + 'fa-infinity'" />
+        </q-tab>
+        <q-tab name="achievement" :label="tabLabels.achievement">
+          <i :class="iconStyle + 'fa-trophy-star'" />
+        </q-tab>
+        <q-tab name="stats" :label="tabLabels.stats">
+          <i :class="iconStyle + 'fa-chart-line'" />
+        </q-tab>
+        <q-tab name="help" :label="tabLabels.help">
+          <i :class="iconStyle + 'fa-circle-question'" />
+        </q-tab>
+        <q-tab name="setting" :label="tabLabels.setting">
+          <i :class="iconStyle + 'fa-gear-complex'" />
+        </q-tab>
       </q-tabs>
       <q-separator />
       <q-tab-panels v-model="tab">
@@ -213,7 +223,7 @@ import Help from 'src/pages/HelpPage.vue';
 import Achievement from 'src/pages/AchievementPage.vue';
 import StatsPage from 'src/pages/StatsPage.vue';
 import SettingPage from 'src/pages/SettingPage.vue';
-import TabLayout from 'src/components/shared/TabLayout.vue';
+import TabLayout from 'src/components/TabLayout.vue';
 import Decimal from 'break_eternity.js';
 import { animate } from 'animejs';
 import { useStoreResearch } from 'stores/research';
@@ -501,6 +511,9 @@ const infinityProgress = computed(() => {
   white-space: nowrap
   text-shadow: 0 1px 4px #23243a, 0 0 2px #23243a
 
+.q-tab i
+  font-size: 20px !important
+
 @media (max-width: 700px)
   .main-layout
     min-width: 100vw
@@ -557,6 +570,10 @@ const infinityProgress = computed(() => {
     justify-content: center
     gap: 2px
   .q-tab__icon, .q-tab-panel .q-tab__icon
+    font-size: 18px !important
+    min-width: 0
+    padding: 0 2px
+  .q-tab i
     font-size: 18px !important
     min-width: 0
     padding: 0 2px
