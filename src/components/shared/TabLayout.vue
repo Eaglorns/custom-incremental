@@ -9,7 +9,7 @@
       >
         <q-tab v-for="tab in tabs" :key="tab.name" :name="tab.name">
           <template v-slot:default>
-            <div class="q-tab__content row no-wrap flex-center q-tab__content--inline">
+            <div class="q-tab__content row">
               <i :class="tab.icon" class="q-tab__icon" />
               <div class="q-tab__label">{{ tab.label }}</div>
             </div>
@@ -43,7 +43,7 @@
           >
             <q-tab v-for="tab in tabs" :key="tab.name" :name="tab.name">
               <template v-slot:default>
-                <div class="q-tab__content column no-wrap flex-center q-tab__content--inline">
+                <div class="q-tab__content column">
                   <i :class="tab.icon" class="q-tab__icon" />
                   <div class="q-tab__label">{{ tab.label }}</div>
                 </div>
@@ -98,24 +98,108 @@ defineEmits<{
 
 .q-tab__content {
   transition: all 0.3s ease;
+  min-height: 40px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .q-tab__icon {
   font-size: 18px;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .q-tab__label {
   transition: all 0.3s ease;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Мобильная версия - иконки и текст в ряд */
+.q-tab__content.row {
+  flex-direction: row;
+  gap: 8px;
+}
+
 .q-tab__content.row .q-tab__icon {
-  margin-right: 8px;
+  width: 20px;
+  text-align: center;
 }
 
-/* Десктопная версия - иконки и текст в колонку */
+.q-tab__content.row .q-tab__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.q-tab__content.column {
+  flex-direction: column;
+  gap: 4px;
+  min-width: 80px;
+  padding: 8px 4px;
+}
+
 .q-tab__content.column .q-tab__icon {
-  margin-bottom: 4px;
+  width: 100%;
+  text-align: center;
+}
+
+.q-tab__content.column .q-tab__label {
+  width: 100%;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+:deep(.q-tab--active) .q-tab__content {
+  background-color: rgba(26, 188, 156, 0.1);
+  border-radius: 8px;
+  transform: scale(1.02);
+}
+
+:deep(.q-tab--active) .q-tab__icon {
+  color: #1abc9c;
+  font-weight: bold;
+}
+
+:deep(.q-tab--active) .q-tab__label {
+  color: #1abc9c;
+  font-weight: bold;
+}
+
+:deep(.q-tab:hover:not(.q-tab--active)) .q-tab__content {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transform: scale(1.01);
+}
+
+:deep(.q-tab:hover:not(.q-tab--active)) .q-tab__icon {
+  color: #26c6da;
+}
+
+:deep(.q-tab:hover:not(.q-tab--active)) .q-tab__label {
+  color: #26c6da;
+}
+
+:deep(.q-tab--active)::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 3px;
+  background-color: #1abc9c;
+  border-radius: 2px;
+}
+
+:deep(.q-tabs--vertical .q-tab--active)::before {
+  bottom: auto;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 30px;
 }
 </style>

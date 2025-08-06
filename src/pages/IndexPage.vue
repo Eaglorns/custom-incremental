@@ -295,7 +295,6 @@ const innerMagicLabels = computed(() => ({
   innerMagicCraft: isMobile.value ? 'Созд' : 'Создание',
 }));
 
-// Конфигурации вкладок
 const shopTabs = computed(() => [
   { name: 'innerShopCPU', icon: iconStyle.value + 'fa-microchip', label: 'CPU' },
   { name: 'innerShopHDD', icon: iconStyle.value + 'fa-hard-drive', label: 'HDD' },

@@ -10,7 +10,7 @@
     >
       <div class="scientist-header-row">
         <div class="scientist-header-left">
-          <i :class="iconStyle + 'fa-brain'" color="blue-4" size="14px" class="q-mr-xs" />
+          <i :class="iconStyle + 'fa-brain'" color="blue-4" size="18px" class="q-mr-xs" />
           <span class="text-bold scientist-intellect-value">{{
             formatNumber(scientist.intellect)
           }}</span>
@@ -19,7 +19,7 @@
           <span class="text-bold scientist-efficiency-value">{{
             formatNumber(scientist.efficiency)
           }}</span>
-          <i :class="iconStyle + 'fa-bolt'" color="teal-5" size="14px" class="q-ml-xs" />
+          <i :class="iconStyle + 'fa-bolt'" color="teal-5" size="18px" class="q-ml-xs" />
         </div>
       </div>
       <div class="scientist-avatar-row">
@@ -40,7 +40,7 @@
         style="height: 8px"
       />
       <div class="scientist-exp-row">
-        <i :class="iconStyle + 'fa-circle-dot'" color="deep-orange-4" size="15px" class="q-mr-xs" />
+        <i :class="iconStyle + 'fa-circle-dot'" color="deep-orange-4" size="18px" class="q-mr-xs" />
         <span class="scientist-exp-value scientist-exp-orange">
           {{ formatNumber(scientist.exp) }}
         </span>

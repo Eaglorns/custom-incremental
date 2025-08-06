@@ -137,7 +137,7 @@ export const useStoreResearch = defineStore('storeResearch', {
         level: new Decimal(0),
         costMultiply: new Decimal(1.2),
         timeMultiply: new Decimal(1.15),
-        maxLevel: new Decimal(-1),
+        maxLevel: new Decimal(1e50),
       },
       researchScientistsMultiplierExperience: {
         isActive: false,
@@ -148,7 +148,7 @@ export const useStoreResearch = defineStore('storeResearch', {
         level: new Decimal(0),
         costMultiply: new Decimal(1.2),
         timeMultiply: new Decimal(1.15),
-        maxLevel: new Decimal(-1),
+        maxLevel: new Decimal(1e50),
       },
       shopMultiplierChanceReturn: {
         isActive: false,

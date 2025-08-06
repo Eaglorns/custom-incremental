@@ -37,7 +37,7 @@
           <div class="text-body2 text-grey-3 q-mb-sm">{{ getUpgrade(key).value.description }}</div>
           <div class="row items-center q-mb-sm">
             <i
-              :name="iconStyle + 'fa-arrow-up-right-dots'"
+              :class="iconStyle + 'fa-arrow-up-right-dots'"
               size="18px"
               color="yellow-4"
               class="q-mr-xs"

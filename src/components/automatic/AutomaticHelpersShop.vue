@@ -14,7 +14,7 @@
             <div class="row items-center q-mb-sm helper-title-row">
               <i
                 :name="iconStyle + getHelper(key).value.icon"
-                size="20px"
+                size="24px"
                 class="q-mr-sm helper-icon icon-default-custom"
               />
               <span class="text-body1 text-weight-bold helper-title text-blue-4">
@@ -37,8 +37,8 @@
                 <div class="column q-gutter-xs">
                   <div class="row items-center">
                     <i
-                      :name="iconStyle + 'fa-users'"
-                      size="16px"
+                      :class="iconStyle + 'fa-users'"
+                      size="18px"
                       class="q-mr-xs icon-default-custom"
                     />
                     <span class="text-caption q-mr-xs text-secondary-custom"
@@ -55,8 +55,8 @@
                       style="min-width: 90px"
                     >
                       <i
-                        :name="iconStyle + 'fa-gauge-high'"
-                        size="12px"
+                        :class="iconStyle + 'fa-gauge-high'"
+                        size="16px"
                         class="q-mr-xs icon-accent-custom"
                       />
                       {{ formatNumber(costCount(getHelper(key).value).value) }}
@@ -78,8 +78,8 @@
                 <div class="column q-gutter-xs">
                   <div class="row items-center">
                     <i
-                      :name="iconStyle + 'fa-percent'"
-                      size="16px"
+                      :class="iconStyle + 'fa-percent'"
+                      size="18px"
                       class="q-mr-xs icon-default-custom"
                     />
                     <span class="text-caption q-mr-xs text-secondary-custom">Шанс покупки:</span>
@@ -99,8 +99,8 @@
                       style="min-width: 90px"
                     >
                       <i
-                        :name="iconStyle + 'fa-gauge-high'"
-                        size="12px"
+                        :class="iconStyle + 'fa-gauge-high'"
+                        size="16px"
                         class="q-mr-xs icon-accent-custom"
                       />
                       {{ formatNumber(costPercent(getHelper(key).value).value) }}

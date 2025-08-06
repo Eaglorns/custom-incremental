@@ -2,7 +2,7 @@
   <div class="prestige-card-modern flex flex-center column items-center q-pa-xl">
     <div class="prestige-header-modern flex items-center q-mb-lg">
       <i
-        :name="iconStyle + 'fa-arrow-up-right-dots'"
+        :class="iconStyle + 'fa-arrow-up-right-dots'"
         color="primary"
         size="36px"
         class="prestige-icon-modern q-mr-md"

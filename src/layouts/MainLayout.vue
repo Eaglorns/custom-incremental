@@ -3,7 +3,7 @@
     <q-header elevated>
       <q-bar class="q-electron-drag bg-grey-10">
         <div class="text-h6 text-weight-bold q-ml-md">
-          <i :class="iconStyle + 'fa-arrow-trend-up'" size="16px" color="grey-4" />
+          <i :class="iconStyle + 'fa-arrow-trend-up'" size="20px" color="grey-4" />
           {{ storeGame.name }}
         </div>
         <div class="text-h6 text-weight-bold q-ml-md">v{{ storeGame.version }}</div>

@@ -32,7 +32,7 @@
             <div class="row items-center">
               <i
                 :class="iconStyle + 'fa-volume-off'"
-                size="16px"
+                size="20px"
                 :color="audioEnabled ? 'grey-5' : 'grey-7'"
                 class="q-mr-sm"
               />
@@ -47,7 +47,7 @@
               />
               <i
                 :class="iconStyle + 'fa-volume-high'"
-                size="16px"
+                size="20px"
                 :color="audioEnabled ? 'grey-5' : 'grey-7'"
                 class="q-ml-sm"
               />
