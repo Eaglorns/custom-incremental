@@ -3,14 +3,14 @@
     <div class="settings-container">
       <div class="q-gutter-y-lg">
         <div class="text-h4 text-weight-bold text-center">
-          <q-icon name="fa-duotone fa-gear" size="32px" color="primary" class="q-mr-sm" />
+          <i :class="iconStyle + 'fa-gear'" size="32px" color="primary" class="q-mr-sm" />
           Настройки
         </div>
         <q-card class="bg-grey-9 text-white setting-card" flat bordered>
           <q-card-section class="q-pa-md">
             <div class="row items-center q-mb-md">
-              <q-icon
-                :name="volumeIcon"
+              <i
+                :class="iconStyle + volumeIcon"
                 size="24px"
                 :color="audioEnabled ? 'secondary' : 'grey-6'"
                 class="q-mr-md"
@@ -30,8 +30,8 @@
               </div>
             </div>
             <div class="row items-center">
-              <q-icon
-                name="fa-duotone fa-volume-off"
+              <i
+                :class="iconStyle + 'fa-volume-off'"
                 size="16px"
                 :color="audioEnabled ? 'grey-5' : 'grey-7'"
                 class="q-mr-sm"
@@ -45,8 +45,8 @@
                 track-color="grey-7"
                 class="col"
               />
-              <q-icon
-                name="fa-duotone fa-volume-high"
+              <i
+                :class="iconStyle + 'fa-volume-high'"
                 size="16px"
                 :color="audioEnabled ? 'grey-5' : 'grey-7'"
                 class="q-ml-sm"
@@ -57,7 +57,31 @@
         <q-card class="bg-grey-9 text-white" flat bordered>
           <q-card-section>
             <div class="text-h6 text-weight-bold q-mb-md">
-              <q-icon name="fa-duotone fa-sliders" size="20px" color="secondary" class="q-mr-sm" />
+              <i :class="iconStyle + 'fa-icons'" size="20px" color="secondary" class="q-mr-sm" />
+              Стиль иконок
+            </div>
+            <div class="q-gutter-md">
+              <q-option-group
+                v-model="selectedIconStyle"
+                :options="iconStyleOptions"
+                color="primary"
+                type="radio"
+                class="text-white"
+              >
+                <template v-slot:label="opt">
+                  <div class="row items-center q-gutter-sm">
+                    <i :class="opt.value + 'fa-star'" size="20px" />
+                    <span>{{ opt.label }}</span>
+                  </div>
+                </template>
+              </q-option-group>
+            </div>
+          </q-card-section>
+        </q-card>
+        <q-card class="bg-grey-9 text-white" flat bordered>
+          <q-card-section>
+            <div class="text-h6 text-weight-bold q-mb-md">
+              <i :class="iconStyle + 'fa-sliders'" size="20px" color="secondary" class="q-mr-sm" />
               Общие настройки
             </div>
             <div class="text-center text-grey-5 q-py-lg">В разработке</div>
@@ -73,6 +97,10 @@ import { computed } from 'vue';
 import { useStoreSetting } from 'stores/setting';
 
 const storeSetting = useStoreSetting();
+
+const iconStyle = computed(() => {
+  return storeSetting.iconStyle;
+});
 
 const audioEnabled = computed({
   get: () => storeSetting.audio.enabled,
@@ -90,19 +118,33 @@ const audioVolume = computed({
 
 const volumeIcon = computed(() => {
   if (!audioEnabled.value) {
-    return 'fa-duotone fa-volume-xmark';
+    return 'fa-volume-xmark';
   }
 
   const volume = audioVolume.value;
   if (volume === 0) {
-    return 'fa-duotone fa-volume-off';
+    return 'fa-volume-off';
   } else if (volume <= 0.33) {
-    return 'fa-duotone fa-volume-low';
+    return 'fa-volume-low';
   } else if (volume <= 0.66) {
-    return 'fa-duotone fa-volume';
+    return 'fa-volume';
   } else {
-    return 'fa-duotone fa-volume-high';
+    return 'fa-volume-high';
   }
+});
+
+const iconStyleOptions = [
+  { label: 'Duotone', value: 'fa-duotone ' },
+  { label: 'Classic', value: 'fa-solid ' },
+  { label: 'Sharp', value: 'fa-sharp ' },
+  { label: 'Sharp Duotone', value: 'fa-sharp-duotone ' },
+];
+
+const selectedIconStyle = computed({
+  get: () => storeSetting.iconStyle,
+  set: (val: string) => {
+    storeSetting.iconStyle = val;
+  },
 });
 </script>
 

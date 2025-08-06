@@ -3,12 +3,12 @@
     <q-card class="q-pa-xl q-mx-auto help-card">
       <div class="text-h4 text-primary q-mb-lg">Справка</div>
       <div class="help-section orange">
-        <q-icon name="fa-solid fa-bullseye" color="primary" size="22px" class="q-mr-sm" />
+        <i :class="iconStyle + 'fa-bullseye'" color="primary" size="22px" class="q-mr-sm" />
         <span class="text-h6 text-bold">Цель</span>
         <div class="q-mt-sm">
           Найдите самое большое <span class="text-deep-orange-5 text-bold">ЧИСЛО</span>
-          <q-icon name="fa-solid fa-infinity" color="deep-orange-5" size="18px" class="q-mx-xs" /> —
-          основная валюта игры.
+          <i :class="iconStyle + 'fa-infinity'" color="deep-orange-5" size="18px" class="q-mx-xs" />
+          — основная валюта игры.
         </div>
         <ul class="q-pl-lg q-mt-xs">
           <li>Покупайте и улучшайте ресурсы</li>
@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="help-section blue">
-        <q-icon name="fa-duotone fa-store" color="primary" size="22px" class="q-mr-sm" />
+        <i :class="iconStyle + 'fa-store'" color="primary" size="22px" class="q-mr-sm" />
         <span class="text-h6 text-bold">Магазин</span>
         <ul class="q-pl-lg q-mt-xs">
           <li><span class="text-bold">Процессоры</span> — увеличивают генерацию</li>
@@ -32,7 +32,7 @@
         </div>
       </div>
       <div class="help-section green">
-        <q-icon name="fa-duotone fa-flask-vial" color="primary" size="22px" class="q-mr-sm" />
+        <i :class="iconStyle + 'fa-flask-vial'" color="primary" size="22px" class="q-mr-sm" />
         <span class="text-h6 text-bold">Исследования</span>
         <ul class="q-pl-lg q-mt-xs">
           <li><span class="text-bold">Учёные</span> — генерируют очки исследований</li>
@@ -44,7 +44,7 @@
         <div class="text-grey-7 q-mt-xs">Прокачка увеличивает бонус, но растёт цена и время.</div>
       </div>
       <div class="help-section yellow">
-        <q-icon name="fa-duotone fa-robot" color="primary" size="22px" class="q-mr-sm" />
+        <i :class="iconStyle + 'fa-robot'" color="primary" size="22px" class="q-mr-sm" />
         <span class="text-h6 text-bold">Автоматизация</span>
         <ul class="q-pl-lg q-mt-xs">
           <li><span class="text-bold">Помощники</span> — автоматически увеличивают ресурсы</li>
@@ -52,12 +52,12 @@
         <div class="text-grey-7 q-mt-xs">Можно прокачивать количество и шанс срабатывания.</div>
       </div>
       <div class="help-section red">
-        <q-icon name="fa-duotone fa-award" color="primary" size="22px" class="q-mr-sm" />
+        <i :class="iconStyle + 'fa-award'" color="primary" size="22px" class="q-mr-sm" />
         <span class="text-h6 text-bold">Престиж</span>
         <div class="q-mt-xs">Сбросьте прогресс ради очков престижа для особых улучшений.</div>
       </div>
       <div class="help-section red">
-        <q-icon name="fa-duotone fa-trophy-star" color="primary" size="22px" class="q-mr-sm" />
+        <i :class="iconStyle + 'fa-trophy-star'" color="primary" size="22px" class="q-mr-sm" />
         <span class="text-h6 text-bold">Достижения</span>
         <div class="q-mt-xs">
           Дают бонус к генерации <span class="text-deep-orange-5 text-bold">ЧИСЛА</span>.
@@ -68,7 +68,16 @@
   </q-page>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useStoreSetting } from 'stores/setting';
+import { computed } from 'vue';
+
+const storeSetting = useStoreSetting();
+
+const iconStyle = computed(() => {
+  return storeSetting.iconStyle;
+});
+</script>
 
 <style lang="scss" scoped>
 .help-card {

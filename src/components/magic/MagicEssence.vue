@@ -39,7 +39,7 @@ const essencesWithMeta = computed(() => {
     const meta = ESSENCE_META.find((m) => m.id === essence.id);
     return {
       ...essence,
-      meta: meta || { name: 'Неизвестно', icon: 'fas fa-question', color: '#666' },
+      meta: meta || { name: 'Неизвестно', icon: 'fa-question', color: '#666' },
     };
   });
 });

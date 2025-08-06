@@ -6,7 +6,7 @@
     :style="{ background: 'var(--color-card-bg)', borderColor: 'var(--color-card-border)' }"
   >
     <div class="row items-center q-mb-lg">
-      <q-icon :name="iconStyle + props.icon" class="text-primary q-mr-md" size="32px" />
+      <i :class="iconStyle + props.icon" class="text-primary q-mr-md" size="32px" />
       <span class="text-h5 text-weight-bold text-primary">{{ props.label }}</span>
     </div>
     <q-form>
@@ -24,7 +24,7 @@
             outlined
           >
             <template v-slot:prepend>
-              <q-icon :name="iconStyle + 'fa-gauge'" class="text-primary" />
+              <i :class="iconStyle + 'fa-gauge'" class="text-primary" />
             </template>
           </q-input>
         </div>
@@ -41,7 +41,7 @@
             outlined
           >
             <template v-slot:prepend>
-              <q-icon :name="iconStyle + 'fa-xmark'" class="text-primary" />
+              <i :class="iconStyle + 'fa-xmark'" class="text-primary" />
             </template>
           </q-input>
         </div>
@@ -58,7 +58,7 @@
             outlined
           >
             <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-coins" class="text-primary" />
+              <i :class="iconStyle + 'fa-coins'" class="text-primary" />
             </template>
           </q-input>
         </div>
@@ -75,7 +75,7 @@
             outlined
           >
             <template v-slot:prepend>
-              <q-icon name="fa-duotone fa-gauge-high" class="text-primary" />
+              <i :class="iconStyle + 'fa-gauge-high'" class="text-primary" />
             </template>
           </q-input>
         </div>

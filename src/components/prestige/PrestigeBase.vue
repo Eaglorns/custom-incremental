@@ -1,7 +1,7 @@
 <template>
   <div class="prestige-card-modern flex flex-center column items-center q-pa-xl">
     <div class="prestige-header-modern flex items-center q-mb-lg">
-      <q-icon
+      <i
         :name="iconStyle + 'fa-arrow-up-right-dots'"
         color="primary"
         size="36px"

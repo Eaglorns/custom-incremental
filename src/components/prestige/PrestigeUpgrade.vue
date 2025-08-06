@@ -10,7 +10,7 @@
           style="min-width: 220px; max-width: 320px"
         >
           <div class="row items-center q-mb-sm no-wrap">
-            <q-icon
+            <i
               :name="iconStyle + getUpgrade(key).value.icon"
               size="28px"
               color="accent"
@@ -36,7 +36,7 @@
           </div>
           <div class="text-body2 text-grey-3 q-mb-sm">{{ getUpgrade(key).value.description }}</div>
           <div class="row items-center q-mb-sm">
-            <q-icon
+            <i
               :name="iconStyle + 'fa-arrow-up-right-dots'"
               size="18px"
               color="yellow-4"

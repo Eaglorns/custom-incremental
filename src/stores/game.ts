@@ -11,7 +11,7 @@ import { useStoreMagic } from 'stores/magic';
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     name: 'cIncremental',
-    version: '0.1.4',
+    version: '0.1.5',
     timerTick: 1000,
     lastTick: Date.now(),
   }),

@@ -12,7 +12,7 @@
             :class="!getHelper(key).value.enabled ? 'helper-card--disabled' : ''"
           >
             <div class="row items-center q-mb-sm helper-title-row">
-              <q-icon
+              <i
                 :name="iconStyle + getHelper(key).value.icon"
                 size="20px"
                 class="q-mr-sm helper-icon icon-default-custom"
@@ -36,7 +36,7 @@
               <div class="column q-gutter-xs">
                 <div class="column q-gutter-xs">
                   <div class="row items-center">
-                    <q-icon
+                    <i
                       :name="iconStyle + 'fa-users'"
                       size="16px"
                       class="q-mr-xs icon-default-custom"
@@ -54,7 +54,7 @@
                       class="q-pa-xs upgrade-cost-chip-wide upgrade-chip-custom"
                       style="min-width: 90px"
                     >
-                      <q-icon
+                      <i
                         :name="iconStyle + 'fa-gauge-high'"
                         size="12px"
                         class="q-mr-xs icon-accent-custom"
@@ -77,7 +77,7 @@
                 <q-separator class="q-my-xs separator-custom" />
                 <div class="column q-gutter-xs">
                   <div class="row items-center">
-                    <q-icon
+                    <i
                       :name="iconStyle + 'fa-percent'"
                       size="16px"
                       class="q-mr-xs icon-default-custom"
@@ -98,7 +98,7 @@
                       class="q-pa-xs upgrade-cost-chip-wide upgrade-chip-custom"
                       style="min-width: 90px"
                     >
-                      <q-icon
+                      <i
                         :name="iconStyle + 'fa-gauge-high'"
                         size="12px"
                         class="q-mr-xs icon-accent-custom"

@@ -16,6 +16,7 @@ export const useStoreSetting = defineStore('storeSetting', {
           enabled: state.audio.enabled,
           volume: state.audio.volume,
         },
+        iconStyle: state.iconStyle,
       };
     },
   },
@@ -37,9 +38,10 @@ export const useStoreSetting = defineStore('storeSetting', {
         }).play();
     },
 
-    load(loaded: { audio: { enabled: boolean; volume: number } }) {
+    load(loaded: { audio: { enabled: boolean; volume: number }; iconStyle: string }) {
       this.audio.enabled = loaded.audio.enabled;
       this.audio.volume = loaded.audio.volume;
+      this.iconStyle = loaded.iconStyle;
     },
   },
 });

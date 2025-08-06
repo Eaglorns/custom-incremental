@@ -32,7 +32,7 @@
       </q-tooltip>
       <q-card-section class="q-pa-xs">
         <div class="text-subtitle2 row items-start no-wrap research-title-row q-mb-sm">
-          <q-icon :name="iconStyle + meta.icon" size="18px" class="text-blue-400 q-mr-xs" />
+          <i :class="iconStyle + meta.icon" size="18px" class="text-blue-400 q-mr-xs" />
           <span class="research-title-text">{{ meta.title }}</span>
         </div>
       </q-card-section>
@@ -41,22 +41,18 @@
           class="row items-center text-slate-400 q-mb-md"
           style="font-size: 13px; font-weight: 600"
         >
-          <q-icon name="fa-duotone fa-signal-bars" class="q-mr-xs text-blue-400" />
+          <i class="fa-duotone fa-signal-bars q-mr-xs text-blue-400" />
           Уровень: {{ getResearch(meta.key).level }} / {{ getResearch(meta.key).maxLevel }}
         </div>
         <div class="row justify-between items-center q-mb-md research-info-row">
           <div class="row items-center research-cost-info">
-            <q-icon
-              :name="iconStyle + 'fa-flask-vial'"
-              size="15px"
-              class="q-mr-xs text-emerald-400"
-            />
+            <i :class="iconStyle + 'fa-flask-vial'" size="15px" class="q-mr-xs text-emerald-400" />
             <q-badge class="q-pa-xs text-bold research-badge">{{
               formatNumber(getResearchCost(meta.key).value)
             }}</q-badge>
           </div>
           <div class="row items-center research-time-info">
-            <q-icon :name="iconStyle + 'fa-clock'" size="15px" class="q-mr-xs text-amber-400" />
+            <i :class="iconStyle + 'fa-clock'" size="15px" class="q-mr-xs text-amber-400" />
             <q-badge class="q-pa-xs text-bold research-badge">{{
               storeData.formatTime(getResearchTime(meta.key).value)
             }}</q-badge>
@@ -503,9 +499,9 @@ onMounted(() => {
   box-sizing: border-box
 
 // Анимация для иконок
-.research-card .q-icon
+.research-card i
   // Убраны анимации
 
-.research-card:hover .q-icon
+.research-card:hover i
   // Убраны анимации
 </style>

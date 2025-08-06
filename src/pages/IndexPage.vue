@@ -5,7 +5,7 @@
         class="flex items-center"
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
-        <q-icon name="fa-duotone fa-gauge-high" size="24px" color="primary" />
+        <i :class="iconStyle + 'fa-gauge-high'" size="24px" color="primary" />
         <span ref="epicRef" class="text-weight-bold text-h5">
           {{ formatNumber(storeData.epicNumber) }}
         </span>
@@ -15,7 +15,7 @@
         class="flex items-center"
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
-        <q-icon name="fa-duotone fa-coins" size="22px" color="secondary" />
+        <i :class="iconStyle + 'fa-coins'" size="22px" color="secondary" />
         <span ref="shopRef" class="text-weight-bold text-h5">
           {{ formatNumber(storeShop.points) }}
         </span>
@@ -25,7 +25,7 @@
         class="flex items-center"
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
-        <q-icon name="fa-duotone fa-arrow-up-right-dots" size="22px" color="secondary" />
+        <i :class="iconStyle + 'fa-arrow-up-right-dots'" size="22px" color="secondary" />
         <span ref="prestigeRef" class="text-weight-bold text-h5">
           {{ formatNumber(storePrestige.points) }}
         </span>
@@ -35,7 +35,7 @@
         class="flex items-center"
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
-        <q-icon name="fa-duotone fa-swords" size="22px" color="secondary" />
+        <i :class="iconStyle + 'fa-swords'" size="22px" color="secondary" />
         <span ref="researchRef" class="text-weight-bold text-h5">
           {{ formatNumber(storeResearch.points) }}
         </span>
@@ -50,33 +50,41 @@
         align="justify"
         class="text-grey"
       >
-        <q-tab name="shop" icon="fa-duotone fa-store" :label="tabLabels.shop" />
+        <q-tab name="shop" :icon="iconStyle + 'fa-store'" :label="tabLabels.shop" />
         <q-tab
           name="prestige"
-          icon="fa-duotone fa-arrow-up-right-dots"
+          :icon="iconStyle + 'fa-arrow-up-right-dots'"
           :label="tabLabels.prestige"
         />
-        <q-tab name="research" icon="fa-duotone fa-flask-vial" :label="tabLabels.research" />
-        <q-tab name="automatic" icon="fa-duotone fa-microchip-ai" :label="tabLabels.automatic" />
-        <q-tab name="eternity" icon="fa-duotone fa-hourglass-end" :label="tabLabels.eternity" />
-        <q-tab name="magic" icon="fa-duotone fa-hat-wizard" :label="tabLabels.magic" />
-        <q-tab name="infinity" icon="fa-duotone fa-infinity" :label="tabLabels.infinity" />
-        <q-tab name="achievement" icon="fa-duotone fa-trophy-star" :label="tabLabels.achievement" />
-        <q-tab name="stats" icon="fa-duotone fa-chart-line" :label="tabLabels.stats" />
-        <q-tab name="help" icon="fa-duotone fa-circle-question" :label="tabLabels.help" />
-        <q-tab name="setting" icon="fa-duotone fa-gear-complex" :label="tabLabels.setting" />
+        <q-tab name="research" :icon="iconStyle + 'fa-flask-vial'" :label="tabLabels.research" />
+        <q-tab
+          name="automatic"
+          :icon="iconStyle + 'fa-microchip-ai'"
+          :label="tabLabels.automatic"
+        />
+        <q-tab name="eternity" :icon="iconStyle + 'fa-hourglass-end'" :label="tabLabels.eternity" />
+        <q-tab name="magic" :icon="iconStyle + 'fa-hat-wizard'" :label="tabLabels.magic" />
+        <q-tab name="infinity" :icon="iconStyle + 'fa-infinity'" :label="tabLabels.infinity" />
+        <q-tab
+          name="achievement"
+          :icon="iconStyle + 'fa-trophy-star'"
+          :label="tabLabels.achievement"
+        />
+        <q-tab name="stats" :icon="iconStyle + 'fa-chart-line'" :label="tabLabels.stats" />
+        <q-tab name="help" :icon="iconStyle + 'fa-circle-question'" :label="tabLabels.help" />
+        <q-tab name="setting" :icon="iconStyle + 'fa-gear-complex'" :label="tabLabels.setting" />
       </q-tabs>
       <q-separator />
       <q-tab-panels v-model="tab">
         <q-tab-panel name="shop" class="panel-flex">
           <template v-if="isMobile">
             <q-tabs v-model="innerShop" align="justify" class="text-teal">
-              <q-tab name="innerShopCPU" icon="fa-duotone fa-microchip" label="CPU" />
-              <q-tab name="innerShopHDD" icon="fa-duotone fa-hard-drive" label="HDD" />
-              <q-tab name="innerShopRAM" icon="fa-duotone fa-memory" label="RAM" />
+              <q-tab name="innerShopCPU" :icon="iconStyle + 'fa-microchip'" label="CPU" />
+              <q-tab name="innerShopHDD" :icon="iconStyle + 'fa-hard-drive'" label="HDD" />
+              <q-tab name="innerShopRAM" :icon="iconStyle + 'fa-memory'" label="RAM" />
               <q-tab
                 name="innerShopWorker"
-                icon="fa-duotone fa-users"
+                :icon="iconStyle + 'fa-users'"
                 :label="innerShopLabels.innerShopWorker"
               />
             </q-tabs>
@@ -86,16 +94,16 @@
               transition-next="slide-up"
             >
               <q-tab-panel name="innerShopCPU"
-                ><ShopTemplate name="cpu" label="CPU" icon="fa-duotone fa-microchip"
+                ><ShopTemplate name="cpu" label="CPU" :icon="iconStyle + 'fa-microchip'"
               /></q-tab-panel>
               <q-tab-panel name="innerShopHDD"
-                ><ShopTemplate name="hdd" label="HDD" icon="fa-duotone fa-hard-drive"
+                ><ShopTemplate name="hdd" label="HDD" :icon="iconStyle + 'fa-hard-drive'"
               /></q-tab-panel>
               <q-tab-panel name="innerShopRAM"
-                ><ShopTemplate name="ram" label="RAM" icon="fa-duotone fa-memory"
+                ><ShopTemplate name="ram" label="RAM" :icon="iconStyle + 'fa-memory'"
               /></q-tab-panel>
               <q-tab-panel name="innerShopWorker"
-                ><ShopTemplate name="worker" label="Работники" icon="fa-duotone fa-users"
+                ><ShopTemplate name="worker" label="Работники" :icon="iconStyle + 'fa-users'"
               /></q-tab-panel>
             </q-tab-panels>
           </template>
@@ -103,12 +111,12 @@
             <q-splitter v-model="splitterModel">
               <template v-slot:before>
                 <q-tabs v-model="innerShop" vertical align="left" class="text-teal">
-                  <q-tab name="innerShopCPU" icon="fa-duotone fa-microchip" label="CPU" />
-                  <q-tab name="innerShopHDD" icon="fa-duotone fa-hard-drive" label="HDD" />
-                  <q-tab name="innerShopRAM" icon="fa-duotone fa-memory" label="RAM" />
+                  <q-tab name="innerShopCPU" :icon="iconStyle + 'fa-microchip'" label="CPU" />
+                  <q-tab name="innerShopHDD" :icon="iconStyle + 'fa-hard-drive'" label="HDD" />
+                  <q-tab name="innerShopRAM" :icon="iconStyle + 'fa-memory'" label="RAM" />
                   <q-tab
                     name="innerShopWorker"
-                    icon="fa-duotone fa-users"
+                    :icon="iconStyle + 'fa-users'"
                     :label="innerShopLabels.innerShopWorker"
                   />
                 </q-tabs>
@@ -120,16 +128,16 @@
                   transition-next="slide-up"
                 >
                   <q-tab-panel name="innerShopCPU"
-                    ><ShopTemplate name="cpu" label="CPU" icon="fa-duotone fa-microchip"
+                    ><ShopTemplate name="cpu" label="CPU" :icon="iconStyle + 'fa-microchip'"
                   /></q-tab-panel>
                   <q-tab-panel name="innerShopHDD"
-                    ><ShopTemplate name="hdd" label="HDD" icon="fa-duotone fa-hard-drive"
+                    ><ShopTemplate name="hdd" label="HDD" :icon="iconStyle + 'fa-hard-drive'"
                   /></q-tab-panel>
                   <q-tab-panel name="innerShopRAM"
-                    ><ShopTemplate name="ram" label="RAM" icon="fa-duotone fa-memory"
+                    ><ShopTemplate name="ram" label="RAM" :icon="iconStyle + 'fa-memory'"
                   /></q-tab-panel>
                   <q-tab-panel name="innerShopWorker"
-                    ><ShopTemplate name="worker" label="Работники" icon="fa-duotone fa-users"
+                    ><ShopTemplate name="worker" label="Работники" :icon="iconStyle + 'fa-users'"
                   /></q-tab-panel>
                 </q-tab-panels>
               </template>
@@ -141,12 +149,12 @@
             <q-tabs v-model="innerPrestige" align="justify" class="text-teal">
               <q-tab
                 name="innerPrestigeBase"
-                icon="fa-duotone fa-arrow-up-from-dotted-line"
+                :icon="iconStyle + 'fa-arrow-up-from-dotted-line'"
                 :label="innerPrestigeLabels.innerPrestigeBase"
               />
               <q-tab
                 name="innerPrestigeUpgrade"
-                icon="fa-duotone fa-sparkles"
+                :icon="iconStyle + 'fa-sparkles'"
                 :label="innerPrestigeLabels.innerPrestigeUpgrade"
               />
             </q-tabs>
@@ -165,12 +173,12 @@
                 <q-tabs v-model="innerPrestige" vertical class="text-teal">
                   <q-tab
                     name="innerPrestigeBase"
-                    icon="fa-duotone fa-arrow-up-from-dotted-line"
+                    :icon="iconStyle + 'fa-arrow-up-from-dotted-line'"
                     :label="innerPrestigeLabels.innerPrestigeBase"
                   />
                   <q-tab
                     name="innerPrestigeUpgrade"
-                    icon="fa-duotone fa-sparkles"
+                    :icon="iconStyle + 'fa-sparkles'"
                     :label="innerPrestigeLabels.innerPrestigeUpgrade"
                   />
                 </q-tabs>
@@ -193,12 +201,12 @@
             <q-tabs v-model="innerResearch" align="justify" class="text-teal">
               <q-tab
                 name="innerResearchScientist"
-                icon="fa-duotone fa-user-astronaut"
+                :icon="iconStyle + 'fa-user-astronaut'"
                 :label="innerResearchLabels.innerResearchScientist"
               />
               <q-tab
                 name="innerResearchBase"
-                icon="fa-duotone fa-flask"
+                :icon="iconStyle + 'fa-flask'"
                 :label="innerResearchLabels.innerResearchBase"
               />
             </q-tabs>
@@ -217,12 +225,12 @@
                 <q-tabs v-model="innerResearch" vertical class="text-teal">
                   <q-tab
                     name="innerResearchScientist"
-                    icon="fa-duotone fa-user-astronaut"
+                    :icon="iconStyle + 'fa-user-astronaut'"
                     :label="innerResearchLabels.innerResearchScientist"
                   />
                   <q-tab
                     name="innerResearchBase"
-                    icon="fa-duotone fa-flask"
+                    :icon="iconStyle + 'fa-flask'"
                     :label="innerResearchLabels.innerResearchBase"
                   />
                 </q-tabs>
@@ -245,7 +253,7 @@
             <q-tabs v-model="innerAutomatic" align="justify" class="text-teal">
               <q-tab
                 name="innerAutomaticHelpersShop"
-                icon="fa-duotone fa-cart-shopping"
+                :icon="iconStyle + 'fa-cart-shopping'"
                 :label="innerAutomaticLabels.innerAutomaticHelpersShop"
               />
             </q-tabs>
@@ -263,7 +271,7 @@
                 <q-tabs v-model="innerAutomatic" vertical class="text-teal">
                   <q-tab
                     name="innerAutomaticHelpersShop"
-                    icon="fa-duotone fa-cart-shopping"
+                    :icon="iconStyle + 'fa-cart-shopping'"
                     :label="innerAutomaticLabels.innerAutomaticHelpersShop"
                   />
                 </q-tabs>
@@ -288,19 +296,19 @@
             <q-tabs v-model="innerMagic" align="justify" class="text-teal">
               <q-tab
                 name="innerMagicBattle"
-                icon="fa-duotone fa-swords"
+                :icon="iconStyle + 'fa-swords'"
                 :label="innerMagicLabels.innerMagicBattle"
               />
-              <q-tab name="innerMagicMage" icon="fa-duotone fa-hat-wizard" label="Маги" />
+              <q-tab name="innerMagicMage" :icon="iconStyle + 'fa-hat-wizard'" label="Маги" />
               <q-tab
                 name="innerMagicEssence"
-                icon="fa-duotone fa-flask-vial"
+                :icon="iconStyle + 'fa-flask-vial'"
                 :label="innerMagicLabels.innerMagicEssence"
               />
-              <q-tab name="innerMagicRune" icon="fa-duotone fa-scroll-old" label="Руны" />
+              <q-tab name="innerMagicRune" :icon="iconStyle + 'fa-scroll-old'" label="Руны" />
               <q-tab
                 name="innerMagicCraft"
-                icon="fa-duotone fa-hammer-war"
+                :icon="iconStyle + 'fa-hammer-war'"
                 :label="innerMagicLabels.innerMagicCraft"
               />
             </q-tabs>
@@ -322,19 +330,19 @@
                 <q-tabs v-model="innerMagic" vertical class="text-teal">
                   <q-tab
                     name="innerMagicBattle"
-                    icon="fa-duotone fa-swords"
+                    :icon="iconStyle + 'fa-swords'"
                     :label="innerMagicLabels.innerMagicBattle"
                   />
-                  <q-tab name="innerMagicMage" icon="fa-duotone fa-hat-wizard" label="Маги" />
+                  <q-tab name="innerMagicMage" :icon="iconStyle + 'fa-hat-wizard'" label="Маги" />
                   <q-tab
                     name="innerMagicEssence"
-                    icon="fa-duotone fa-flask-vial"
+                    :icon="iconStyle + 'fa-flask-vial'"
                     :label="innerMagicLabels.innerMagicEssence"
                   />
-                  <q-tab name="innerMagicRune" icon="fa-duotone fa-scroll-old" label="Руны" />
+                  <q-tab name="innerMagicRune" :icon="iconStyle + 'fa-scroll-old'" label="Руны" />
                   <q-tab
                     name="innerMagicCraft"
-                    icon="fa-duotone fa-hammer-war"
+                    :icon="iconStyle + 'fa-hammer-war'"
                     :label="innerMagicLabels.innerMagicCraft"
                   />
                 </q-tabs>
@@ -370,7 +378,7 @@
       </q-tab-panels>
     </q-card>
     <q-footer class="footer">
-      <q-icon name="fa-duotone fa-hourglass-end" color="deep-purple-3" size="20px" />
+      <i :class="iconStyle + 'fa-hourglass-end'" color="deep-purple-3" size="20px" />
       <span class="q-mr-md footer-label">До вечности:</span>
       <q-linear-progress
         :value="infinityProgress"
@@ -410,11 +418,17 @@ import { animate } from 'animejs';
 import { useStoreResearch } from 'stores/research';
 import { useStoreShop } from 'stores/shop';
 import { useStorePrestige } from 'stores/prestige';
+import { useStoreSetting } from 'stores/setting';
 
 const storeData = useStoreData();
 const storeResearch = useStoreResearch();
 const storeShop = useStoreShop();
 const storePrestige = useStorePrestige();
+const storeSetting = useStoreSetting();
+
+const iconStyle = computed(() => {
+  return storeSetting.iconStyle;
+});
 
 const formatNumber = storeData.formatNumber;
 
@@ -572,7 +586,7 @@ const infinityProgress = computed(() => {
   margin-left: 7px !important
   margin-right: 7px !important
 
-.banner-row > div > q-icon, span
+.banner-row > div > i, span
   margin-left: 4px !important
   margin-right: 4px !important
 
@@ -684,7 +698,7 @@ const infinityProgress = computed(() => {
   .on-color-shop-points,
   .on-color-research-points
     font-size: 15px !important
-  .q-icon
+  i
     font-size: 14px !important
     min-width: 0
     padding: 0 2px
