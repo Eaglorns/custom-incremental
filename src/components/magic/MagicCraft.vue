@@ -116,7 +116,7 @@ const getEssenceMetaById = (id: string) => {
   background: linear-gradient(145deg, rgba(52, 58, 64, 0.98), rgba(33, 37, 41, 0.95));
   border: 2px solid #495057;
   border-radius: 16px;
-  padding: 24px;
+  padding: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 500px;
@@ -125,7 +125,7 @@ const getEssenceMetaById = (id: string) => {
 
 .no-selection {
   text-align: center;
-  padding: 40px 20px;
+  padding: 30px 20px;
   color: #adb5bd;
   background: rgba(73, 80, 87, 0.3);
   border-radius: 12px;
@@ -148,12 +148,12 @@ const getEssenceMetaById = (id: string) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
-  padding: 20px;
+  margin-bottom: 16px;
+  padding: 12px;
   background: linear-gradient(135deg, rgba(0, 123, 255, 0.15), rgba(0, 123, 255, 0.08));
   border-radius: 12px;
   border: 1px solid rgba(0, 123, 255, 0.3);
-  gap: 20px;
+  gap: 12px;
 }
 
 .selected-rune-details {
@@ -163,59 +163,59 @@ const getEssenceMetaById = (id: string) => {
 
 .rune-title {
   font-weight: 700;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   color: #f8f9fa;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .rune-level-text {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #4dabf7;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
   font-weight: 600;
 }
 
 .rune-description {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #adb5bd;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .selected-rune-icon {
-  font-size: 3rem;
+  font-size: 2.2rem;
   flex-shrink: 0;
   opacity: 0.8;
 }
 
 .requirements-section {
-  margin-top: 24px;
+  margin-top: 20px;
 }
 
 .requirements-title {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: #ced4da;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   text-align: left;
   border-bottom: 2px solid #495057;
-  padding-bottom: 8px;
+  padding-bottom: 6px;
 }
 
 .requirements-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .requirement-item {
   background: rgba(73, 80, 87, 0.4);
   border: 1px solid #6c757d;
   border-radius: 8px;
-  padding: 16px;
+  padding: 12px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   transition: all 0.2s ease;
 
   &:hover {
@@ -230,7 +230,7 @@ const getEssenceMetaById = (id: string) => {
 }
 
 .requirement-icon {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   flex-shrink: 0;
 }
 
@@ -254,8 +254,8 @@ const getEssenceMetaById = (id: string) => {
 
 .craft-button {
   width: 100%;
-  padding: 16px 24px;
-  font-size: 1.1rem;
+  padding: 14px 20px;
+  font-size: 1.05rem;
   font-weight: 600;
   border-radius: 8px;
   text-transform: none;
@@ -285,95 +285,162 @@ const getEssenceMetaById = (id: string) => {
   }
 }
 
-// Мобильная адаптация
 @media (max-width: 768px) {
   .magic-craft {
-    padding: 20px;
-    margin: 0 16px;
+    padding: 12px;
+    margin: 0 8px;
   }
 
   .selected-rune-info {
     flex-direction: column;
     text-align: center;
-    gap: 16px;
+    gap: 6px;
+    padding: 10px;
+    margin-bottom: 12px;
   }
 
   .selected-rune-icon {
-    font-size: 2.5rem;
+    font-size: 1.6rem;
     order: -1;
   }
 
   .rune-title {
-    font-size: 1.2rem;
+    font-size: 0.95rem;
+    margin-bottom: 3px;
+  }
+
+  .rune-level-text {
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+  }
+
+  .rune-description {
+    font-size: 0.7rem;
+  }
+
+  .requirements-section {
+    margin-top: 16px;
+  }
+
+  .requirements-title {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
   }
 
   .requirements-grid {
     grid-template-columns: 1fr;
+    gap: 6px;
+    margin-bottom: 14px;
   }
 
   .requirement-item {
-    padding: 12px;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .requirement-icon {
+    font-size: 1.1rem;
+  }
+
+  .requirement-amount {
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+  }
+
+  .requirement-name {
+    font-size: 0.7rem;
   }
 
   .craft-button {
-    padding: 14px 20px;
-    font-size: 1rem;
+    padding: 10px 14px;
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 480px) {
   .magic-craft {
-    padding: 16px;
-    margin: 0 8px;
+    padding: 10px;
+    margin: 0 6px;
   }
 
   .no-selection {
-    padding: 30px 16px;
+    padding: 16px 10px;
   }
 
   .no-selection-icon {
-    font-size: 2.5rem;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
   }
 
-  .selected-rune-info {
-    padding: 16px;
-  }
-
-  .selected-rune-icon {
-    font-size: 2rem;
-  }
-
-  .rune-title {
-    font-size: 1.1rem;
-  }
-
-  .rune-level-text {
+  .no-selection-text {
     font-size: 0.9rem;
   }
 
-  .rune-description {
-    font-size: 0.8rem;
+  .selected-rune-info {
+    padding: 8px;
+    gap: 4px;
+    margin-bottom: 10px;
   }
 
-  .requirement-item {
-    padding: 10px;
-  }
-
-  .requirement-icon {
+  .selected-rune-icon {
     font-size: 1.3rem;
   }
 
-  .requirement-amount {
+  .rune-title {
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+  }
+
+  .rune-level-text {
+    font-size: 0.7rem;
+    margin-bottom: 3px;
+  }
+
+  .rune-description {
+    font-size: 0.65rem;
+  }
+
+  .requirements-section {
+    margin-top: 12px;
+  }
+
+  .requirements-title {
     font-size: 0.85rem;
+    margin-bottom: 6px;
+    padding-bottom: 3px;
+  }
+
+  .requirements-grid {
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+
+  .requirement-item {
+    padding: 6px;
+    gap: 6px;
+  }
+
+  .requirement-icon {
+    font-size: 0.95rem;
+  }
+
+  .requirement-amount {
+    font-size: 0.7rem;
+    margin-bottom: 1px;
   }
 
   .requirement-name {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
   }
 
   .craft-button {
-    padding: 12px 18px;
-    font-size: 0.95rem;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+
+  .craft-button .fas {
+    margin-right: 4px;
   }
 }
 </style>

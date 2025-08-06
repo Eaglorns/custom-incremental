@@ -56,88 +56,98 @@ const getRequiredEssence = (essenceId: string) => {
 
 .essences-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
-  gap: 6px;
-  margin-bottom: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
 .essence-item {
   background: linear-gradient(145deg, #a8afb6, #e6e6e6);
   border: 1px solid #dee2e6;
-  border-radius: 8px;
-  padding: 8px 4px;
+  border-radius: 10px;
+  padding: 6px 4px;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
   &.insufficient {
     border-color: #dc3545;
     background: linear-gradient(145deg, #f8d7da, #f1aeb5);
-    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+    box-shadow: 0 3px 6px rgba(220, 53, 69, 0.25);
   }
 }
 
 .essence-icon {
-  font-size: 1.5rem;
-  margin-bottom: 4px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+  font-size: 3rem;
+  margin-bottom: 2px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.15));
 }
 
 .essence-amount {
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   color: #495057;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+  margin-bottom: 2px;
 }
 
 .essence-name {
-  font-size: 0.7rem;
+  font-size: 0.9rem;
   color: #6c757d;
-  margin-top: 2px;
-  font-weight: 500;
+  margin-top: 0px;
+  font-weight: 600;
 }
 
 // Мобильная адаптация
 @media (max-width: 768px) {
   .essences-grid {
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-    gap: 4px;
+    grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+    gap: 8px;
   }
 
   .essence-item {
-    padding: 6px 3px;
+    padding: 4px 3px;
+    min-height: 85px;
   }
 
   .essence-icon {
-    font-size: 1.2rem;
-    margin-bottom: 2px;
+    font-size: 2.4rem;
+    margin-bottom: 1px;
   }
 
   .essence-amount {
-    font-size: 0.8rem;
+    font-size: 1.05rem;
   }
 
   .essence-name {
-    font-size: 0.6rem;
+    font-size: 0.8rem;
   }
 }
 
 @media (max-width: 480px) {
   .essences-grid {
-    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-    gap: 3px;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 6px;
+  }
+
+  .essence-item {
+    min-height: 75px;
   }
 
   .essence-icon {
-    font-size: 1rem;
+    font-size: 2rem;
   }
 
   .essence-amount {
-    font-size: 0.7rem;
+    font-size: 0.95rem;
   }
 
   .essence-name {
-    font-size: 0.55rem;
+    font-size: 0.75rem;
   }
 }
 </style>

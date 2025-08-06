@@ -31,10 +31,55 @@
               <i :class="iconStyle + mage.icon" :style="{ color: mage.iconColor }"></i>
             </div>
             <div class="mage-info">
-              <div class="mage-name">{{ mage.name }}</div>
+              <div class="mage-header">
+                <div class="mage-name">{{ mage.name }}</div>
+                <div class="mage-rank" :style="{ color: mage.rank.color }">
+                  {{ mage.rank.name }}
+                </div>
+              </div>
               <div class="mage-level">Уровень {{ formatNumber(mage.level) }}</div>
-              <div class="mage-rank" :style="{ color: mage.rank.color }">
-                {{ mage.rank.name }}
+
+              <!-- Мобильная информация о маге -->
+              <div class="mobile-mage-details">
+                <div class="experience-section">
+                  <div class="exp-header">
+                    <span class="exp-label">Опыт:</span>
+                    <span class="exp-values">
+                      {{ formatNumber(storeMagic.getMageExperienceProgress(mage).current) }} /
+                      {{ formatNumber(storeMagic.getMageExperienceProgress(mage).max) }}
+                    </span>
+                  </div>
+                  <div class="exp-bar-container">
+                    <q-linear-progress
+                      :value="storeMagic.getMageExperienceProgress(mage).percentage / 100"
+                      color="primary"
+                      track-color="grey-8"
+                      size="8px"
+                      rounded
+                      class="exp-progress"
+                    />
+                  </div>
+                </div>
+
+                <div v-if="getMageRunes(mage).length > 0" class="mobile-runes">
+                  <div class="runes-label">Руны:</div>
+                  <div class="rune-grid-mobile">
+                    <div
+                      v-for="rune in getMageRunes(mage).slice(0, 6)"
+                      :key="rune.id"
+                      class="rune-item-mobile"
+                      :style="{ color: rune.color }"
+                    >
+                      <i :class="iconStyle + rune.icon"></i>
+                      <span class="rune-quantity">
+                        {{ formatNumber(mage.runeQuantities[rune.id] || new Decimal(0)) }}
+                      </span>
+                    </div>
+                    <div v-if="getMageRunes(mage).length > 6" class="more-runes">
+                      +{{ getMageRunes(mage).length - 6 }}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -164,6 +209,12 @@ const selectedMageRunes = computed(() => {
     .map((runeId) => RUNE_META.find((meta) => meta.id === runeId))
     .filter((rune): rune is NonNullable<typeof rune> => Boolean(rune));
 });
+
+const getMageRunes = (mage: Mage) => {
+  return mage.runeIds
+    .map((runeId) => RUNE_META.find((meta) => meta.id === runeId))
+    .filter((rune): rune is NonNullable<typeof rune> => Boolean(rune));
+};
 
 const selectMage = (mage: Mage) => {
   storeMagic.selectedMage = mage;
@@ -324,7 +375,7 @@ const selectMage = (mage: Mage) => {
 
       .mage-item {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 12px;
         padding: 12px;
         background: linear-gradient(145deg, #363a5c, #2d3251);
@@ -347,30 +398,46 @@ const selectMage = (mage: Mage) => {
           background: linear-gradient(145deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2));
           border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 50%;
+          flex-shrink: 0;
         }
 
         .mage-info {
           flex: 1;
+          min-width: 0;
 
-          .mage-name {
-            color: #e5e7eb;
-            font-size: 14px;
-            font-weight: bold;
-            margin: 0;
+          .mage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+
+            .mage-name {
+              color: #e5e7eb;
+              font-size: 14px;
+              font-weight: bold;
+              margin: 0;
+            }
+
+            .mage-rank {
+              font-size: 10px;
+              font-weight: bold;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              padding: 2px 6px;
+              border-radius: 4px;
+              background: rgba(0, 0, 0, 0.3);
+              border: 1px solid currentColor;
+            }
           }
 
           .mage-level {
             color: #a1a1aa;
             font-size: 12px;
-            margin: 2px 0 0 0;
+            margin: 0 0 8px 0;
           }
 
-          .mage-rank {
-            font-size: 10px;
-            font-weight: bold;
-            margin: 2px 0 0 0;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+          .mobile-mage-details {
+            display: none;
           }
         }
       }
@@ -627,8 +694,97 @@ const selectMage = (mage: Mage) => {
   .magic-mages {
     .mages-layout {
       grid-template-columns: 1fr;
-      grid-template-rows: auto 1fr;
+      grid-template-rows: auto;
       height: auto;
+    }
+
+    .mage-panel-placeholder {
+      .mage-item {
+        .mobile-mage-details {
+          display: block !important;
+          margin-top: 8px;
+          padding-top: 8px;
+          border-top: 1px solid #4a5578;
+
+          .experience-section {
+            margin-bottom: 8px;
+
+            .exp-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 4px;
+
+              .exp-label {
+                color: #a1a1aa;
+                font-size: 10px;
+                font-weight: 500;
+              }
+
+              .exp-values {
+                color: #e5e7eb;
+                font-size: 10px;
+                font-weight: bold;
+              }
+            }
+
+            .exp-bar-container {
+              .exp-progress {
+                border-radius: 4px;
+                box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+              }
+            }
+          }
+
+          .mobile-runes {
+            .runes-label {
+              color: #a1a1aa;
+              font-size: 10px;
+              font-weight: 500;
+              margin-bottom: 4px;
+            }
+
+            .rune-grid-mobile {
+              display: flex;
+              gap: 4px;
+              flex-wrap: wrap;
+              align-items: center;
+
+              .rune-item-mobile {
+                display: flex;
+                align-items: center;
+                gap: 2px;
+                padding: 2px 4px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 4px;
+                border: 1px solid currentColor;
+
+                i {
+                  font-size: 10px;
+                }
+
+                .rune-quantity {
+                  font-size: 9px;
+                  font-weight: bold;
+                }
+              }
+
+              .more-runes {
+                color: #a1a1aa;
+                font-size: 9px;
+                font-style: italic;
+                padding: 2px 4px;
+                background: rgba(161, 161, 170, 0.2);
+                border-radius: 4px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .mage-management {
+      display: none;
     }
   }
 }

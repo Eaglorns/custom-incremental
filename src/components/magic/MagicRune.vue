@@ -206,8 +206,8 @@ onUnmounted(() => {
 
 .runes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
 }
 
 .rune-slot {
@@ -215,10 +215,10 @@ onUnmounted(() => {
   background: linear-gradient(145deg, #f8f9fa, #e9ecef);
   border: 2px solid #dee2e6;
   border-radius: 10px;
-  padding: 10px 6px;
+  padding: 8px 6px;
   text-align: center;
   cursor: pointer;
-  min-height: 85px;
+  min-height: 115px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -367,7 +367,7 @@ onUnmounted(() => {
 }
 
 .rune-icon {
-  font-size: 1.9rem;
+  font-size: 3.8rem;
   margin-bottom: 4px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
@@ -375,17 +375,17 @@ onUnmounted(() => {
 
 .rune-level {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 6px;
+  right: 6px;
   background: linear-gradient(145deg, #007bff, #0056b3);
   color: white;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: bold;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
@@ -393,17 +393,17 @@ onUnmounted(() => {
 
 .craft-indicator {
   position: absolute;
-  top: 4px;
-  left: 4px;
+  top: 6px;
+  left: 6px;
   background: linear-gradient(145deg, #1e7e34, #155a24);
   color: white;
   border-radius: 50%;
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   animation: craft-pulse 2s infinite;
 
@@ -425,7 +425,7 @@ onUnmounted(() => {
 }
 
 .rune-name {
-  font-size: 0.7rem;
+  font-size: 0.95rem;
   font-weight: bold;
   color: #495057;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
@@ -434,70 +434,70 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .runes-grid {
-    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+    gap: 10px;
   }
 
   .rune-slot {
-    padding: 8px 4px;
-    min-height: 70px;
+    padding: 6px 4px;
+    min-height: 100px;
   }
 
   .rune-icon {
-    font-size: 1.5rem;
+    font-size: 3rem;
     margin-bottom: 3px;
   }
 
   .rune-level {
-    width: 16px;
-    height: 16px;
-    font-size: 0.6rem;
-    top: 3px;
-    right: 3px;
+    width: 22px;
+    height: 22px;
+    font-size: 0.7rem;
+    top: 5px;
+    right: 5px;
   }
 
   .craft-indicator {
-    width: 14px;
-    height: 14px;
-    font-size: 0.5rem;
-    top: 3px;
-    left: 3px;
+    width: 20px;
+    height: 20px;
+    font-size: 0.6rem;
+    top: 5px;
+    left: 5px;
   }
 
   .rune-name {
-    font-size: 0.6rem;
+    font-size: 0.8rem;
   }
 }
 
 @media (max-width: 480px) {
   .runes-grid {
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-    gap: 4px;
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: 8px;
   }
 
   .rune-slot {
-    padding: 6px 3px;
-    min-height: 60px;
+    padding: 4px 3px;
+    min-height: 75px;
   }
 
   .rune-icon {
-    font-size: 1.3rem;
+    font-size: 2.2rem;
   }
 
   .rune-level {
-    width: 14px;
-    height: 14px;
-    font-size: 0.55rem;
+    width: 20px;
+    height: 20px;
+    font-size: 0.65rem;
   }
 
   .craft-indicator {
-    width: 12px;
-    height: 12px;
-    font-size: 0.45rem;
+    width: 18px;
+    height: 18px;
+    font-size: 0.55rem;
   }
 
   .rune-name {
-    font-size: 0.55rem;
+    font-size: 0.7rem;
   }
 }
 </style>
