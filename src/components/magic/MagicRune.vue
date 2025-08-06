@@ -54,6 +54,8 @@ const craftingRune = ref<Rune | null>(null);
 const craftProgress = ref(0);
 const craftTimer = ref<number | null>(null);
 const craftDuration = 500;
+const isMouseDown = ref(false);
+const currentCraftingRune = ref<Rune | null>(null);
 
 const iconStyle = computed(() => {
   return storeSetting.iconStyle;
@@ -81,12 +83,41 @@ const startCrafting = (rune: Rune) => {
 
   storeMagic.selectRune(rune);
 
+  isMouseDown.value = true;
+  currentCraftingRune.value = rune;
+
+  if (craftingRune.value?.id === rune.id) {
+    // Уже крафтим эту руну, не начинаем заново
+    return;
+  }
+
+  startCraftingCycle(rune);
+};
+
+const startCraftingCycle = (rune: Rune) => {
+  if (
+    !storeMagic.canCraftSpecificRune(rune) ||
+    !isMouseDown.value ||
+    currentCraftingRune.value?.id !== rune.id
+  ) {
+    return;
+  }
+
   craftingRune.value = rune;
   craftProgress.value = 0;
 
   const startTime = Date.now();
 
   const updateProgress = () => {
+    if (
+      !isMouseDown.value ||
+      currentCraftingRune.value?.id !== rune.id ||
+      !storeMagic.canCraftSpecificRune(rune)
+    ) {
+      stopCrafting();
+      return;
+    }
+
     const elapsed = Date.now() - startTime;
     const progress = Math.min((elapsed / craftDuration) * 100, 100);
     craftProgress.value = progress;
@@ -102,6 +133,9 @@ const startCrafting = (rune: Rune) => {
 };
 
 const stopCrafting = () => {
+  isMouseDown.value = false;
+  currentCraftingRune.value = null;
+
   if (craftTimer.value) {
     cancelAnimationFrame(craftTimer.value);
     craftTimer.value = null;
@@ -115,7 +149,30 @@ const completeCrafting = () => {
     storeMagic.craftRune();
     storeSetting.playSound('MagicOnRuneCraft', 14);
   }
-  stopCrafting();
+
+  // Сброс состояния крафта, но сохранение информации о зажатии
+  const wasMouseDown = isMouseDown.value;
+  const runeBeingCrafted = currentCraftingRune.value;
+
+  if (craftTimer.value) {
+    cancelAnimationFrame(craftTimer.value);
+    craftTimer.value = null;
+  }
+  craftingRune.value = null;
+  craftProgress.value = 0;
+
+  // Если мышь всё ещё зажата и можно крафтить эту же руну, начинаем новый цикл
+  if (wasMouseDown && runeBeingCrafted && storeMagic.canCraftSpecificRune(runeBeingCrafted)) {
+    setTimeout(() => {
+      if (
+        isMouseDown.value &&
+        currentCraftingRune.value?.id === runeBeingCrafted.id &&
+        storeMagic.canCraftSpecificRune(runeBeingCrafted)
+      ) {
+        startCraftingCycle(runeBeingCrafted);
+      }
+    }, 50); // Небольшая задержка для плавности
+  }
 };
 
 onUnmounted(() => {
