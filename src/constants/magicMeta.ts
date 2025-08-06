@@ -9,8 +9,8 @@ export interface EssenceMeta {
 
 export interface RuneRequirementMeta {
   essenceId: string;
-  baseAmount: number;
-  multiplier: number;
+  baseAmount: Decimal;
+  multiplier: Decimal;
 }
 
 export interface RuneMeta {
@@ -234,9 +234,9 @@ export const RUNE_META: RuneMeta[] = [
     icon: 'fas fa-icicles',
     color: '#3498db',
     requirements: [
-      { essenceId: 'ice', baseAmount: 8, multiplier: 1.5 },
-      { essenceId: 'water', baseAmount: 6, multiplier: 1.3 },
-      { essenceId: 'air', baseAmount: 5, multiplier: 1.2 },
+      { essenceId: 'ice', baseAmount: new Decimal(8), multiplier: new Decimal(1.5) },
+      { essenceId: 'water', baseAmount: new Decimal(6), multiplier: new Decimal(1.3) },
+      { essenceId: 'air', baseAmount: new Decimal(5), multiplier: new Decimal(1.2) },
     ],
   },
   {
@@ -247,9 +247,9 @@ export const RUNE_META: RuneMeta[] = [
     icon: 'fas fa-biohazard',
     color: '#8fbc8f',
     requirements: [
-      { essenceId: 'poison', baseAmount: 8, multiplier: 1.5 },
-      { essenceId: 'chaos', baseAmount: 6, multiplier: 1.3 },
-      { essenceId: 'dark', baseAmount: 4, multiplier: 1.2 },
+      { essenceId: 'poison', baseAmount: new Decimal(8), multiplier: new Decimal(1.5) },
+      { essenceId: 'chaos', baseAmount: new Decimal(6), multiplier: new Decimal(1.3) },
+      { essenceId: 'dark', baseAmount: new Decimal(4), multiplier: new Decimal(1.2) },
     ],
   },
   {
@@ -259,9 +259,9 @@ export const RUNE_META: RuneMeta[] = [
     icon: 'fas fa-cloud-bolt',
     color: '#1e90ff',
     requirements: [
-      { essenceId: 'lightning', baseAmount: 8, multiplier: 1.5 },
-      { essenceId: 'air', baseAmount: 6, multiplier: 1.3 },
-      { essenceId: 'water', baseAmount: 4, multiplier: 1.2 },
+      { essenceId: 'lightning', baseAmount: new Decimal(8), multiplier: new Decimal(1.5) },
+      { essenceId: 'air', baseAmount: new Decimal(6), multiplier: new Decimal(1.3) },
+      { essenceId: 'water', baseAmount: new Decimal(4), multiplier: new Decimal(1.2) },
     ],
   },
   {
@@ -271,9 +271,9 @@ export const RUNE_META: RuneMeta[] = [
     icon: 'fas fa-crown',
     color: '#ffd700',
     requirements: [
-      { essenceId: 'light', baseAmount: 10, multiplier: 1.8 },
-      { essenceId: 'order', baseAmount: 8, multiplier: 1.5 },
-      { essenceId: 'spirit', baseAmount: 6, multiplier: 1.3 },
+      { essenceId: 'light', baseAmount: new Decimal(10), multiplier: new Decimal(1.8) },
+      { essenceId: 'order', baseAmount: new Decimal(8), multiplier: new Decimal(1.5) },
+      { essenceId: 'spirit', baseAmount: new Decimal(6), multiplier: new Decimal(1.3) },
     ],
   },
   {
@@ -284,9 +284,9 @@ export const RUNE_META: RuneMeta[] = [
     icon: 'fas fa-fire-flame-curved',
     color: '#ff6600',
     requirements: [
-      { essenceId: 'fire', baseAmount: 8, multiplier: 1.5 },
-      { essenceId: 'arcane', baseAmount: 6, multiplier: 1.4 },
-      { essenceId: 'crystal', baseAmount: 4, multiplier: 1.2 },
+      { essenceId: 'fire', baseAmount: new Decimal(8), multiplier: new Decimal(1.5) },
+      { essenceId: 'arcane', baseAmount: new Decimal(6), multiplier: new Decimal(1.4) },
+      { essenceId: 'crystal', baseAmount: new Decimal(4), multiplier: new Decimal(1.2) },
     ],
   },
   {
@@ -297,9 +297,9 @@ export const RUNE_META: RuneMeta[] = [
     icon: 'fas fa-skull-crossbones',
     color: '#1a1a1a',
     requirements: [
-      { essenceId: 'death', baseAmount: 10, multiplier: 1.7 },
-      { essenceId: 'blood', baseAmount: 8, multiplier: 1.5 },
-      { essenceId: 'nature', baseAmount: 6, multiplier: 1.3 },
+      { essenceId: 'death', baseAmount: new Decimal(10), multiplier: new Decimal(1.7) },
+      { essenceId: 'blood', baseAmount: new Decimal(8), multiplier: new Decimal(1.5) },
+      { essenceId: 'nature', baseAmount: new Decimal(6), multiplier: new Decimal(1.3) },
     ],
   },
   {
@@ -310,9 +310,9 @@ export const RUNE_META: RuneMeta[] = [
     icon: 'fas fa-heart-crack',
     color: '#8b0000',
     requirements: [
-      { essenceId: 'metal', baseAmount: 10, multiplier: 1.6 },
-      { essenceId: 'earth', baseAmount: 6, multiplier: 1.4 },
-      { essenceId: 'lightning', baseAmount: 4, multiplier: 1.3 },
+      { essenceId: 'metal', baseAmount: new Decimal(10), multiplier: new Decimal(1.6) },
+      { essenceId: 'earth', baseAmount: new Decimal(6), multiplier: new Decimal(1.4) },
+      { essenceId: 'lightning', baseAmount: new Decimal(4), multiplier: new Decimal(1.3) },
     ],
   },
   {
@@ -322,9 +322,9 @@ export const RUNE_META: RuneMeta[] = [
     icon: 'fas fa-gem',
     color: '#32cd32',
     requirements: [
-      { essenceId: 'ice', baseAmount: 8, multiplier: 1.4 },
-      { essenceId: 'chaos', baseAmount: 6, multiplier: 1.5 },
-      { essenceId: 'dark', baseAmount: 5, multiplier: 1.3 },
+      { essenceId: 'ice', baseAmount: new Decimal(8), multiplier: new Decimal(1.4) },
+      { essenceId: 'chaos', baseAmount: new Decimal(6), multiplier: new Decimal(1.5) },
+      { essenceId: 'dark', baseAmount: new Decimal(5), multiplier: new Decimal(1.3) },
     ],
   },
 ];

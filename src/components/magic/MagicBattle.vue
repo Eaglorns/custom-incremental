@@ -13,10 +13,6 @@
             <div class="monster-info">
               <h6 class="monster-name">{{ storeMagic.monster.name }}</h6>
               <div class="monster-level">Уровень {{ storeMagic.monster.level }}</div>
-              <div class="monster-rewards" v-if="storeMagic.monster.rewards.length > 1">
-                <i class="fas fa-star" style="color: #f59e0b"></i>
-                {{ storeMagic.monster.rewards.length }} наград
-              </div>
               <div class="monster-kill-counter">
                 <i class="fas fa-skull" style="color: #fbbf24"></i>
                 До повышения уровня: {{ storeMagic.monsterKillCount }}
@@ -52,7 +48,6 @@
                 v-for="(effect, index) in storeMagic.monster.damageEffects"
                 :key="`${storeMagic.monster.id}-effect-${index}`"
                 class="effect-item"
-                :title="`${damageTypes.find((dt) => dt.type === effect.type)?.name} (${effect.stacks})`"
               >
                 <i
                   :class="damageTypes.find((dt) => dt.type === effect.type)?.icon"
@@ -75,17 +70,14 @@
                 :title="reward.name"
               >
                 <i :class="reward.icon" :style="{ color: reward.color }"></i>
-                <span>{{ reward.amount }}</span>
-                <span v-if="saturationBonus > 0" class="saturation-bonus">
-                  (+{{
-                    formatNumber(new Decimal(reward.baseAmount.mul(saturationBonus).mul(0.01)))
-                  }})
-                </span>
+                <span>{{
+                  formatNumber(
+                    reward.amount.mul(
+                      new Decimal(reward.baseAmount.mul(saturationBonus).mul(0.01)).plus(1),
+                    ),
+                  )
+                }}</span>
               </div>
-            </div>
-            <div v-if="saturationBonus > 0" class="saturation-info">
-              <i class="fas fa-gem" style="color: #32cd32"></i>
-              Насыщение: +{{ saturationBonus }}% к наградам
             </div>
           </div>
         </div>

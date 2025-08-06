@@ -39,8 +39,13 @@
             ></i>
           </div>
           <div class="requirement-amount">
-            {{ storeMagic.getEssenceById(requirement.essenceId)?.amount || 0 }} /
-            {{ storeMagic.getRequiredEssenceAmount(requirement) }}
+            {{
+              formatNumber(
+                storeMagic.getEssenceById(requirement.essenceId)?.amount || new Decimal(0),
+              )
+            }}
+            /
+            {{ formatNumber(storeMagic.getRequiredEssenceAmount(requirement)) }}
           </div>
           <div class="requirement-name">
             {{ getEssenceMetaById(requirement.essenceId)?.name }}
@@ -63,10 +68,15 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useStoreMagic } from 'src/stores/magic';
+import { useStoreMagic } from 'stores/magic';
+import { useStoreData } from 'stores/data';
 import { RUNE_META, ESSENCE_META } from 'src/constants/magicMeta';
+import Decimal from 'break_eternity.js';
 
 const storeMagic = useStoreMagic();
+const storeData = useStoreData();
+
+const formatNumber = storeData.formatNumber;
 
 const selectedRuneWithMeta = computed(() => {
   if (!storeMagic.selectedRune) return null;

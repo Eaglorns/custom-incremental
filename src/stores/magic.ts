@@ -44,7 +44,7 @@ export interface Essence {
 
 export interface Rune {
   id: string;
-  level: number;
+  level: Decimal;
 }
 
 interface DamageEffect {
@@ -90,7 +90,7 @@ export const useStoreMagic = defineStore('storeMagic', {
     })) as Essence[],
     runes: RUNE_META.map((meta) => ({
       id: meta.id,
-      level: 0,
+      level: new Decimal(0),
     })) as Rune[],
     selectedRune: null as Rune | null,
     monsterKillCount: 11,
@@ -184,8 +184,8 @@ export const useStoreMagic = defineStore('storeMagic', {
         return RUNE_META[rand];
       };
 
-      const calculateEffectAmount = (mage: Mage, runeId: string, runeLevel: number) => {
-        let effectAmount = new Decimal(Math.max(1, runeLevel));
+      const calculateEffectAmount = (mage: Mage, runeId: string, runeLevel: Decimal) => {
+        let effectAmount = new Decimal(Decimal.max(1, runeLevel));
         if (mage.runeIds.includes(runeId) && mage.runeQuantities[runeId]) {
           const runeQuantity = mage.runeQuantities[runeId]?.toNumber() ?? 0;
           const bonus = effectAmount.mul(runeQuantity).div(100);
@@ -215,7 +215,7 @@ export const useStoreMagic = defineStore('storeMagic', {
         if (!damageTypes.some((dt) => dt.type === runeId)) return;
 
         const runeState = this.runes.find((r) => r.id === runeId);
-        const runeLevel = runeState ? runeState.level : 0;
+        const runeLevel = runeState ? runeState.level : new Decimal(0);
         const effectAmount = calculateEffectAmount(mage, runeId, runeLevel);
 
         this.applyDamageEffect(runeId as DamageEffect['type'], effectAmount);
@@ -406,10 +406,8 @@ export const useStoreMagic = defineStore('storeMagic', {
     },
 
     getRequiredEssenceAmount(requirement: RuneRequirementMeta) {
-      if (!this.selectedRune) return 0;
-      return Math.floor(
-        requirement.baseAmount * Math.pow(requirement.multiplier, this.selectedRune.level),
-      );
+      if (!this.selectedRune) return new Decimal(0);
+      return requirement.baseAmount.mul(requirement.multiplier.pow(this.selectedRune.level));
     },
 
     canAffordEssenceRequirement(requirement: RuneRequirementMeta) {
@@ -441,7 +439,7 @@ export const useStoreMagic = defineStore('storeMagic', {
 
       const runeInArray = this.runes.find((r) => r.id === this.selectedRune!.id);
       if (runeInArray) {
-        runeInArray.level++;
+        runeInArray.level = runeInArray.level.plus(1);
         this.selectedRune = runeInArray;
       }
     },

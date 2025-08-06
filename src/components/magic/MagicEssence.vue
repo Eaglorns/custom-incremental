@@ -5,12 +5,12 @@
         v-for="essence in essencesWithMeta"
         :key="essence.id"
         class="essence-item"
-        :class="{ insufficient: essence.amount < getRequiredEssence(essence.id) }"
+        :class="{ insufficient: essence.amount.lt(getRequiredEssence(essence.id)) }"
       >
         <div class="essence-icon">
           <i :class="essence.meta.icon" :style="{ color: essence.meta.color }"></i>
         </div>
-        <div class="essence-amount">{{ essence.amount }}</div>
+        <div class="essence-amount">{{ formatNumber(essence.amount) }}</div>
         <div class="essence-name">{{ essence.meta.name }}</div>
       </div>
     </div>
@@ -19,10 +19,14 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useStoreMagic } from 'src/stores/magic';
+import { useStoreMagic } from 'stores/magic';
 import { ESSENCE_META } from 'src/constants/magicMeta';
+import { useStoreData } from 'stores/data';
 
 const storeMagic = useStoreMagic();
+const storeData = useStoreData();
+
+const formatNumber = storeData.formatNumber;
 
 const essencesWithMeta = computed(() => {
   return storeMagic.essences.map((essence) => {
