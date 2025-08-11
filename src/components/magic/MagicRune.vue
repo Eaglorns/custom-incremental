@@ -471,17 +471,17 @@ onUnmounted(() => {
 
 @media (max-width: 480px) {
   .runes-grid {
-    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 6px;
   }
 
   .rune-slot {
     padding: 4px 3px;
-    min-height: 75px;
+    min-height: 72px;
   }
 
   .rune-icon {
-    font-size: 2.2rem;
+    font-size: 2rem;
   }
 
   .rune-level {
@@ -497,7 +497,30 @@ onUnmounted(() => {
   }
 
   .rune-name {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .runes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    gap: 6px;
+  }
+  .rune-slot {
+    min-height: 68px;
+  }
+  .rune-icon {
+    font-size: 1.85rem;
+  }
+  .rune-level {
+    width: 18px;
+    height: 18px;
+    font-size: 0.6rem;
+  }
+  .craft-indicator {
+    width: 16px;
+    height: 16px;
+    font-size: 0.5rem;
   }
 }
 </style>

@@ -388,13 +388,98 @@ const displayedRewards = computed(() => {
 @media (max-width: 768px) {
   .battle-panel {
     .battle-area {
-      height: 400px;
+      height: 360px;
 
       .monster-card {
+        padding: 14px;
         .monster-header .monster-avatar {
-          font-size: 24px;
-          width: 40px;
-          height: 40px;
+          font-size: 22px;
+          width: 36px;
+          height: 36px;
+        }
+        .monster-info {
+          .monster-name {
+            font-size: 16px;
+          }
+          .monster-level {
+            font-size: 12px;
+          }
+        }
+        .monster-stats {
+          gap: 8px;
+          font-size: 11px;
+        }
+        .monster-kill-counter {
+          font-size: 11px;
+          padding: 2px 6px;
+        }
+        .monster-rewards {
+          font-size: 12px;
+        }
+        .monster-health {
+          .health-bar {
+            height: 20px;
+          }
+          .health-text {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .battle-panel {
+    padding: 12px;
+    .battle-area {
+      height: 320px;
+      .monster-card {
+        padding: 12px;
+        gap: 10px;
+        .monster-header {
+          gap: 10px;
+        }
+        .monster-info {
+          .monster-name {
+            font-size: 14px;
+          }
+          .monster-level {
+            font-size: 11px;
+          }
+        }
+        .monster-stats {
+          gap: 6px;
+          font-size: 10px;
+        }
+        .monster-kill-counter {
+          font-size: 10px;
+          padding: 2px 5px;
+        }
+        .monster-health {
+          .health-label {
+            font-size: 12px;
+          }
+          .health-bar {
+            height: 18px;
+          }
+          .health-text {
+            font-size: 11px;
+          }
+        }
+        .effects-list {
+          gap: 6px;
+        }
+        .effect-item {
+          padding: 3px 6px;
+          font-size: 10px;
+        }
+        .rewards-list {
+          gap: 8px;
+        }
+        .reward-item {
+          padding: 5px 8px;
+          font-size: 11px;
         }
       }
     }

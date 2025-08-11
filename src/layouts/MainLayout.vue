@@ -48,43 +48,60 @@ const localeOptions = [
 ];
 </script>
 
-<style lang="sass" scoped>
-.q-bar.q-electron-drag
-  display: flex
-  flex-direction: row
-  flex-wrap: nowrap
-  align-items: center
-  overflow: hidden
-  min-width: 0
-  i, .text-h6, .text-caption, .q-select
-    min-width: 0
-    max-width: 100%
-    overflow: hidden
-    text-overflow: ellipsis
-  .q-space
-    flex: 1 1 auto
-  .q-select
-    max-width: 150px
-    min-width: 60px
-    font-size: 14px
-    margin-left: 8px
-  .text-h6
-    margin-left: 8px
-  .text-caption
-    margin-left: 4px
-  i
-    margin-right: 4px
-@media (max-width: 700px)
-  .text-h6
-    font-size: 15px
-    text-align: left
-  i
-    margin-right: 8px
-    margin-bottom: 0
-  .q-select
-    right: 0
-    font-size: 14px
-  .text-caption
-    margin: 0 0 4px 0
-    font-size: 13px
+<style lang="scss" scoped>
+.q-bar.q-electron-drag {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow: hidden;
+  min-width: 0;
+  i,
+  .text-h6,
+  .text-caption,
+  .q-select {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .q-space {
+    flex: 1 1 auto;
+  }
+  .q-select {
+    max-width: 150px;
+    min-width: 60px;
+    font-size: 14px;
+    margin-left: 8px;
+  }
+  .text-h6 {
+    margin-left: 8px;
+  }
+  .text-caption {
+    margin-left: 4px;
+  }
+  i {
+    margin-right: 4px;
+  }
+}
+
+@media (max-width: 700px) {
+  .text-h6 {
+    font-size: 15px;
+    text-align: left;
+  }
+  i {
+    margin-right: 8px;
+    margin-bottom: 0;
+  }
+  .q-select {
+    right: 0;
+    font-size: 13px;
+    max-width: 120px;
+  }
+  .text-caption {
+    margin: 0 0 4px 0;
+    font-size: 12px;
+  }
+}
 </style>

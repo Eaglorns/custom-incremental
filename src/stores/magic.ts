@@ -82,6 +82,7 @@ export interface Monster {
 
 export const useStoreMagic = defineStore('storeMagic', {
   state: () => ({
+    points: new Decimal(0),
     mages: [] as Mage[],
     selectedMage: null as Mage | null,
     essences: ESSENCE_META.map((meta) => ({
@@ -165,6 +166,9 @@ export const useStoreMagic = defineStore('storeMagic', {
       }
       return state.monster.regeneration;
     },
+    pointsGainPerTick(state) {
+      return state.mages.reduce((sum, mage) => sum.plus(mage.level), new Decimal(0));
+    },
     save(state) {
       return {
         mages: state.mages,
@@ -173,12 +177,14 @@ export const useStoreMagic = defineStore('storeMagic', {
         monsterKillCount: state.monsterKillCount,
         monsterGeneratedLevel: state.monsterGeneratedLevel,
         monster: state.monster,
+        points: state.points,
       };
     },
   },
 
   actions: {
     processMage() {
+      let totalPointsGain = new Decimal(0);
       const getRandomRune = () => {
         const rand = Math.floor(Math.random() * RUNE_META.length);
         return RUNE_META[rand];
@@ -209,6 +215,7 @@ export const useStoreMagic = defineStore('storeMagic', {
       };
 
       this.mages.forEach((mage) => {
+        totalPointsGain = totalPointsGain.plus(mage.level);
         const randomRune = getRandomRune();
         if (!randomRune) return;
         const runeId = randomRune.id;
@@ -221,6 +228,10 @@ export const useStoreMagic = defineStore('storeMagic', {
         this.applyDamageEffect(runeId as DamageEffect['type'], effectAmount);
         maybeAddRuneQuantity(mage, runeId);
       });
+
+      if (totalPointsGain.gt(0)) {
+        this.points = this.points.plus(totalPointsGain);
+      }
     },
     processEffects() {
       this.monster.damageEffects.forEach((effect) => {
@@ -548,9 +559,10 @@ export const useStoreMagic = defineStore('storeMagic', {
       monsterKillCount?: number;
       monsterGeneratedLevel?: number;
       monster?: Monster;
+      points?: Decimal | number | string;
     }) {
-      if (loaded) {
-        this.mages = (loaded.mages || []).map((mage) => ({
+      const loadMages = (mages?: Mage[]) =>
+        (mages || []).map((mage) => ({
           ...mage,
           level: new Decimal(mage.level),
           currentExp: new Decimal(mage.currentExp),
@@ -563,36 +575,68 @@ export const useStoreMagic = defineStore('storeMagic', {
           ),
         }));
 
-        this.essences = (loaded.essences || this.essences).map((essence) => ({
+      const loadEssences = (essences?: Essence[], defaultEssences?: Essence[]) =>
+        (essences || defaultEssences || []).map((essence) => ({
           ...essence,
           amount: new Decimal(essence.amount),
         }));
 
-        this.runes = (loaded.runes || this.runes).map((rune) => ({
+      const loadRunes = (runes?: Rune[], defaultRunes?: Rune[]) =>
+        (runes || defaultRunes || []).map((rune) => ({
           ...rune,
           level: new Decimal(rune.level),
         }));
 
+      const loadMonster = (monster?: Monster) =>
+        monster
+          ? {
+              ...monster,
+              level: new Decimal(monster.level),
+              currentHealth: new Decimal(monster.currentHealth),
+              maxHealth: new Decimal(monster.maxHealth),
+              armor: new Decimal(monster.armor),
+              regeneration: new Decimal(monster.regeneration),
+              damageEffects: (monster.damageEffects || []).map((effect) => ({
+                ...effect,
+                stacks: new Decimal(effect.stacks),
+              })),
+              rewards: (monster.rewards || []).map((reward) => ({
+                ...reward,
+                amount: new Decimal(reward.amount),
+              })),
+            }
+          : undefined;
+
+      const loadPoints = (points?: Decimal | number | string) => {
+        if (points === undefined) return undefined;
+        if (typeof points === 'number' || typeof points === 'string') {
+          return new Decimal(points);
+        }
+        const v = points as unknown as {
+          toString?: () => string;
+          toNumber?: () => number;
+        };
+        if (v && typeof v.toString === 'function') {
+          return new Decimal(v.toString());
+        }
+        if (v && typeof v.toNumber === 'function') {
+          return new Decimal(v.toNumber());
+        }
+        return new Decimal(0);
+      };
+
+      if (loaded) {
+        this.mages = loadMages(loaded.mages);
+        this.essences = loadEssences(loaded.essences, this.essences);
+        this.runes = loadRunes(loaded.runes, this.runes);
         this.monsterKillCount = loaded.monsterKillCount || 10;
         this.monsterGeneratedLevel = loaded.monsterGeneratedLevel || 1;
-
         if (loaded.monster) {
-          this.monster = {
-            ...loaded.monster,
-            level: new Decimal(loaded.monster.level),
-            currentHealth: new Decimal(loaded.monster.currentHealth),
-            maxHealth: new Decimal(loaded.monster.maxHealth),
-            armor: new Decimal(loaded.monster.armor),
-            regeneration: new Decimal(loaded.monster.regeneration),
-            damageEffects: (loaded.monster.damageEffects || []).map((effect) => ({
-              ...effect,
-              stacks: new Decimal(effect.stacks),
-            })),
-            rewards: (loaded.monster.rewards || []).map((reward) => ({
-              ...reward,
-              amount: new Decimal(reward.amount),
-            })),
-          };
+          this.monster = loadMonster(loaded.monster)!;
+        }
+        const loadedPoints = loadPoints(loaded.points);
+        if (loadedPoints !== undefined) {
+          this.points = loadedPoints;
         }
       }
       if (this.monster.name === '') {

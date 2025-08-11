@@ -699,6 +699,7 @@ const selectMage = (mage: Mage) => {
     }
 
     .mage-panel-placeholder {
+      padding: 12px;
       .mage-item {
         .mobile-mage-details {
           display: block !important;
@@ -761,6 +762,50 @@ const selectMage = (mage: Mage) => {
 
                 i {
                   font-size: 10px;
+
+                  @media (max-width: 480px) {
+                    .magic-mages {
+                      .mage-panel-placeholder {
+                        padding: 10px;
+                        .hire-button {
+                          padding: 6px 10px;
+                          font-size: 12px;
+                        }
+                        .mage-list {
+                          gap: 6px;
+                        }
+                        .mage-item {
+                          gap: 8px;
+                          padding: 10px;
+                          .mage-avatar {
+                            font-size: 18px;
+                            width: 28px;
+                            height: 28px;
+                          }
+                          .mage-info {
+                            .mage-header {
+                              .mage-name {
+                                font-size: 13px;
+                              }
+                              .mage-rank {
+                                font-size: 9px;
+                                padding: 1px 5px;
+                              }
+                            }
+                            .mage-level {
+                              font-size: 11px;
+                              margin-bottom: 6px;
+                            }
+                          }
+                          .mobile-mage-details {
+                            .experience-section .exp-header {
+                              margin-bottom: 2px;
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
 
                 .rune-quantity {

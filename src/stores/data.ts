@@ -4,7 +4,36 @@ import { useStoreResearch } from 'stores/research';
 import { useStoreShop } from 'stores/shop';
 import { useStoreAchievement } from 'stores/achievement';
 import { useStorePrestige } from 'stores/prestige';
-import { Duration } from 'luxon';
+
+// Time constants and threshold computed once to avoid repeated allocations
+const SECS_IN_MIN = 60;
+const SECS_IN_HOUR = 60 * SECS_IN_MIN;
+const SECS_IN_DAY = 24 * SECS_IN_HOUR;
+const SECS_IN_YEAR = 365 * SECS_IN_DAY; // consistent with our day/year display
+const INFINITY_THRESHOLD_SECONDS = new Decimal(SECS_IN_YEAR).mul(100); // > 100 years -> '∞'
+
+// Helpers for time formatting kept outside to reduce complexity in core function
+function fmtYears(y: number, d: number): string {
+  if (y > 10) return `${y} г`;
+  if (d) return `${y} г ${d} д`;
+  return `${y} г`;
+}
+
+function fmtDays(d: number, h: number): string {
+  if (d > 10) return `${d} д`;
+  if (h) return `${d} д ${h} ч`;
+  return `${d} д`;
+}
+
+function fmtHours(h: number, m: number): string {
+  if (m) return `${h} ч ${m} м`;
+  return `${h} ч`;
+}
+
+function fmtMinutes(m: number, s: number): string {
+  if (s) return `${m} м ${s} с`;
+  return `${m} м`;
+}
 
 export const useStoreData = defineStore('storeData', {
   state: () => ({
@@ -18,7 +47,15 @@ export const useStoreData = defineStore('storeData', {
     formatNumber: () => {
       function cleanExp(str: string) {
         str = str.replace(/\.0+([e[])/, '$1').replace(/(\.\d*[1-9])0+([e[])/, '$1$2');
-        return str.replace(/e(-?\d{4,})/, (m, p1) => `e${Number(p1).toExponential(2)}`);
+        return str.replace(/e(-?\d{4,})/g, (_m, p1: string) => {
+          const sign = p1.startsWith('-') ? '-' : '';
+          const digits = sign ? p1.slice(1) : p1;
+          const len = digits.length;
+          const lead = digits.slice(0, 3);
+          const mantissa = lead.length > 1 ? `${lead[0]}.${lead.slice(1)}` : lead[0];
+          const expPart = len - 1;
+          return `e${sign}${mantissa}e+${expPart}`;
+        });
       }
 
       function formatSmall(num: Decimal, fixed?: boolean) {
@@ -30,8 +67,14 @@ export const useStoreData = defineStore('storeData', {
       function formatScientific(num: Decimal) {
         const exp = num.log10().floor();
         const mantissa = num.div(Decimal.pow(10, exp));
-        const expStr =
-          Math.abs(exp.toNumber()) >= 1000 ? exp.toNumber().toExponential(2) : exp.toFixed(0);
+        let expStr: string;
+        if (exp.abs().gte(1000)) {
+          const k = exp.log10().floor();
+          const m = exp.div(Decimal.pow(10, k.toNumber()));
+          expStr = `${m.toNumber().toFixed(2)}e${k.toFixed(0)}`;
+        } else {
+          expStr = exp.toFixed(0);
+        }
         const str = mantissa.eq(mantissa.floor())
           ? `${mantissa.toFixed(0)}e${expStr}`
           : `${mantissa.toFixed(2)}e${expStr}`;
@@ -39,13 +82,20 @@ export const useStoreData = defineStore('storeData', {
       }
 
       function formatE(num: Decimal, value: Decimal) {
-        const exp = value.floor();
-        const mantissa10 = Math.pow(10, num.log10().minus(exp).toNumber());
+        const exp = value.floor(); // value in [0, 1e6), exp is safe to Number for pow
+        const frac = num.log10().minus(exp); // in [0,1)
+        const mantissa10 = Math.pow(10, frac.toNumber()); // 1 <= m < 10
         if (Math.abs(mantissa10 - 1) < 1e-6) {
           return `e${exp.toFixed(0)}`;
         }
-        const expStr =
-          Math.abs(exp.toNumber()) >= 1000 ? exp.toNumber().toExponential(2) : exp.toFixed(0);
+        let expStr: string;
+        if (exp.abs().gte(1000)) {
+          const k = exp.log10().floor();
+          const m = exp.div(Decimal.pow(10, k.toNumber()));
+          expStr = `${m.toNumber().toFixed(2)}e${k.toFixed(0)}`;
+        } else {
+          expStr = exp.toFixed(0);
+        }
         const str = Number.isInteger(mantissa10)
           ? `${mantissa10.toFixed(0)}e${expStr}`
           : `${mantissa10.toFixed(2)}e${expStr}`;
@@ -72,65 +122,71 @@ export const useStoreData = defineStore('storeData', {
         return cleanExp(str);
       }
 
-      return (num: Decimal, fixed?: boolean) => {
-        if (num.lt(1e6)) {
-          return formatSmall(num, fixed);
+      function computeTetrationState(n: Decimal): { t: number; value: Decimal } {
+        let t = 0;
+        let v = n;
+        while (v.gte(1e6)) {
+          v = v.log10();
+          t++;
         }
-        let value = num;
-        let tetration = 0;
-        while (value.gte(1e6)) {
-          value = value.log10();
-          tetration++;
-        }
-        if (tetration === 0) {
-          return formatScientific(num);
-        }
-        if (tetration === 1) {
-          return formatE(num, value);
-        }
-        if (tetration < 10) {
-          return formatTetration(value, tetration);
-        }
-        return formatSuperTetration(tetration);
-      };
+        return { t, value: v };
+      }
+
+      function formatNumberCore(n: Decimal, fixed?: boolean): string {
+        if (n.lt(1e6)) return formatSmall(n, fixed);
+        const { t, value } = computeTetrationState(n);
+        if (t === 0) return formatScientific(n);
+        if (t === 1) return formatE(n, value);
+        if (t < 10) return formatTetration(value, t);
+        return formatSuperTetration(t);
+      }
+
+      return (num: Decimal, fixed?: boolean) => formatNumberCore(num, fixed);
     },
 
-    formatTime:
-      () =>
-      (seconds: Decimal): string => {
-        const dur = Duration.fromObject({ seconds: seconds.round().toNumber() })
-          .shiftTo('years', 'days', 'hours', 'minutes', 'seconds')
-          .normalize();
+    formatTime: () => {
+      function formatTimeCore(seconds: Decimal): string {
+        if (seconds.lte(0)) return '0 с';
 
-        function formatYears(dur: Duration): string {
-          if (dur.years > 10) return `${dur.years} г`;
-          if (dur.days) return `${dur.years} г ${dur.days} д`;
-          return `${dur.years} г`;
+        const total = seconds.round();
+        if (total.gte(INFINITY_THRESHOLD_SECONDS)) return '∞';
+
+        const years = total.div(SECS_IN_YEAR).floor();
+        let remainder = total.mod(SECS_IN_YEAR);
+        const days = remainder.div(SECS_IN_DAY).floor();
+        remainder = remainder.mod(SECS_IN_DAY);
+        const hours = remainder.div(SECS_IN_HOUR).floor();
+        remainder = remainder.mod(SECS_IN_HOUR);
+        const minutes = remainder.div(SECS_IN_MIN).floor();
+        const secs = remainder.mod(SECS_IN_MIN).floor();
+
+        const y = years.toNumber();
+        const d = days.toNumber();
+        const h = hours.toNumber();
+        const m = minutes.toNumber();
+        const s = secs.toNumber();
+
+        const yOut = fmtYears(y, d);
+        const dOut = fmtDays(d, h);
+        const hOut = fmtHours(h, m);
+        const mOut = fmtMinutes(m, s);
+
+        const pairs: Array<[number, string]> = [
+          [y, yOut],
+          [d, dOut],
+          [h, hOut],
+          [m, mOut],
+        ];
+
+        for (const [val, out] of pairs) {
+          if (val >= 1) return out;
         }
 
-        function formatDays(dur: Duration): string {
-          if (dur.days > 10) return `${dur.days} д`;
-          if (dur.hours) return `${dur.days} д ${dur.hours} ч`;
-          return `${dur.days} д`;
-        }
+        return `${s} с`;
+      }
 
-        function formatHours(dur: Duration): string {
-          if (dur.minutes) return `${dur.hours} ч ${dur.minutes} м`;
-          return `${dur.hours} ч`;
-        }
-
-        function formatMinutes(dur: Duration): string {
-          if (dur.seconds) return `${dur.minutes} м ${dur.seconds} с`;
-          return `${dur.minutes} м`;
-        }
-
-        if (dur.years > 100) return '∞';
-        if (dur.years >= 1) return formatYears(dur);
-        if (dur.days >= 1) return formatDays(dur);
-        if (dur.hours >= 1) return formatHours(dur);
-        if (dur.minutes >= 1) return formatMinutes(dur);
-        return `${dur.seconds} с`;
-      },
+      return (seconds: Decimal): string => formatTimeCore(seconds);
+    },
 
     getMultiplierEpicNumber: (state): Decimal => {
       const storeResearch = useStoreResearch();

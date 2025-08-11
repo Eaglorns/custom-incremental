@@ -40,6 +40,16 @@
           {{ formatNumber(storeResearch.points) }}
         </span>
       </div>
+      <div
+        v-if="storeData.currentTab === 'magic'"
+        class="flex items-center"
+        style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
+      >
+        <i :class="iconStyle + 'fa-droplet'" size="22px" color="secondary" />
+        <span ref="researchRef" class="text-weight-bold text-h5">
+          {{ formatNumber(storeMagic.points) }}
+        </span>
+      </div>
     </div>
     <q-card class="main-card">
       <q-tabs
@@ -49,6 +59,8 @@
         indicator-color="primary"
         align="justify"
         class="text-grey"
+        mobile-arrows
+        shrink
       >
         <q-tab name="shop" :label="tabLabels.shop">
           <i :class="iconStyle + 'fa-store'" />
@@ -160,6 +172,9 @@
             <template #innerMagicBattle>
               <MagicBattle />
             </template>
+            <template #innerMagicMana>
+              <MagicMana />
+            </template>
             <template #innerMagicMage>
               <MagicMage />
             </template>
@@ -219,6 +234,7 @@ import MagicRune from 'src/components/magic/MagicRune.vue';
 import MagicCraft from 'src/components/magic/MagicCraft.vue';
 import MagicMage from 'src/components/magic/MagicMage.vue';
 import MagicBattle from 'src/components/magic/MagicBattle.vue';
+import MagicMana from 'src/components/magic/MagicMana.vue';
 import Help from 'src/pages/HelpPage.vue';
 import Achievement from 'src/pages/AchievementPage.vue';
 import StatsPage from 'src/pages/StatsPage.vue';
@@ -230,12 +246,14 @@ import { useStoreResearch } from 'stores/research';
 import { useStoreShop } from 'stores/shop';
 import { useStorePrestige } from 'stores/prestige';
 import { useStoreSetting } from 'stores/setting';
+import { useStoreMagic } from 'stores/magic';
 
 const storeData = useStoreData();
 const storeResearch = useStoreResearch();
 const storeShop = useStoreShop();
 const storePrestige = useStorePrestige();
 const storeSetting = useStoreSetting();
+const storeMagic = useStoreMagic();
 
 const iconStyle = computed(() => {
   return storeSetting.iconStyle;
@@ -352,6 +370,11 @@ const automaticTabs = computed(() => [
 
 const magicTabs = computed(() => [
   {
+    name: 'innerMagicMana',
+    icon: iconStyle.value + 'fa-droplet',
+    label: 'Мана',
+  },
+  {
     name: 'innerMagicBattle',
     icon: iconStyle.value + 'fa-swords',
     label: innerMagicLabels.value.innerMagicBattle,
@@ -433,158 +456,172 @@ const infinityProgress = computed(() => {
 });
 </script>
 
-<style lang="sass">
-.main-layout
-  min-height: 100vh
-  min-width: 100vw
-  display: flex
-  flex-direction: column
+<style lang="scss">
+.main-layout {
+  min-height: 100vh;
+  min-width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
 
-.banner-row
-  display: flex
-  flex-direction: row
-  flex-wrap: nowrap
-  align-items: center
-  justify-content: center
-  margin-top: 15px
-  margin-bottom: 5px
+.banner-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
 
-.banner-row > div
-  margin: 3px
-  max-height: 30px
-  min-width: 100px
-  max-width: 200px
-  display: flex
-  align-items: center
-  justify-content: center
+.banner-row > div {
+  margin: 3px;
+  max-height: 30px;
+  min-width: 100px;
+  max-width: 200px;
+  margin-left: 7px !important;
+  margin-right: 7px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-.banner-row > div
-  margin-left: 7px !important
-  margin-right: 7px !important
+.banner-row > div > i,
+span {
+  margin-left: 4px !important;
+  margin-right: 4px !important;
+}
 
-.banner-row > div > i, span
-  margin-left: 4px !important
-  margin-right: 4px !important
+.main-card {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
 
-.main-card
-  flex: 1 1 auto
-  min-height: 0
-  min-width: 0
-  width: 100vw
-  display: flex
-  flex-direction: column
-  background: transparent
-  box-shadow: none
-  padding: 0
+.panel-flex {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
 
-.panel-flex
-  flex: 1 1 auto
-  min-height: 0
-  min-width: 0
-  display: flex
-  flex-direction: column
+.footer {
+  flex: 0 0 48px;
+  min-height: 48px;
+  max-height: 56px;
+  width: 100vw;
+  padding: 0;
+  background: #23243a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
 
-.footer
-  flex: 0 0 48px
-  min-height: 48px
-  max-height: 56px
-  width: 100vw
-  padding: 0
-  background: #23243a
-  display: flex
-  align-items: center
-  justify-content: center
-  font-size: 16px
+.progress-bar {
+  width: 300px;
+  min-height: 18px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
 
-.progress-bar
-  width: 300px
-  min-height: 18px
-  display: flex
-  align-items: center
-  position: relative
+.footer-progress {
+  color: #fff;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-shadow:
+    0 1px 4px #23243a,
+    0 0 2px #23243a;
+}
 
-.footer-progress
-  color: #fff
-  font-weight: bold
-  font-size: 18px
-  line-height: 1.2
-  white-space: nowrap
-  text-shadow: 0 1px 4px #23243a, 0 0 2px #23243a
+.q-tab i {
+  font-size: 20px !important;
+}
 
-.q-tab i
-  font-size: 20px !important
-
-@media (max-width: 700px)
-  .main-layout
-    min-width: 100vw
-  .main-card
-    width: 100vw
-    padding: 4px
-    box-shadow: none
-  .panel-flex
-    padding: 4px
-  .footer
-    min-height: 24px
-    max-height: 40px
-    padding: 4px
-    font-size: 12px !important
-  .progress-bar
-    width: 170px
-    height: 30px
-    display: flex
-    align-items: center
-    position: relative
-  .footer-label, .footer-progress
-    font-size: 16px
-    line-height: 1.2
-  .q-tabs.vertical .q-tab__content,
-  .q-tabs.vertical .q-tab__icon,
-  .q-tabs.vertical .q-tab__label
-    flex-direction: column
-    align-items: center
-    justify-content: center
-    gap: 2px
-    display: block
-    text-align: center
-    padding: 0
-    flex-shrink: 1
-    margin-bottom: 4px
-  .q-tabs.vertical .q-tab__label
-    font-size: 12px !important
-    white-space: normal !important
-    word-break: break-word !important
-    max-width: none !important
-    text-align: center
-    padding: 0 2px
-    writing-mode: vertical-rl
-    text-orientation: mixed
-  .q-tab__label, .q-tab-panel .q-tab__label
-    font-size: 12px !important
-    white-space: normal !important
-    word-break: break-word !important
-    max-width: none !important
-    text-align: center
-    padding: 0 2px
-  .q-tab, .q-tab__content
-    align-items: center
-    justify-content: center
-    gap: 2px
-  .q-tab__icon, .q-tab-panel .q-tab__icon
-    font-size: 18px !important
-    min-width: 0
-    padding: 0 2px
-  .q-tab i
-    font-size: 18px !important
-    min-width: 0
-    padding: 0 2px
+@media (max-width: 700px) {
+  .banner-row {
+    flex-wrap: wrap;
+  }
+  .banner-row > div {
+    min-width: 80px;
+    max-width: calc(50vw - 16px);
+  }
+  .main-layout {
+    min-width: 100vw;
+  }
+  .main-card {
+    width: 100vw;
+    padding: 4px;
+    box-shadow: none;
+  }
+  .panel-flex {
+    padding: 4px;
+  }
+  .footer {
+    min-height: 24px;
+    max-height: 40px;
+    padding: 4px;
+    font-size: 12px !important;
+  }
+  .progress-bar {
+    width: 170px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  .footer-label,
+  .footer-progress {
+    font-size: 16px;
+    line-height: 1.2;
+  }
+  .q-tab__label,
+  .q-tab-panel .q-tab__label {
+    font-size: 12px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    max-width: none !important;
+    text-align: center;
+    padding: 0 2px;
+  }
+  .q-tab,
+  .q-tab__content {
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+  .q-tab__icon,
+  .q-tab-panel .q-tab__icon {
+    font-size: 18px !important;
+    min-width: 0;
+    padding: 0 2px;
+  }
+  .q-tab i {
+    font-size: 18px !important;
+    min-width: 0;
+    padding: 0 2px;
+  }
   .on-color-epic-number,
   .on-color-shop-points,
-  .on-color-research-points
-    font-size: 15px !important
-  i
-    font-size: 14px !important
-    min-width: 0
-    padding: 0 2px
-    flex-direction: column
-    align-items: stretch
+  .on-color-research-points {
+    font-size: 15px !important;
+  }
+  i {
+    font-size: 14px !important;
+    min-width: 0;
+    padding: 0 2px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
 </style>

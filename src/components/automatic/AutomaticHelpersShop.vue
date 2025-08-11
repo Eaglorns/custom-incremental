@@ -341,4 +341,46 @@ function getHelperChanceWithCount(percent: Decimal, count: Decimal): Decimal {
     padding: 2px 4px !important;
   }
 }
+
+/* Улучшения для небольших экранов: перенос строк и компактные элементы */
+@media (max-width: 600px) {
+  .helper-title-row {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .helper-icon {
+    font-size: 16px;
+  }
+  .helper-card {
+    padding: 6px !important;
+  }
+  .helper-description {
+    font-size: 10px;
+  }
+  .helper-card .row.items-center {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Скрыть текстовую метку у тумблера ради экономии места */
+  .helper-card .q-toggle .q-toggle__label {
+    display: none;
+  }
+  .upgrade-cost-chip-wide {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+  .btn-equal-width,
+  .upgrade-btn-narrow {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  /* Стек чипа и кнопки в колонку, если очень узко */
+  .helper-card .row.items-center.q-gutter-xs {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+  }
+}
 </style>

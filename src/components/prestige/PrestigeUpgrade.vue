@@ -107,42 +107,52 @@ const buyUpgrade = (key: string) => {
 };
 </script>
 
-<style lang="sass" scoped>
-.prestige-tooltip-large
-  font-size: 1.25rem
-  font-weight: 600
-  color: #fff !important
-  background: #23272e !important
-  border-radius: 8px
-  padding: 8px 16px
-  box-shadow: 0 2px 8px #0008
+<style lang="scss" scoped>
+.prestige-tooltip-large {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff !important;
+  background: #23272e !important;
+  border-radius: 8px;
+  padding: 8px 16px;
+  box-shadow: 0 2px 8px #0008;
+}
 
-.prestige-badge-dark
-  background: #23272e !important
-  color: #e0e0e0 !important
-  border: 1px solid #444 !important
+.prestige-badge-dark {
+  background: #23272e !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #444 !important;
+}
 
-.prestige-btn-dark
-  background: #23272e !important
-  color: #e0e0e0 !important
-  border: 1px solid #444 !important
-  &:hover, &:focus
-    background: #1a1d22 !important
-    color: #fff !important
+.prestige-btn-dark {
+  background: #23272e !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #444 !important;
+}
+.prestige-btn-dark:hover,
+.prestige-btn-dark:focus {
+  background: #1a1d22 !important;
+  color: #fff !important;
+}
 
-.prestige-card-dark
-  background: #2d323b !important
-  border: 1px solid black !important
+.prestige-card-dark {
+  background: #2d323b !important;
+  border: 1px solid black !important;
+}
 
-.text-accent
-  color: #ffb300 !important
+.text-accent {
+  color: #ffb300 !important;
+}
 
-.q-card .text-white
-  color: #fff !important
+.q-card .text-white {
+  color: #fff !important;
+}
 
-.q-card .text-grey-3
-  color: #e0e0e0 !important
+.q-card .text-grey-3 {
+  color: #e0e0e0 !important;
+}
 
-.q-card .text-grey-8
-  color: #b0b0b0 !important
+.q-card .text-grey-8 {
+  color: #b0b0b0 !important;
+}
 </style>

@@ -121,59 +121,105 @@ const achievementBonus = computed(() => {
 });
 </script>
 
-<style lang="sass" scoped>
-.achievement-card-fixed
-  width: 140px
-  min-height: 220px
-  max-height: 220px
-  display: flex
-  flex-direction: column
-  justify-content: flex-start
-  align-items: stretch
-  margin: 5px
-  box-sizing: border-box
+<style lang="scss" scoped>
+.achievement-card-fixed {
+  width: 140px;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  margin: 5px;
+  box-sizing: border-box;
+}
 
 .achievement-card-fixed > .flex,
 .achievement-card-fixed > .text-subtitle2,
-.achievement-card-fixed > .text-caption
-  flex-shrink: 0
+.achievement-card-fixed > .text-caption {
+  flex-shrink: 0;
+}
 
-.achievement-badge-bottom
-  margin-top: auto
+.achievement-badge-bottom {
+  margin-top: auto;
+}
 
-.tooltip-bordered
-  border: 2px solid $primary
-  border-radius: 8px
-  box-shadow: 0 2px 12px rgba(0,0,0,0.18)
-  padding: 10px
-  max-width: 220px
-  min-width: 160px
-  text-align: left
+.tooltip-bordered {
+  border: 2px solid $primary;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  padding: 10px;
+  max-width: 220px;
+  min-width: 160px;
+  text-align: left;
+}
 
-  @media (max-width: 700px)
-    .q-page.q-pa-lg
-      padding: 8px !important
-    .q-mb-md.text-h6.text-bold.row.items-center
-      flex-direction: column !important
-      align-items: flex-start !important
-      font-size: 16px !important
-      .q-chip
-        margin-left: 0 !important
-        margin-top: 8px !important
-    .q-gutter-md
-      flex-wrap: wrap
-      gap: 8px !important
-      margin-left: 0 !important
-      margin-right: 0 !important
-    .q-card
-      width: 110px !important
-      min-width: 90px !important
-      margin-right: 8px !important
-      margin-bottom: 8px !important
-      padding: 4px !important
-      font-size: 13px !important
-    .q-tooltip.tooltip-bordered
-      max-width: 180px !important
-      min-width: 100px !important
-      padding: 6px !important
+.achievement-card-fixed .text-subtitle2 {
+  font-size: 14px;
+  line-height: 1.2;
+  max-height: calc(1.2em * 2);
+  overflow: hidden;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: none;
+}
+
+.achievement-card-fixed .text-caption {
+  font-size: 12px;
+  line-height: 1.2;
+  /* показать весь текст без сокращения */
+  max-height: none;
+  overflow: visible;
+  display: block;
+  white-space: normal;
+  word-break: break-word;
+}
+
+@media (max-width: 700px) {
+  .q-page.q-pa-lg {
+    padding: 8px !important;
+  }
+  .q-mb-md.text-h6.text-bold.row.items-center {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    font-size: 16px !important;
+  }
+  .q-mb-md.text-h6.text-bold.row.items-center .q-chip {
+    margin-left: 0 !important;
+    margin-top: 8px !important;
+  }
+  .q-gutter-md {
+    flex-wrap: wrap;
+    gap: 8px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .q-card {
+    width: 100px !important;
+    min-width: 82px !important;
+    margin-right: 6px !important;
+    margin-bottom: 6px !important;
+    padding: 3px !important;
+    font-size: 12px !important;
+  }
+  .achievement-card-fixed .text-subtitle2 {
+    font-size: 13px;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+  }
+  .achievement-card-fixed .text-caption {
+    font-size: 11px;
+    /* не обрезать описание на мобильных тоже */
+    line-clamp: unset;
+    -webkit-line-clamp: unset;
+  }
+  .q-tooltip.tooltip-bordered {
+    max-width: 180px !important;
+    min-width: 100px !important;
+    padding: 6px !important;
+  }
+}
 </style>
