@@ -8,6 +8,8 @@ import { useStoreStats } from 'stores/stats';
 import { useStorePrestige } from 'stores/prestige';
 import { useStoreMagic } from 'stores/magic';
 
+const TICK_MAX_STEPS = 1000;
+
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     name: 'cIncremental',
@@ -17,15 +19,8 @@ export const useStoreGame = defineStore('storeGame', {
   }),
   getters: {
     generateEpicNumber() {
-      const storeShop = useStoreShop();
-      const storeResearch = useStoreResearch();
-      const storeAchievement = useStoreAchievement();
-      const parShopCPU = storeShop.list.cpu.value;
-      const parResearchCPU = storeResearch.base.cpuPow;
-      const result = parShopCPU
-        .pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1))
-        .mul(storeAchievement.achievementBonus);
-      return result;
+      const storeData = useStoreData();
+      return storeData.epicNumberGain;
     },
   },
   actions: {
@@ -43,8 +38,8 @@ export const useStoreGame = defineStore('storeGame', {
       const delta = now - this.lastTick;
       this.lastTick = now;
 
-      let steps = Math.floor(delta / this.timerTick) || 1;
-      if (steps > 1000) steps = 1000;
+      let steps = Math.floor(delta / this.timerTick);
+      steps = Math.min(TICK_MAX_STEPS, Math.max(1, steps));
       for (let i = 0; i < steps; i++) {
         storeStats.gameTime++;
         this.processGiveMultiplierEpicNumber();
@@ -69,7 +64,8 @@ export const useStoreGame = defineStore('storeGame', {
       const parShopHDD = storeShop.list.hdd.value;
       const parResearchHDD = storeResearch.base.hddPow;
       const storeData = useStoreData();
-      const result = parShopHDD.pow(parResearchHDD.bonus.mul(parResearchHDD.level).plus(1));
+      const hddPowExp = parResearchHDD.bonus.mul(parResearchHDD.level).plus(1);
+      const result = parShopHDD.pow(hddPowExp);
       storeData.multiplierEpicNumber = storeData.multiplierEpicNumber.plus(result);
     },
   },

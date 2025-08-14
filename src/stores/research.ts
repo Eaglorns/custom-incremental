@@ -34,6 +34,13 @@ interface ResearchLoadData {
   };
 }
 
+const D0 = new Decimal(0);
+const D1 = new Decimal(1);
+const D1_1 = new Decimal(1.1);
+const D350 = new Decimal(350);
+const D100 = new Decimal(100);
+const D50 = new Decimal(50);
+
 export const useStoreResearch = defineStore('storeResearch', {
   state: () => ({
     points: new Decimal(0),
@@ -166,11 +173,11 @@ export const useStoreResearch = defineStore('storeResearch', {
   getters: {
     getResearchSpeed: (store): Decimal => {
       const base = store.speed;
-      if (base.lt(1)) return new Decimal(1);
+      if (base.lt(1)) return D1;
       const research = store.base.researchTimeMultiplierDecrease;
-      const bonus = research.level.gt(0) ? research.bonus.pow(research.level) : new Decimal(1);
-      const reduced = base.log(1.1).div(new Decimal(350).div(bonus));
-      return Decimal.max(new Decimal(1), new Decimal(1).add(reduced));
+      const bonus = research.level.gt(0) ? research.bonus.pow(research.level) : D1;
+      const reduced = base.log(D1_1).div(D350.div(bonus));
+      return Decimal.max(D1, D1.add(reduced));
     },
 
     save: (store) => {
@@ -283,7 +290,7 @@ export const useStoreResearch = defineStore('storeResearch', {
       }
     },
     expToLevel(level: Decimal) {
-      return level.pow(2).mul(100).plus(50);
+      return level.pow(2).mul(D100).plus(D50);
     },
     processScientists() {
       this.scientists.forEach((s) => {
@@ -291,13 +298,14 @@ export const useStoreResearch = defineStore('storeResearch', {
       });
 
       const { level, bonus } = this.base.researchScientistsMultiplierExperience;
-      const expMultiplier = level.gte(1) ? level.mul(bonus).plus(1) : new Decimal(1);
+      const expMultiplier = level.gte(1) ? level.mul(bonus).plus(1) : D1;
 
-      let totalResearch = new Decimal(0);
+      let totalResearch = D0;
       this.scientists.forEach((s) => {
         s.exp = s.exp.add(s.intellect.mul(expMultiplier));
-        if (s.exp.gte(this.expToLevel(s.level))) {
-          s.exp = s.exp.sub(this.expToLevel(s.level));
+        const need = this.expToLevel(s.level);
+        if (s.exp.gte(need)) {
+          s.exp = s.exp.sub(need);
           s.level = s.level.add(1);
         }
         totalResearch = totalResearch.add(s.level.mul(s.efficiency.div(100).add(1)));
@@ -309,86 +317,51 @@ export const useStoreResearch = defineStore('storeResearch', {
       const storeShop = useStoreShop();
       const parRAM = storeShop.list.ram.value;
       const parResearchRam = this.base.ramPow;
-      const result = parRAM.pow(parResearchRam.bonus.mul(parResearchRam.level).plus(1));
+      const exp = parResearchRam.bonus.mul(parResearchRam.level).plus(1);
+      const result = parRAM.pow(exp);
       this.speed = this.speed.plus(result);
     },
-    load(loaded: ResearchLoadData) {
-      this.points = new Decimal(loaded.points);
-      this.speed = new Decimal(loaded.speed);
-      this.scientists = loaded.scientists.map((s) => ({
+    load(loaded: Partial<ResearchLoadData>) {
+      const toDec = (v?: string | number | Decimal, def = '0') => new Decimal(v ?? def);
+
+      this.points = toDec(loaded?.points);
+      this.speed = toDec(loaded?.speed);
+
+      this.scientists = (loaded?.scientists || []).map((s) => ({
         id: s.id,
-        level: new Decimal(s.level),
-        exp: new Decimal(s.exp),
-        intellect: new Decimal(s.intellect),
-        efficiency: new Decimal(s.efficiency),
+        level: toDec(s.level),
+        exp: toDec(s.exp),
+        intellect: toDec(s.intellect),
+        efficiency: toDec(s.efficiency),
       }));
-      this.base.cpuPow.isActive = loaded.base.cpuPow.isActive;
-      this.base.cpuPow.currentTime = new Decimal(loaded.base.cpuPow.currentTime);
-      this.base.cpuPow.level = new Decimal(loaded.base.cpuPow.level);
-      this.base.hddPow.isActive = loaded.base.hddPow.isActive;
-      this.base.hddPow.currentTime = new Decimal(loaded.base.hddPow.currentTime);
-      this.base.hddPow.level = new Decimal(loaded.base.hddPow.level);
-      this.base.ramPow.isActive = loaded.base.ramPow.isActive;
-      this.base.ramPow.currentTime = new Decimal(loaded.base.ramPow.currentTime);
-      this.base.ramPow.level = new Decimal(loaded.base.ramPow.level);
-      this.base.workerPow.isActive = loaded.base.workerPow.isActive;
-      this.base.workerPow.currentTime = new Decimal(loaded.base.workerPow.currentTime);
-      this.base.workerPow.level = new Decimal(loaded.base.workerPow.level);
-      this.base.shopCostMultiplierDecrease.isActive =
-        loaded.base.shopCostMultiplierDecrease.isActive;
-      this.base.shopCostMultiplierDecrease.currentTime = new Decimal(
-        loaded.base.shopCostMultiplierDecrease.currentTime,
-      );
-      this.base.shopCostMultiplierDecrease.level = new Decimal(
-        loaded.base.shopCostMultiplierDecrease.level,
-      );
-      this.base.epicNumberMultiplierDecrease.currentTime = new Decimal(
-        loaded.base.epicNumberMultiplierDecrease.currentTime,
-      );
-      this.base.epicNumberMultiplierDecrease.isActive =
-        loaded.base.epicNumberMultiplierDecrease.isActive;
-      this.base.epicNumberMultiplierDecrease.level = new Decimal(
-        loaded.base.epicNumberMultiplierDecrease.level,
-      );
-      this.base.researchTimeMultiplierDecrease.isActive =
-        loaded.base.researchTimeMultiplierDecrease.isActive;
-      this.base.researchTimeMultiplierDecrease.currentTime = new Decimal(
-        loaded.base.researchTimeMultiplierDecrease.currentTime,
-      );
-      this.base.researchTimeMultiplierDecrease.level = new Decimal(
-        loaded.base.researchTimeMultiplierDecrease.level,
-      );
-      this.base.researchScientistsChance.isActive = loaded.base.researchScientistsChance.isActive;
-      this.base.researchScientistsChance.currentTime = new Decimal(
-        loaded.base.researchScientistsChance.currentTime,
-      );
-      this.base.researchScientistsChance.level = new Decimal(
-        loaded.base.researchScientistsChance.level,
-      );
-      this.base.researchScientistsMultiplierStats.isActive =
-        loaded.base.researchScientistsMultiplierStats.isActive;
-      this.base.researchScientistsMultiplierStats.currentTime = new Decimal(
-        loaded.base.researchScientistsMultiplierStats.currentTime,
-      );
-      this.base.researchScientistsMultiplierStats.level = new Decimal(
-        loaded.base.researchScientistsMultiplierStats.level,
-      );
-      this.base.researchScientistsMultiplierExperience.isActive =
-        loaded.base.researchScientistsMultiplierExperience.isActive;
-      this.base.researchScientistsMultiplierExperience.currentTime = new Decimal(
-        loaded.base.researchScientistsMultiplierExperience.currentTime,
-      );
-      this.base.researchScientistsMultiplierExperience.level = new Decimal(
-        loaded.base.researchScientistsMultiplierExperience.level,
-      );
-      this.base.shopMultiplierChanceReturn.isActive =
-        loaded.base.shopMultiplierChanceReturn.isActive;
-      this.base.shopMultiplierChanceReturn.currentTime = new Decimal(
-        loaded.base.shopMultiplierChanceReturn.currentTime,
-      );
-      this.base.shopMultiplierChanceReturn.level = new Decimal(
-        loaded.base.shopMultiplierChanceReturn.level,
-      );
+
+      const lb = loaded?.base;
+      const assign = (
+        dst: { isActive: boolean; currentTime: Decimal; level: Decimal },
+        src?: ResearchList,
+      ) => {
+        if (!src) return;
+        dst.isActive = !!src.isActive;
+        dst.currentTime = toDec(src.currentTime);
+        dst.level = toDec(src.level);
+      };
+
+      if (lb) {
+        assign(this.base.cpuPow, lb.cpuPow);
+        assign(this.base.hddPow, lb.hddPow);
+        assign(this.base.ramPow, lb.ramPow);
+        assign(this.base.workerPow, lb.workerPow);
+        assign(this.base.shopCostMultiplierDecrease, lb.shopCostMultiplierDecrease);
+        assign(this.base.epicNumberMultiplierDecrease, lb.epicNumberMultiplierDecrease);
+        assign(this.base.researchTimeMultiplierDecrease, lb.researchTimeMultiplierDecrease);
+        assign(this.base.researchScientistsChance, lb.researchScientistsChance);
+        assign(this.base.researchScientistsMultiplierStats, lb.researchScientistsMultiplierStats);
+        assign(
+          this.base.researchScientistsMultiplierExperience,
+          lb.researchScientistsMultiplierExperience,
+        );
+        assign(this.base.shopMultiplierChanceReturn, lb.shopMultiplierChanceReturn);
+      }
     },
   },
 });

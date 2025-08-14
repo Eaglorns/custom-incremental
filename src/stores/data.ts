@@ -5,14 +5,16 @@ import { useStoreShop } from 'stores/shop';
 import { useStoreAchievement } from 'stores/achievement';
 import { useStorePrestige } from 'stores/prestige';
 
-// Time constants and threshold computed once to avoid repeated allocations
 const SECS_IN_MIN = 60;
 const SECS_IN_HOUR = 60 * SECS_IN_MIN;
 const SECS_IN_DAY = 24 * SECS_IN_HOUR;
-const SECS_IN_YEAR = 365 * SECS_IN_DAY; // consistent with our day/year display
-const INFINITY_THRESHOLD_SECONDS = new Decimal(SECS_IN_YEAR).mul(100); // > 100 years -> '∞'
+const SECS_IN_YEAR = 365 * SECS_IN_DAY;
+const INFINITY_THRESHOLD_SECONDS = new Decimal(SECS_IN_YEAR).mul(100);
 
-// Helpers for time formatting kept outside to reduce complexity in core function
+// Decimal constants to reduce allocations and unify usage
+const D1 = new Decimal(1);
+const D1_015 = new Decimal(1.015);
+
 function fmtYears(y: number, d: number): string {
   if (y > 10) return `${y} г`;
   if (d) return `${y} г ${d} д`;
@@ -82,9 +84,9 @@ export const useStoreData = defineStore('storeData', {
       }
 
       function formatE(num: Decimal, value: Decimal) {
-        const exp = value.floor(); // value in [0, 1e6), exp is safe to Number for pow
-        const frac = num.log10().minus(exp); // in [0,1)
-        const mantissa10 = Math.pow(10, frac.toNumber()); // 1 <= m < 10
+        const exp = value.floor();
+        const frac = num.log10().minus(exp);
+        const mantissa10 = Math.pow(10, frac.toNumber());
         if (Math.abs(mantissa10 - 1) < 1e-6) {
           return `e${exp.toFixed(0)}`;
         }
@@ -191,11 +193,11 @@ export const useStoreData = defineStore('storeData', {
     getMultiplierEpicNumber: (state): Decimal => {
       const storeResearch = useStoreResearch();
       const base = state.multiplierEpicNumber;
-      if (base.lt(1)) return new Decimal(1);
+      if (base.lt(1)) return D1;
       const research = storeResearch.base.epicNumberMultiplierDecrease;
-      const bonus = research.level.gt(0) ? research.bonus.pow(research.level) : new Decimal(1);
-      const reduced = base.log(1.015).div(new Decimal(250).div(bonus));
-      return Decimal.max(new Decimal(1), new Decimal(1).add(reduced));
+      const bonus = research.level.gt(0) ? research.bonus.pow(research.level) : D1;
+      const reduced = base.log(D1_015).div(new Decimal(250).div(bonus));
+      return Decimal.max(D1, D1.add(reduced));
     },
 
     epicNumberGain: (): Decimal => {
@@ -207,8 +209,9 @@ export const useStoreData = defineStore('storeData', {
       const parResearchCPU = storeResearch.base.cpuPow;
       const prestigeMul = storePrestige.points.mul(0.01).add(1);
       const prestigeUpgradeBonus = storePrestige.upgrades.prestigeBonus.level.mul(0.01).add(1);
+      const cpuPowExp = parResearchCPU.bonus.mul(parResearchCPU.level).plus(1);
       const result = parShopCPU
-        .pow(parResearchCPU.bonus.mul(parResearchCPU.level).plus(1))
+        .pow(cpuPowExp)
         .mul(prestigeMul)
         .mul(prestigeUpgradeBonus)
         .mul(storeAchievement.achievementBonus);
@@ -229,10 +232,10 @@ export const useStoreData = defineStore('storeData', {
       this.epicNumber = this.epicNumber.plus(this.epicNumberGain);
     },
 
-    load(loaded: { version: string; epicNumber: string; multiplierEpicNumber: string }) {
-      this.version = loaded.version;
-      this.epicNumber = new Decimal(loaded.epicNumber);
-      this.multiplierEpicNumber = new Decimal(loaded.multiplierEpicNumber);
+    load(loaded: { version?: string; epicNumber?: string; multiplierEpicNumber?: string }) {
+      this.version = loaded?.version ?? this.version;
+      this.epicNumber = new Decimal(loaded?.epicNumber ?? '0');
+      this.multiplierEpicNumber = new Decimal(loaded?.multiplierEpicNumber ?? '0');
     },
   },
 });

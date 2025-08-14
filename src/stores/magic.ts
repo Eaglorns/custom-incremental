@@ -16,6 +16,9 @@ import {
 } from '../constants/magicMeta';
 import Decimal from 'break_eternity.js';
 
+const D0 = new Decimal(0);
+const D1 = new Decimal(1);
+
 export interface MageRank {
   id: number;
   name: string;
@@ -167,7 +170,7 @@ export const useStoreMagic = defineStore('storeMagic', {
       return state.monster.regeneration;
     },
     pointsGainPerTick(state) {
-      return state.mages.reduce((sum, mage) => sum.plus(mage.level), new Decimal(0));
+      return state.mages.reduce((sum, mage) => sum.plus(mage.level), D0);
     },
     save(state) {
       return {
@@ -183,17 +186,27 @@ export const useStoreMagic = defineStore('storeMagic', {
   },
 
   actions: {
+    requiredAmountFor(requirement: RuneRequirementMeta, level: Decimal) {
+      return requirement.baseAmount.mul(requirement.multiplier.pow(level));
+    },
+
+    canAffordEssenceRequirementAtLevel(requirement: RuneRequirementMeta, level: Decimal) {
+      const essence = this.getEssenceById(requirement.essenceId);
+      if (!essence) return false;
+      return essence.amount.gte(this.requiredAmountFor(requirement, level));
+    },
+
     processMage() {
-      let totalPointsGain = new Decimal(0);
+      let totalPointsGain = D0;
       const getRandomRune = () => {
         const rand = Math.floor(Math.random() * RUNE_META.length);
         return RUNE_META[rand];
       };
 
       const calculateEffectAmount = (mage: Mage, runeId: string, runeLevel: Decimal) => {
-        let effectAmount = new Decimal(Decimal.max(1, runeLevel));
+        let effectAmount = Decimal.max(D1, runeLevel);
         if (mage.runeIds.includes(runeId) && mage.runeQuantities[runeId]) {
-          const runeQuantity = mage.runeQuantities[runeId] || new Decimal(0);
+          const runeQuantity = mage.runeQuantities[runeId] || D0;
           const bonus = effectAmount.mul(runeQuantity).div(100);
           effectAmount = effectAmount.plus(bonus);
         }
@@ -202,15 +215,12 @@ export const useStoreMagic = defineStore('storeMagic', {
 
       const maybeAddRuneQuantity = (mage: Mage, runeId: string) => {
         if (Math.random() > 0.01) return;
+        const current = mage.runeQuantities[runeId];
         if (mage.runeIds.includes(runeId)) {
-          if (mage.runeQuantities[runeId]) {
-            mage.runeQuantities[runeId] = mage.runeQuantities[runeId].plus(1);
-          } else {
-            mage.runeQuantities[runeId] = new Decimal(1);
-          }
+          mage.runeQuantities[runeId] = (current ?? D0).plus(1);
         } else {
           mage.runeIds.push(runeId);
-          mage.runeQuantities[runeId] = new Decimal(1);
+          mage.runeQuantities[runeId] = D1;
         }
       };
 
@@ -222,7 +232,7 @@ export const useStoreMagic = defineStore('storeMagic', {
         if (!damageTypes.some((dt) => dt.type === runeId)) return;
 
         const runeState = this.runes.find((r) => r.id === runeId);
-        const runeLevel = runeState ? runeState.level : new Decimal(0);
+        const runeLevel = runeState ? runeState.level : D0;
         const effectAmount = calculateEffectAmount(mage, runeId, runeLevel);
 
         this.applyDamageEffect(runeId as DamageEffect['type'], effectAmount);
@@ -308,21 +318,22 @@ export const useStoreMagic = defineStore('storeMagic', {
       const damageType = damageTypes.find((dt) => dt.type === type);
       if (!damageType) return;
 
-      const existingEffect = this.monster.damageEffects.find((effect) => effect.type === type);
+      let existingEffect = this.monster.damageEffects.find((effect) => effect.type === type);
       if (existingEffect) {
         existingEffect.stacks = existingEffect.stacks.plus(amount);
       } else {
-        this.monster.damageEffects.push({
-          type,
-          stacks: new Decimal(amount),
-        });
+        existingEffect = { type, stacks: new Decimal(amount) } as DamageEffect;
+        this.monster.damageEffects.push(existingEffect);
       }
+
       if (type === 'poison') {
-        this.monsterDealDamage(existingEffect?.stacks || new Decimal(0));
+        this.monsterDealDamage(existingEffect.stacks);
       } else if (type === 'ignite') {
-        this.monsterDealDamage(existingEffect?.stacks.div(2) || new Decimal(0));
+        this.monsterDealDamage(existingEffect.stacks.div(2));
+        existingEffect.stacks = existingEffect.stacks.mul(1.001);
       } else if (type === 'bleeding') {
-        this.monsterDealDamage(existingEffect?.stacks.div(10) || new Decimal(0));
+        this.monsterDealDamage(existingEffect.stacks.div(10));
+        existingEffect.stacks = existingEffect.stacks.div(1.001);
       }
     },
     hireMage() {
@@ -400,11 +411,11 @@ export const useStoreMagic = defineStore('storeMagic', {
     },
 
     getRequiredEssence(essenceId: string) {
-      if (!this.selectedRune) return 0;
+      if (!this.selectedRune) return D0;
       const runeMeta = RUNE_META.find((meta) => meta.id === this.selectedRune!.id);
-      if (!runeMeta) return 0;
+      if (!runeMeta) return D0;
       const requirement = runeMeta.requirements.find((req) => req.essenceId === essenceId);
-      return requirement ? this.getRequiredEssenceAmount(requirement) : 0;
+      return requirement ? this.getRequiredEssenceAmount(requirement) : D0;
     },
 
     getRuneMeta(id: string) {
@@ -417,8 +428,8 @@ export const useStoreMagic = defineStore('storeMagic', {
     },
 
     getRequiredEssenceAmount(requirement: RuneRequirementMeta) {
-      if (!this.selectedRune) return new Decimal(0);
-      return requirement.baseAmount.mul(requirement.multiplier.pow(this.selectedRune.level));
+      if (!this.selectedRune) return D0;
+      return this.requiredAmountFor(requirement, this.selectedRune.level);
     },
 
     canAffordEssenceRequirement(requirement: RuneRequirementMeta) {
@@ -428,11 +439,12 @@ export const useStoreMagic = defineStore('storeMagic', {
     },
 
     canCraftRune() {
-      if (!this.selectedRune) return false;
-      const runeMeta = this.getRuneMeta(this.selectedRune.id);
+      const sr = this.selectedRune;
+      if (!sr) return false;
+      const runeMeta = this.getRuneMeta(sr.id);
       if (!runeMeta) return false;
-      return runeMeta.requirements.every((requirement) =>
-        this.canAffordEssenceRequirement(requirement),
+      return runeMeta.requirements.every((req) =>
+        this.canAffordEssenceRequirementAtLevel(req, sr.level),
       );
     },
 
@@ -440,28 +452,18 @@ export const useStoreMagic = defineStore('storeMagic', {
       const currentRune = this.runes.find((r) => r.id === id);
       const runeMeta = this.getRuneMeta(id);
       if (!currentRune || !runeMeta) return false;
-      return runeMeta.requirements.every((requirement) => {
-        const essence = this.getEssenceById(requirement.essenceId);
-        if (!essence) return false;
-        const requiredAmount = requirement.baseAmount.mul(
-          requirement.multiplier.pow(currentRune.level),
-        );
-        return essence.amount.gte(requiredAmount);
-      });
+      return runeMeta.requirements.every((req) =>
+        this.canAffordEssenceRequirementAtLevel(req, currentRune.level),
+      );
     },
 
     canCraftSpecificRune(rune: Rune) {
       const runeMeta = this.getRuneMeta(rune.id);
       if (!runeMeta) return false;
       const currentRune = this.runes.find((r) => r.id === rune.id) || rune;
-      return runeMeta.requirements.every((requirement) => {
-        const essence = this.getEssenceById(requirement.essenceId);
-        if (!essence) return false;
-        const requiredAmount = requirement.baseAmount.mul(
-          requirement.multiplier.pow(currentRune.level),
-        );
-        return essence.amount.gte(requiredAmount);
-      });
+      return runeMeta.requirements.every((req) =>
+        this.canAffordEssenceRequirementAtLevel(req, currentRune.level),
+      );
     },
 
     craftRune() {

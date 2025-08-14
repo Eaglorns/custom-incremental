@@ -17,6 +17,10 @@ interface ShopItem {
 
 type ShopKey = 'cpu' | 'hdd' | 'ram' | 'worker';
 
+const D0 = new Decimal(0);
+const D1 = new Decimal(1);
+const D100 = new Decimal(100);
+
 export const useStoreShop = defineStore('storeShop', {
   state: () => ({
     points: new Decimal(0),
@@ -68,25 +72,27 @@ export const useStoreShop = defineStore('storeShop', {
       const buyMode =
         type === 'value' ? store.list[name].buyModeValue : store.list[name].buyModeMultiply;
       const storePrestige = useStorePrestige();
-      let max =
+      const level =
         type === 'value'
-          ? storePrestige.upgrades.prestigeBuyValueCount.level.plus(1)
-          : storePrestige.upgrades.prestigeBuyValueMultiply.level.plus(1);
-      if (max.lt(1)) max = max.plus(1);
+          ? storePrestige.upgrades.prestigeBuyValueCount.level
+          : storePrestige.upgrades.prestigeBuyValueMultiply.level;
+      const max = level.plus(1).floor().max(1);
       switch (buyMode) {
         case 1:
-          return new Decimal(1);
+          return D1;
         case 100:
-          return max.floor().max(1);
-        default:
-          return max
-            .mul(buyMode / 100)
-            .floor()
-            .max(1);
+          return max;
+        default: {
+          const portion = new Decimal(buyMode).div(D100);
+          return max.mul(portion).floor().max(1);
+        }
       }
     },
 
     buyMax: () => (points: Decimal, price: Decimal, count: Decimal) => {
+      if (!price || price.lte(0) || !points || points.lte(0) || !count || count.lte(0)) {
+        return { bought: D0, rest: D0 };
+      }
       const maxCanBuy = points.div(price).floor();
       const bought = Decimal.min(count, maxCanBuy);
       const rest = bought.mul(price);
@@ -94,10 +100,9 @@ export const useStoreShop = defineStore('storeShop', {
     },
 
     costMultiplierDecrease() {
-      const costMultiplierDecrease = useStoreResearch().base.shopCostMultiplierDecrease;
-      return costMultiplierDecrease.level.gt(0)
-        ? costMultiplierDecrease.bonus.mul(costMultiplierDecrease.level)
-        : new Decimal(1);
+      const cmd = useStoreResearch().base.shopCostMultiplierDecrease;
+      const res = cmd.level.gt(0) ? cmd.bonus.mul(cmd.level) : D1;
+      return res.gt(0) ? res : D1;
     },
 
     costMultiply() {
@@ -144,9 +149,8 @@ export const useStoreShop = defineStore('storeShop', {
     processGivePoints() {
       const storeResearch = useStoreResearch();
       const parResearchWorker = storeResearch.base.workerPow;
-      const give = this.list.worker.value.pow(
-        parResearchWorker.bonus.mul(parResearchWorker.level).plus(1),
-      );
+      const exp = parResearchWorker.bonus.mul(parResearchWorker.level).plus(1);
+      const give = this.list.worker.value.pow(exp);
       this.points = this.points.add(give);
     },
 
@@ -167,13 +171,18 @@ export const useStoreShop = defineStore('storeShop', {
       const buyResult = this.buyMax(storeData.epicNumber, this.costMultiply(key), amount);
       if (buyResult.bought.gt(0)) {
         this.list[key].multiply = this.list[key].multiply.plus(buyResult.bought);
-        if (researchMultiplierChance.level.mul(researchMultiplierChance.bonus).lt(Math.random()))
+        const chance = Decimal.max(
+          0,
+          Decimal.min(1, researchMultiplierChance.level.mul(researchMultiplierChance.bonus)),
+        );
+        if (chance.lt(Math.random())) {
           storeData.epicNumber = storeData.epicNumber.minus(buyResult.rest);
+        }
       }
     },
 
     load(loaded: {
-      points: string;
+      points?: string | number;
       list: {
         cpu: ShopItem;
         hdd: ShopItem;
@@ -181,23 +190,33 @@ export const useStoreShop = defineStore('storeShop', {
         worker: ShopItem;
       };
     }) {
-      this.points = new Decimal(loaded.points);
-      this.list.cpu.value = new Decimal(loaded.list.cpu.value);
-      this.list.cpu.multiply = new Decimal(loaded.list.cpu.multiply);
-      this.list.cpu.buyModeValue = loaded.list.cpu.buyModeValue;
-      this.list.cpu.buyModeMultiply = loaded.list.cpu.buyModeMultiply;
-      this.list.hdd.value = new Decimal(loaded.list.hdd.value);
-      this.list.hdd.multiply = new Decimal(loaded.list.hdd.multiply);
-      this.list.hdd.buyModeValue = loaded.list.hdd.buyModeValue;
-      this.list.hdd.buyModeMultiply = loaded.list.hdd.buyModeMultiply;
-      this.list.ram.value = new Decimal(loaded.list.ram.value);
-      this.list.ram.multiply = new Decimal(loaded.list.ram.multiply);
-      this.list.ram.buyModeValue = loaded.list.ram.buyModeValue;
-      this.list.ram.buyModeMultiply = loaded.list.ram.buyModeMultiply;
-      this.list.worker.value = new Decimal(loaded.list.worker.value);
-      this.list.worker.multiply = new Decimal(loaded.list.worker.multiply);
-      this.list.worker.buyModeValue = loaded.list.worker.buyModeValue;
-      this.list.worker.buyModeMultiply = loaded.list.worker.buyModeMultiply;
+      const toDec = (v?: string | number | Decimal, def = '0') => new Decimal(v ?? def);
+
+      this.points = toDec(loaded?.points);
+      this.list.cpu.value = toDec(loaded.list.cpu.value);
+      this.list.cpu.multiply = toDec(loaded.list.cpu.multiply);
+      this.list.cpu.buyModeValue = loaded.list.cpu.buyModeValue ?? this.list.cpu.buyModeValue;
+      this.list.cpu.buyModeMultiply =
+        loaded.list.cpu.buyModeMultiply ?? this.list.cpu.buyModeMultiply;
+
+      this.list.hdd.value = toDec(loaded.list.hdd.value);
+      this.list.hdd.multiply = toDec(loaded.list.hdd.multiply);
+      this.list.hdd.buyModeValue = loaded.list.hdd.buyModeValue ?? this.list.hdd.buyModeValue;
+      this.list.hdd.buyModeMultiply =
+        loaded.list.hdd.buyModeMultiply ?? this.list.hdd.buyModeMultiply;
+
+      this.list.ram.value = toDec(loaded.list.ram.value);
+      this.list.ram.multiply = toDec(loaded.list.ram.multiply);
+      this.list.ram.buyModeValue = loaded.list.ram.buyModeValue ?? this.list.ram.buyModeValue;
+      this.list.ram.buyModeMultiply =
+        loaded.list.ram.buyModeMultiply ?? this.list.ram.buyModeMultiply;
+
+      this.list.worker.value = toDec(loaded.list.worker.value);
+      this.list.worker.multiply = toDec(loaded.list.worker.multiply);
+      this.list.worker.buyModeValue =
+        loaded.list.worker.buyModeValue ?? this.list.worker.buyModeValue;
+      this.list.worker.buyModeMultiply =
+        loaded.list.worker.buyModeMultiply ?? this.list.worker.buyModeMultiply;
     },
   },
 });

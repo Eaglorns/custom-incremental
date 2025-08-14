@@ -4,6 +4,25 @@ import { useStoreData } from 'stores/data';
 import { useStoreShop } from 'stores/shop';
 import { useStoreResearch } from 'stores/research';
 
+const D0 = new Decimal(0);
+const D1 = new Decimal(1);
+const BASE = new Decimal(1.3);
+const FACTOR = new Decimal(0.00001);
+
+const VALUE_UPGRADES = [
+  ['autoShopCPUValue', 'cpu'],
+  ['autoShopHDDValue', 'hdd'],
+  ['autoShopRAMValue', 'ram'],
+  ['autoShopWorkerValue', 'worker'],
+] as const;
+
+const MULTIPLIER_UPGRADES = [
+  ['autoShopCPUMultiply', 'cpu'],
+  ['autoShopHDDMultiply', 'hdd'],
+  ['autoShopRAMMultiply', 'ram'],
+  ['autoShopWorkerMultiply', 'worker'],
+] as const;
+
 export const useStorePrestige = defineStore('storePrestige', {
   state: () => ({
     points: new Decimal(0),
@@ -83,27 +102,26 @@ export const useStorePrestige = defineStore('storePrestige', {
     },
   }),
   getters: {
-    getEpicNumberToPrestige: (): Decimal => {
-      const storePrestige = useStorePrestige();
-      const prestigeUpgradeSoftening = storePrestige.upgrades.prestigeSoftening.level.gt(0)
-        ? storePrestige.upgrades.prestigeSoftening.level
-        : new Decimal(1);
-      return new Decimal(1.3).div(new Decimal(0.00001).mul(prestigeUpgradeSoftening));
+    getEpicNumberToPrestige: (state): Decimal => {
+      const soft = state.upgrades.prestigeSoftening.level.gt(0)
+        ? state.upgrades.prestigeSoftening.level
+        : D1;
+      return BASE.div(FACTOR.mul(soft));
     },
 
-    prestigeGain: (): Decimal => {
+    prestigeGain: (state): Decimal => {
       const storeData = useStoreData();
-      const storePrestige = useStorePrestige();
-      if (storeData.epicNumber.lte(0)) return new Decimal(0);
-      const prestigeUpgradeSoftening = storePrestige.upgrades.prestigeSoftening.level.gt(0)
-        ? storePrestige.upgrades.prestigeSoftening.level
-        : new Decimal(1);
-      return storeData.epicNumber.mul(0.00001).mul(prestigeUpgradeSoftening).log(1.3);
+      const n = storeData.epicNumber;
+      if (n.lte(0)) return D0;
+      const soft = state.upgrades.prestigeSoftening.level.gt(0)
+        ? state.upgrades.prestigeSoftening.level
+        : D1;
+      const scaled = n.mul(FACTOR).mul(soft);
+      return scaled.log(BASE);
     },
 
-    prestigeCan: (): boolean => {
-      const storePrestige = useStorePrestige();
-      return storePrestige.prestigeGain.gte(1);
+    prestigeCan(): boolean {
+      return (this.prestigeGain as unknown as Decimal).gte(1);
     },
 
     save(state) {
@@ -113,7 +131,9 @@ export const useStorePrestige = defineStore('storePrestige', {
           prestigeBonus: { level: state.upgrades.prestigeBonus.level },
           prestigeSoftening: { level: state.upgrades.prestigeSoftening.level },
           prestigeBuyValueCount: { level: state.upgrades.prestigeBuyValueCount.level },
-          prestigeBuyValueMultiply: { level: state.upgrades.prestigeBuyValueMultiply.level },
+          prestigeBuyValueMultiply: {
+            level: state.upgrades.prestigeBuyValueMultiply.level,
+          },
           autoShopCPUValue: { level: state.upgrades.autoShopCPUValue.level },
           autoShopHDDValue: { level: state.upgrades.autoShopHDDValue.level },
           autoShopRAMValue: { level: state.upgrades.autoShopRAMValue.level },
@@ -129,98 +149,77 @@ export const useStorePrestige = defineStore('storePrestige', {
   actions: {
     onPrestige() {
       const storeData = useStoreData();
-      const storePrestige = useStorePrestige();
       const storeShop = useStoreShop();
       const storeResearch = useStoreResearch();
-      storePrestige.points = storePrestige.points.add(storePrestige.prestigeGain);
-      storeData.epicNumber = new Decimal(1);
-      storeResearch.points = new Decimal(0);
-      storeShop.list.cpu.value = new Decimal(1);
-      storeShop.list.cpu.multiply = new Decimal(1);
-      storeShop.list.hdd.value = new Decimal(1);
-      storeShop.list.hdd.multiply = new Decimal(1);
-      storeShop.list.ram.value = new Decimal(1);
-      storeShop.list.ram.multiply = new Decimal(1);
-      storeShop.list.worker.value = new Decimal(1);
-      storeShop.list.worker.multiply = new Decimal(1);
-      storeShop.points = new Decimal(0);
+
+      this.points = this.points.add(this.prestigeGain as unknown as Decimal);
+      storeData.epicNumber = D1;
+      storeResearch.points = D0;
+      storeShop.list.cpu.value = D1;
+      storeShop.list.cpu.multiply = D1;
+      storeShop.list.hdd.value = D1;
+      storeShop.list.hdd.multiply = D1;
+      storeShop.list.ram.value = D1;
+      storeShop.list.ram.multiply = D1;
+      storeShop.list.worker.value = D1;
+      storeShop.list.worker.multiply = D1;
+      storeShop.points = D0;
     },
 
     processUpgradeAddShop() {
-      const storePrestige = useStorePrestige();
       const storeShop = useStoreShop();
-      const upgradesValue = [
-        { key: 'autoShopCPUValue', shopKey: 'cpu' },
-        { key: 'autoShopHDDValue', shopKey: 'hdd' },
-        { key: 'autoShopRAMValue', shopKey: 'ram' },
-        { key: 'autoShopWorkerValue', shopKey: 'worker' },
-      ];
-      upgradesValue.forEach(({ key, shopKey }) => {
-        const level = storePrestige.upgrades[key as keyof typeof storePrestige.upgrades].level;
+
+      for (const [uKey, sKey] of VALUE_UPGRADES) {
+        const level = this.upgrades[uKey].level;
         if (level.gt(0)) {
-          storeShop.list[shopKey as keyof typeof storeShop.list].value =
-            storeShop.list[shopKey as keyof typeof storeShop.list].value.add(level);
+          const shop = storeShop.list[sKey];
+          shop.value = shop.value.add(level);
         }
-      });
-      const upgradesMultiply = [
-        { key: 'autoShopCPUMultiply', shopKey: 'cpu' },
-        { key: 'autoShopHDDMultiply', shopKey: 'hdd' },
-        { key: 'autoShopRAMMultiply', shopKey: 'ram' },
-        { key: 'autoShopWorkerMultiply', shopKey: 'worker' },
-      ];
-      upgradesMultiply.forEach(({ key, shopKey }) => {
-        const level = storePrestige.upgrades[key as keyof typeof storePrestige.upgrades].level;
+      }
+
+      for (const [uKey, sKey] of MULTIPLIER_UPGRADES) {
+        const level = this.upgrades[uKey].level;
         if (level.gt(0)) {
-          storeShop.list[shopKey as keyof typeof storeShop.list].multiply =
-            storeShop.list[shopKey as keyof typeof storeShop.list].multiply.add(level);
+          const shop = storeShop.list[sKey];
+          shop.multiply = shop.multiply.add(level);
         }
-      });
+      }
     },
 
     load(loaded: {
-      points: string;
-      upgrades: {
-        prestigeBonus: { level: string };
-        prestigeSoftening: { level: string };
-        prestigeBuyValueCount: { level: string };
-        prestigeBuyValueMultiply: { level: string };
-        autoShopCPUValue: { level: string };
-        autoShopHDDValue: { level: string };
-        autoShopRAMValue: { level: string };
-        autoShopWorkerValue: { level: string };
-        autoShopCPUMultiply: { level: string };
-        autoShopHDDMultiply: { level: string };
-        autoShopRAMMultiply: { level: string };
-        autoShopWorkerMultiply: { level: string };
+      points?: string | number;
+      upgrades?: {
+        prestigeBonus?: { level?: string | number };
+        prestigeSoftening?: { level?: string | number };
+        prestigeBuyValueCount?: { level?: string | number };
+        prestigeBuyValueMultiply?: { level?: string | number };
+        autoShopCPUValue?: { level?: string | number };
+        autoShopHDDValue?: { level?: string | number };
+        autoShopRAMValue?: { level?: string | number };
+        autoShopWorkerValue?: { level?: string | number };
+        autoShopCPUMultiply?: { level?: string | number };
+        autoShopHDDMultiply?: { level?: string | number };
+        autoShopRAMMultiply?: { level?: string | number };
+        autoShopWorkerMultiply?: { level?: string | number };
       };
     }) {
-      this.points = new Decimal(loaded.points);
-      this.upgrades.prestigeBonus.level = new Decimal(loaded.upgrades.prestigeBonus.level);
-      this.upgrades.prestigeSoftening.level = new Decimal(loaded.upgrades.prestigeSoftening.level);
-      this.upgrades.prestigeBuyValueCount.level = new Decimal(
-        loaded.upgrades.prestigeBuyValueCount.level,
-      );
-      this.upgrades.prestigeBuyValueMultiply.level = new Decimal(
-        loaded.upgrades.prestigeBuyValueMultiply.level,
-      );
-      this.upgrades.autoShopCPUValue.level = new Decimal(loaded.upgrades.autoShopCPUValue.level);
-      this.upgrades.autoShopHDDValue.level = new Decimal(loaded.upgrades.autoShopHDDValue.level);
-      this.upgrades.autoShopRAMValue.level = new Decimal(loaded.upgrades.autoShopRAMValue.level);
-      this.upgrades.autoShopWorkerValue.level = new Decimal(
-        loaded.upgrades.autoShopWorkerValue.level,
-      );
-      this.upgrades.autoShopCPUMultiply.level = new Decimal(
-        loaded.upgrades.autoShopCPUMultiply.level,
-      );
-      this.upgrades.autoShopHDDMultiply.level = new Decimal(
-        loaded.upgrades.autoShopHDDMultiply.level,
-      );
-      this.upgrades.autoShopRAMMultiply.level = new Decimal(
-        loaded.upgrades.autoShopRAMMultiply.level,
-      );
-      this.upgrades.autoShopWorkerMultiply.level = new Decimal(
-        loaded.upgrades.autoShopWorkerMultiply.level,
-      );
+      const toDec = (v?: string | number, def = '0') => new Decimal(v ?? def);
+
+      this.points = toDec(loaded?.points, '0');
+      const u = loaded?.upgrades ?? {};
+
+      this.upgrades.prestigeBonus.level = toDec(u.prestigeBonus?.level);
+      this.upgrades.prestigeSoftening.level = toDec(u.prestigeSoftening?.level);
+      this.upgrades.prestigeBuyValueCount.level = toDec(u.prestigeBuyValueCount?.level);
+      this.upgrades.prestigeBuyValueMultiply.level = toDec(u.prestigeBuyValueMultiply?.level);
+      this.upgrades.autoShopCPUValue.level = toDec(u.autoShopCPUValue?.level);
+      this.upgrades.autoShopHDDValue.level = toDec(u.autoShopHDDValue?.level);
+      this.upgrades.autoShopRAMValue.level = toDec(u.autoShopRAMValue?.level);
+      this.upgrades.autoShopWorkerValue.level = toDec(u.autoShopWorkerValue?.level);
+      this.upgrades.autoShopCPUMultiply.level = toDec(u.autoShopCPUMultiply?.level);
+      this.upgrades.autoShopHDDMultiply.level = toDec(u.autoShopHDDMultiply?.level);
+      this.upgrades.autoShopRAMMultiply.level = toDec(u.autoShopRAMMultiply?.level);
+      this.upgrades.autoShopWorkerMultiply.level = toDec(u.autoShopWorkerMultiply?.level);
     },
   },
 });

@@ -5,6 +5,30 @@ import { useStoreShop } from 'stores/shop';
 import { useStorePrestige } from 'stores/prestige';
 import { useStoreResearch } from 'stores/research';
 
+// Constants and types for optimization and safety
+const ZERO = new Decimal(0);
+
+type AchievementKey =
+  | 'epicNumberValue'
+  | 'shopCpuValue'
+  | 'shopHddValue'
+  | 'shopRamValue'
+  | 'shopWorkerValue'
+  | 'prestigePoints'
+  | 'researchPoints'
+  | 'shopPoints';
+
+const DIVIDERS: Record<AchievementKey, Decimal> = {
+  epicNumberValue: new Decimal(10),
+  shopCpuValue: new Decimal(5),
+  shopHddValue: new Decimal(4),
+  shopRamValue: new Decimal(3),
+  shopWorkerValue: new Decimal(2),
+  prestigePoints: new Decimal(1.5),
+  researchPoints: new Decimal(2),
+  shopPoints: new Decimal(4),
+} as const;
+
 export const useStoreAchievement = defineStore('storeAchievement', {
   state: () => ({
     list: {
@@ -22,7 +46,7 @@ export const useStoreAchievement = defineStore('storeAchievement', {
     getLevel:
       () =>
       (current: Decimal, divider: Decimal): Decimal => {
-        if (current.lt(divider)) return new Decimal(0);
+        if (current.lt(divider)) return ZERO;
         return current.log(divider).floor();
       },
 
@@ -45,38 +69,27 @@ export const useStoreAchievement = defineStore('storeAchievement', {
     },
   },
   actions: {
+    updateLevel(key: AchievementKey, current: Decimal, divider: Decimal) {
+      const level = this.getLevel(current, divider);
+      if (level.gt(this.list[key])) this.list[key] = level;
+    },
+
     processUpdate() {
       const storeData = useStoreData();
       const storeShop = useStoreShop();
       const storePrestige = useStorePrestige();
       const storeResearch = useStoreResearch();
 
-      const epicNumberLevel = this.getLevel(storeData.epicNumber, new Decimal(10));
-      if (epicNumberLevel.gt(this.list.epicNumberValue))
-        this.list.epicNumberValue = epicNumberLevel;
+      this.updateLevel('epicNumberValue', storeData.epicNumber, DIVIDERS.epicNumberValue);
 
-      const cpuLevel = this.getLevel(storeShop.list.cpu.value, new Decimal(5));
-      if (cpuLevel.gt(this.list.shopCpuValue)) this.list.shopCpuValue = cpuLevel;
+      this.updateLevel('shopCpuValue', storeShop.list.cpu.value, DIVIDERS.shopCpuValue);
+      this.updateLevel('shopHddValue', storeShop.list.hdd.value, DIVIDERS.shopHddValue);
+      this.updateLevel('shopRamValue', storeShop.list.ram.value, DIVIDERS.shopRamValue);
+      this.updateLevel('shopWorkerValue', storeShop.list.worker.value, DIVIDERS.shopWorkerValue);
 
-      const hddLevel = this.getLevel(storeShop.list.hdd.value, new Decimal(4));
-      if (hddLevel.gt(this.list.shopHddValue)) this.list.shopHddValue = hddLevel;
-
-      const ramLevel = this.getLevel(storeShop.list.ram.value, new Decimal(3));
-      if (ramLevel.gt(this.list.shopRamValue)) this.list.shopRamValue = ramLevel;
-
-      const workerLevel = this.getLevel(storeShop.list.worker.value, new Decimal(2));
-      if (workerLevel.gt(this.list.shopWorkerValue)) this.list.shopWorkerValue = workerLevel;
-
-      const prestigePointsLevel = this.getLevel(storePrestige.points, new Decimal(1.5));
-      if (prestigePointsLevel.gt(this.list.prestigePoints))
-        this.list.prestigePoints = prestigePointsLevel;
-
-      const researchPointsLevel = this.getLevel(storeResearch.points, new Decimal(2));
-      if (researchPointsLevel.gt(this.list.researchPoints))
-        this.list.researchPoints = researchPointsLevel;
-
-      const shopPointsLevel = this.getLevel(storeShop.points, new Decimal(4));
-      if (shopPointsLevel.gt(this.list.shopPoints)) this.list.shopPoints = shopPointsLevel;
+      this.updateLevel('prestigePoints', storePrestige.points, DIVIDERS.prestigePoints);
+      this.updateLevel('researchPoints', storeResearch.points, DIVIDERS.researchPoints);
+      this.updateLevel('shopPoints', storeShop.points, DIVIDERS.shopPoints);
     },
 
     load(loaded: {
@@ -89,14 +102,14 @@ export const useStoreAchievement = defineStore('storeAchievement', {
       researchPoints: string;
       shopPoints: string;
     }) {
-      this.list.epicNumberValue = new Decimal(loaded.epicNumberValue);
-      this.list.shopCpuValue = new Decimal(loaded.shopCpuValue);
-      this.list.shopHddValue = new Decimal(loaded.shopHddValue);
-      this.list.shopRamValue = new Decimal(loaded.shopRamValue);
-      this.list.shopWorkerValue = new Decimal(loaded.shopWorkerValue);
-      this.list.prestigePoints = new Decimal(loaded.prestigePoints);
-      this.list.researchPoints = new Decimal(loaded.researchPoints);
-      this.list.shopPoints = new Decimal(loaded.shopPoints);
+      this.list.epicNumberValue = new Decimal(loaded?.epicNumberValue ?? '0');
+      this.list.shopCpuValue = new Decimal(loaded?.shopCpuValue ?? '0');
+      this.list.shopHddValue = new Decimal(loaded?.shopHddValue ?? '0');
+      this.list.shopRamValue = new Decimal(loaded?.shopRamValue ?? '0');
+      this.list.shopWorkerValue = new Decimal(loaded?.shopWorkerValue ?? '0');
+      this.list.prestigePoints = new Decimal(loaded?.prestigePoints ?? '0');
+      this.list.researchPoints = new Decimal(loaded?.researchPoints ?? '0');
+      this.list.shopPoints = new Decimal(loaded?.shopPoints ?? '0');
     },
   },
 });

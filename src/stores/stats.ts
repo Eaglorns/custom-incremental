@@ -5,6 +5,10 @@ import { useStoreResearch } from 'stores/research';
 import { useStorePrestige } from 'stores/prestige';
 import { useStoreShop } from 'stores/shop';
 
+const SHOP_KEYS = ['cpu', 'hdd', 'ram', 'worker'] as const;
+
+type ShopKey = (typeof SHOP_KEYS)[number];
+
 export const useStoreStats = defineStore('storeStats', {
   state: () => ({
     gameTime: 0,
@@ -42,10 +46,11 @@ export const useStoreStats = defineStore('storeStats', {
       const storeResearch = useStoreResearch();
       const storePrestige = useStorePrestige();
       const storeShop = useStoreShop();
-      this.maxShopBuy.cpu = Decimal.max(this.maxShopBuy.cpu, storeShop.list.cpu.value);
-      this.maxShopBuy.hdd = Decimal.max(this.maxShopBuy.hdd, storeShop.list.hdd.value);
-      this.maxShopBuy.ram = Decimal.max(this.maxShopBuy.ram, storeShop.list.ram.value);
-      this.maxShopBuy.worker = Decimal.max(this.maxShopBuy.worker, storeShop.list.worker.value);
+
+      SHOP_KEYS.forEach((k: ShopKey) => {
+        this.maxShopBuy[k] = Decimal.max(this.maxShopBuy[k], storeShop.list[k].value);
+      });
+
       this.maxEpicNumber = Decimal.max(this.maxEpicNumber, storeData.epicNumber);
       this.maxShopPoints = Decimal.max(this.maxShopPoints, storeShop.points);
       this.maxResearchPoints = Decimal.max(this.maxResearchPoints, storeResearch.points);
@@ -53,27 +58,30 @@ export const useStoreStats = defineStore('storeStats', {
     },
 
     load(loaded: {
-      gameTime: number;
-      maxShopBuy: {
-        cpu: string;
-        hdd: string;
-        ram: string;
-        worker: string;
+      gameTime?: number;
+      maxShopBuy?: {
+        cpu?: string;
+        hdd?: string;
+        ram?: string;
+        worker?: string;
       };
-      maxEpicNumber: string;
-      maxShopPoints: string;
-      maxResearchPoints: string;
-      maxPrestigePoints: string;
+      maxEpicNumber?: string;
+      maxShopPoints?: string;
+      maxResearchPoints?: string;
+      maxPrestigePoints?: string;
     }) {
-      this.gameTime = loaded.gameTime;
-      this.maxShopBuy.cpu = new Decimal(loaded.maxShopBuy.cpu);
-      this.maxShopBuy.hdd = new Decimal(loaded.maxShopBuy.hdd);
-      this.maxShopBuy.ram = new Decimal(loaded.maxShopBuy.ram);
-      this.maxShopBuy.worker = new Decimal(loaded.maxShopBuy.worker);
-      this.maxEpicNumber = new Decimal(loaded.maxEpicNumber);
-      this.maxShopPoints = new Decimal(loaded.maxShopPoints);
-      this.maxPrestigePoints = new Decimal(loaded.maxPrestigePoints);
-      this.maxResearchPoints = new Decimal(loaded.maxResearchPoints);
+      this.gameTime = loaded?.gameTime ?? this.gameTime;
+
+      const msb = loaded?.maxShopBuy ?? {};
+      this.maxShopBuy.cpu = new Decimal(msb.cpu || this.maxShopBuy.cpu);
+      this.maxShopBuy.hdd = new Decimal(msb.hdd || this.maxShopBuy.hdd);
+      this.maxShopBuy.ram = new Decimal(msb.ram || this.maxShopBuy.ram);
+      this.maxShopBuy.worker = new Decimal(msb.worker || this.maxShopBuy.worker);
+
+      this.maxEpicNumber = new Decimal(loaded?.maxEpicNumber || this.maxEpicNumber);
+      this.maxShopPoints = new Decimal(loaded?.maxShopPoints || this.maxShopPoints);
+      this.maxPrestigePoints = new Decimal(loaded?.maxPrestigePoints || this.maxPrestigePoints);
+      this.maxResearchPoints = new Decimal(loaded?.maxResearchPoints || this.maxResearchPoints);
     },
   },
 });
