@@ -7,16 +7,16 @@
         class="rune-slot"
         :class="{
           selected: storeMagic.selectedRune?.id === rune.id,
-          'yellow-rune': rune.level.equals(0) && !storeMagic.canCraftSpecificRune(rune),
-          'yellow-solid': rune.level.gt(0) && !storeMagic.canCraftSpecificRune(rune),
-          'green-rune': storeMagic.canCraftSpecificRune(rune),
+          'yellow-rune': rune.level.equals(0) && !storeMagic.canCraftRuneById(rune.id),
+          'yellow-solid': rune.level.gt(0) && !storeMagic.canCraftRuneById(rune.id),
+          'green-rune': storeMagic.canCraftRuneById(rune.id),
           crafting: craftingRune?.id === rune.id,
         }"
         @click="storeMagic.selectRune(rune)"
         @mousedown="startCrafting(rune)"
         @mouseup="stopCrafting"
         @mouseleave="stopCrafting"
-        @touchstart="startCrafting(rune)"
+        @touchstart.prevent="startCrafting(rune)"
         @touchend="stopCrafting"
         @touchcancel="stopCrafting"
         @contextmenu.prevent
@@ -25,7 +25,7 @@
           <i :class="iconStyle + rune.meta.icon" :style="{ color: rune.meta.color }"></i>
         </div>
         <div v-if="rune.level.gt(0)" class="rune-level">{{ rune.level }}</div>
-        <div v-if="storeMagic.canCraftSpecificRune(rune)" class="craft-indicator">
+        <div v-if="storeMagic.canCraftRuneById(rune.id)" class="craft-indicator">
           <i class="fas fa-hammer"></i>
         </div>
         <div class="rune-name">{{ rune.meta.name }}</div>
@@ -54,6 +54,8 @@ const craftingRune = ref<Rune | null>(null);
 const craftProgress = ref(0);
 const craftTimer = ref<number | null>(null);
 const craftDuration = 500;
+const holdDelay = 160; // минимальное удержание перед стартом крафта (мс)
+const holdTimeout = ref<number | null>(null);
 const isMouseDown = ref(false);
 const currentCraftingRune = ref<Rune | null>(null);
 const isCompleting = ref(false);
@@ -78,11 +80,11 @@ const runesWithMeta = computed(() => {
 });
 
 const startCrafting = (rune: Rune) => {
-  if (!storeMagic.canCraftSpecificRune(rune)) {
+  if (!storeMagic.canCraftRuneById(rune.id)) {
     return;
   }
 
-  storeMagic.selectRune(rune);
+  // ВАЖНО: не выбираем руну здесь. Выбор только по клику (@click)
 
   isMouseDown.value = true;
   currentCraftingRune.value = rune;
@@ -91,11 +93,18 @@ const startCrafting = (rune: Rune) => {
     return;
   }
 
-  startCraftingCycle(rune);
+  // Запускаем цикл крафта только если кнопку удерживают не менее holdDelay
+  if (holdTimeout.value) {
+    clearTimeout(holdTimeout.value);
+  }
+  holdTimeout.value = window.setTimeout(() => {
+    if (!isMouseDown.value || currentCraftingRune.value?.id !== rune.id) return;
+    startCraftingCycle(rune);
+  }, holdDelay);
 };
 
 const startCraftingCycle = (rune: Rune) => {
-  if (!storeMagic.canCraftSpecificRune(rune)) {
+  if (!storeMagic.canCraftRuneById(rune.id)) {
     stopCrafting();
     return;
   }
@@ -119,7 +128,7 @@ const startCraftingCycle = (rune: Rune) => {
       isCompleting.value ||
       !isMouseDown.value ||
       currentCraftingRune.value?.id !== rune.id ||
-      !storeMagic.canCraftSpecificRune(rune)
+      !storeMagic.canCraftRuneById(rune.id)
     ) {
       if (!isCompleting.value) {
         stopCrafting();
@@ -132,7 +141,7 @@ const startCraftingCycle = (rune: Rune) => {
     craftProgress.value = progress;
 
     if (progress >= 100) {
-      if (storeMagic.canCraftSpecificRune(rune) && !isCompleting.value) {
+      if (storeMagic.canCraftRuneById(rune.id) && !isCompleting.value) {
         isCompleting.value = true;
         completeCrafting();
       } else {
@@ -151,6 +160,11 @@ const stopCrafting = () => {
   currentCraftingRune.value = null;
   isCompleting.value = false;
 
+  if (holdTimeout.value) {
+    clearTimeout(holdTimeout.value);
+    holdTimeout.value = null;
+  }
+
   if (craftTimer.value) {
     cancelAnimationFrame(craftTimer.value);
     craftTimer.value = null;
@@ -164,7 +178,7 @@ const completeCrafting = () => {
     return;
   }
 
-  if (craftingRune.value && storeMagic.canCraftSpecificRune(craftingRune.value)) {
+  if (craftingRune.value && storeMagic.canCraftRuneById(craftingRune.value.id)) {
     storeMagic.craftRune();
     storeSetting.playSound('MagicOnRuneCraft', 20);
   }
@@ -185,7 +199,7 @@ const completeCrafting = () => {
       if (
         isMouseDown.value &&
         currentCraftingRune.value?.id === runeBeingCrafted.id &&
-        storeMagic.canCraftSpecificRune(runeBeingCrafted) &&
+        storeMagic.canCraftRuneById(runeBeingCrafted.id) &&
         !isCompleting.value
       ) {
         startCraftingCycle(runeBeingCrafted);

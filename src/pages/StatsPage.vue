@@ -2,12 +2,12 @@
   <q-page class="q-pa-md bg-dark text-white">
     <q-card flat bordered class="bg-grey-10 text-white stat-card">
       <q-card-section>
-        <div v-for="stat in stats" :key="stat.label" class="stat-row">
-          <template v-if="Array.isArray(stat.value)">
+        <div v-for="stat in statsView" :key="stat.label" class="stat-row">
+          <template v-if="stat.kind === 'multi'">
             <div class="stat-label">{{ stat.label }}</div>
             <div class="row items-center">
               <q-input
-                v-for="(item, idx) in stat.value"
+                v-for="(item, idx) in stat.items"
                 :label="item.label"
                 :key="stat.label + idx"
                 :model-value="item.value"
@@ -16,7 +16,7 @@
                 filled
                 color="primary"
                 class="bg-grey-9 text-accent stat-input"
-                :style="'width:' + (stat.widths ? stat.widths[idx] : stat.width) + ';'"
+                :style="'width:' + item.width + ';'"
               />
             </div>
           </template>
@@ -51,59 +51,84 @@ const storeStats = useStoreStats();
 const formatNumber = storeData.formatNumber;
 const formatTime = storeData.formatTime;
 
-const stats = computed(() => [
-  {
-    label: 'Проведено времени в игре',
-    value: formatTime(new Decimal(storeStats.gameTime)),
-    width: '200px',
-  },
-  {
-    label: 'Максимальное ЧИСЛО',
-    value: formatNumber(storeStats.maxEpicNumber),
-    width: '200px',
-  },
-  {
-    label: 'Максимальные монеты',
-    value: formatNumber(storeStats.maxShopPoints),
-    width: '275px',
-  },
-  {
-    label: 'Максимальные очки престижа',
-    value: formatNumber(storeStats.maxPrestigePoints),
-    width: '275px',
-  },
-  {
-    label: 'Максимальные очки исследований',
-    value: formatNumber(storeStats.maxResearchPoints),
-    width: '275px',
-  },
-  {
-    label: 'Максимальное значения магазина',
-    value: [
-      { label: 'CPU', value: formatNumber(storeStats.maxShopBuy.cpu) },
-      { label: 'HDD', value: formatNumber(storeStats.maxShopBuy.hdd) },
-      { label: 'RAM', value: formatNumber(storeStats.maxShopBuy.ram) },
-      { label: 'Работники', value: formatNumber(storeStats.maxShopBuy.worker) },
-    ],
-    widths: ['100px', '100px', '100px', '100px'],
-  },
-  {
-    label: 'Множитель прироста числа',
-    value: [
-      { label: 'Значение', value: formatNumber(storeData.multiplierEpicNumber) },
-      { label: 'Результат', value: formatNumber(storeData.getMultiplierEpicNumber) },
-    ],
-    widths: ['100px', '100px'],
-  },
-  {
-    label: 'Множитель ускорения исследований',
-    value: [
-      { label: 'Значение', value: formatNumber(storeResearch.speed) },
-      { label: 'Результат', value: formatNumber(storeResearch.getResearchSpeed) },
-    ],
-    widths: ['100px', '100px'],
-  },
-]);
+const statsView = computed(() => {
+  const maxShopWidths = ['100px', '100px', '100px', '100px'];
+  const multWidths = ['100px', '100px'];
+  return [
+    {
+      label: 'Проведено времени в игре',
+      value: formatTime(new Decimal(storeStats.gameTime)),
+      width: '200px',
+      kind: 'single' as const,
+    },
+    {
+      label: 'Максимальное ЧИСЛО',
+      value: formatNumber(storeStats.maxEpicNumber),
+      width: '200px',
+      kind: 'single' as const,
+    },
+    {
+      label: 'Максимальные монеты',
+      value: formatNumber(storeStats.maxShopPoints),
+      width: '275px',
+      kind: 'single' as const,
+    },
+    {
+      label: 'Максимальные очки престижа',
+      value: formatNumber(storeStats.maxPrestigePoints),
+      width: '275px',
+      kind: 'single' as const,
+    },
+    {
+      label: 'Максимальные очки исследований',
+      value: formatNumber(storeStats.maxResearchPoints),
+      width: '275px',
+      kind: 'single' as const,
+    },
+    {
+      label: 'Максимальное значения магазина',
+      items: [
+        { label: 'CPU', value: formatNumber(storeStats.maxShopBuy.cpu), width: maxShopWidths[0] },
+        { label: 'HDD', value: formatNumber(storeStats.maxShopBuy.hdd), width: maxShopWidths[1] },
+        { label: 'RAM', value: formatNumber(storeStats.maxShopBuy.ram), width: maxShopWidths[2] },
+        {
+          label: 'Работники',
+          value: formatNumber(storeStats.maxShopBuy.worker),
+          width: maxShopWidths[3],
+        },
+      ],
+      kind: 'multi' as const,
+    },
+    {
+      label: 'Множитель прироста числа',
+      items: [
+        {
+          label: 'Значение',
+          value: formatNumber(storeData.multiplierEpicNumber),
+          width: multWidths[0],
+        },
+        {
+          label: 'Результат',
+          value: formatNumber(storeData.getMultiplierEpicNumber),
+          width: multWidths[1],
+        },
+      ],
+      kind: 'multi' as const,
+    },
+    {
+      label: 'Множитель ускорения исследований',
+      items: [
+        { label: 'Значение', value: formatNumber(storeResearch.speed), width: multWidths[0] },
+        {
+          label: 'Результат',
+          value: formatNumber(storeResearch.getResearchSpeed),
+          width: multWidths[1],
+        },
+      ],
+      kind: 'multi' as const,
+    },
+  ];
+});
 </script>
 
 <style lang="scss" scoped>

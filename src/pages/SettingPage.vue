@@ -24,7 +24,7 @@
               <q-space />
               <div class="row items-center q-gutter-md">
                 <div class="text-h6 text-weight-bold" :class="{ 'text-grey-6': !audioEnabled }">
-                  {{ audioEnabled ? Math.round(audioVolume * 100) : 0 }}%
+                  {{ volumePercent }}%
                 </div>
                 <q-toggle v-model="audioEnabled" color="primary" size="lg" :icon="volumeIcon" />
               </div>
@@ -44,6 +44,7 @@
                 :color="audioEnabled ? 'primary' : 'grey-6'"
                 track-color="grey-7"
                 class="col"
+                :disable="!audioEnabled"
               />
               <i
                 :class="iconStyle + 'fa-volume-high'"
@@ -123,9 +124,13 @@ const audioEnabled = computed({
 const audioVolume = computed({
   get: () => storeSetting.audio.volume,
   set: (val: number) => {
-    storeSetting.audio.volume = val;
+    storeSetting.setVolume(val);
   },
 });
+
+const volumePercent = computed(() =>
+  audioEnabled.value ? Math.round(audioVolume.value * 100) : 0,
+);
 
 const volumeIcon = computed(() => {
   if (!audioEnabled.value) {

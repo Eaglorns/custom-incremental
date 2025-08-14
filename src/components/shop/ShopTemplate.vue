@@ -91,7 +91,7 @@
             snap
             color="primary"
             label
-            :label-value="formatNumber(storeShop.getBuyAmount(props.name, 'value'))"
+            :label-value="formatNumber(amountValue)"
             label-always
           />
         </div>
@@ -99,7 +99,7 @@
           <q-btn
             color="primary"
             outline
-            :label="buyLabel('Купить', props.name, 'value')"
+            :label="labelBuyValue"
             class="full-width"
             @click="onBuyValueCustom(props.name)"
             size="lg"
@@ -118,7 +118,7 @@
             snap
             color="primary"
             label
-            :label-value="formatNumber(storeShop.getBuyAmount(props.name, 'multiply'))"
+            :label-value="formatNumber(amountMultiply)"
             label-always
           />
         </div>
@@ -126,7 +126,7 @@
           <q-btn
             color="primary"
             outline
-            :label="buyLabel('Умножить', props.name, 'multiply')"
+            :label="labelBuyMultiply"
             class="full-width"
             @click="onBuyMultiplyCustom(props.name)"
             size="lg"
@@ -158,34 +158,40 @@ const iconStyle = computed(() => {
 
 const formatNumber = storeData.formatNumber;
 
+const currentItem = computed(() => storeShop.list[props.name]);
+const costValue = computed(() => currentItem.value.cost.value);
+const costMultiply = computed(() => storeShop.costMultiply(props.name));
+
 const buyModeValue = computed({
-  get: () => storeShop.list[props.name].buyModeValue,
-  set: (val) => (storeShop.list[props.name].buyModeValue = val),
+  get: () => currentItem.value.buyModeValue,
+  set: (val: number) => (currentItem.value.buyModeValue = val),
 });
-
 const buyModeMultiply = computed({
-  get: () => storeShop.list[props.name].buyModeMultiply,
-  set: (val) => (storeShop.list[props.name].buyModeMultiply = val),
+  get: () => currentItem.value.buyModeMultiply,
+  set: (val: number) => (currentItem.value.buyModeMultiply = val),
 });
 
-function buyLabel(base: string, name: ShopItemName, type: 'value' | 'multiply') {
-  const points = type === 'value' ? storeShop.points : storeData.epicNumber;
-  const amount = storeShop.getBuyAmount(name, type);
-  const result = storeShop.buyMax(
-    points,
-    type === 'multiply'
-      ? storeShop.costMultiply(props.name)
-      : storeShop.list[props.name].cost.value,
-    amount,
-  );
-  return `${base} ${formatNumber(result.bought)}`;
-}
+const amountValue = computed(() => storeShop.getBuyAmount(props.name, 'value'));
+const amountMultiply = computed(() => storeShop.getBuyAmount(props.name, 'multiply'));
+
+const resultValue = computed(() =>
+  storeShop.buyMax(storeShop.points, costValue.value, amountValue.value),
+);
+const resultMultiply = computed(() =>
+  storeShop.buyMax(storeData.epicNumber, costMultiply.value, amountMultiply.value),
+);
+
+const canBuyValue = computed(() => resultValue.value.bought.gt(0));
+const canBuyMultiply = computed(() => resultMultiply.value.bought.gt(0));
+
+const labelBuyValue = computed(() => `Купить ${formatNumber(resultValue.value.bought)}`);
+const labelBuyMultiply = computed(() => `Умножить ${formatNumber(resultMultiply.value.bought)}`);
 
 function onBuyValueCustom(name: ShopItemName) {
   const amount = storeShop.getBuyAmount(name, 'value');
   if (amount.gt(0)) {
     storeShop.onBuyValue(name, amount);
-    storeSetting.playSound('ShopOnBuyValue', 14);
+    storeSetting.playSound('ShopOnBuyValue', 35);
   }
 }
 
@@ -193,31 +199,9 @@ function onBuyMultiplyCustom(name: ShopItemName) {
   const amount = storeShop.getBuyAmount(name, 'multiply');
   if (amount.gt(0)) {
     storeShop.onBuyMultiply(name, amount);
-    storeSetting.playSound('ShopOnBuyMultiplier', 14);
+    storeSetting.playSound('ShopOnBuyMultiplier', 120);
   }
 }
-
-const canBuyValue = computed(() => {
-  const result = storeShop.buyMax(
-    storeShop.points,
-    storeShop.list[props.name].cost.value,
-    storeShop.getBuyAmount(props.name, 'value'),
-  );
-  if (result.bought.gt(0)) {
-    return true;
-  }
-  return false;
-});
-
-const canBuyMultiply = computed(() => {
-  const points = storeData.epicNumber;
-  const amount = storeShop.getBuyAmount(props.name, 'multiply');
-  const result = storeShop.buyMax(points, storeShop.costMultiply(props.name), amount);
-  if (result.bought.gt(0)) {
-    return true;
-  }
-  return false;
-});
 </script>
 
 <style lang="scss" scoped>

@@ -2,10 +2,10 @@
   <div class="magic-essence">
     <div class="essences-grid">
       <div
-        v-for="essence in essencesWithMeta"
+        v-for="essence in essencesForView"
         :key="essence.id"
         class="essence-item"
-        :class="{ insufficient: essence.amount.lt(getRequiredEssence(essence.id)) }"
+        :class="{ insufficient: essence.insufficient }"
       >
         <div class="essence-icon">
           <i :class="iconStyle + essence.meta.icon" :style="{ color: essence.meta.color }"></i>
@@ -19,10 +19,11 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useStoreMagic } from 'stores/magic';
+import { useStoreMagic, type Essence } from 'stores/magic';
 import { ESSENCE_META } from 'src/constants/magicMeta';
 import { useStoreData } from 'stores/data';
 import { useStoreSetting } from 'src/stores/setting';
+import Decimal from 'break_eternity.js';
 
 const storeMagic = useStoreMagic();
 const storeData = useStoreData();
@@ -34,19 +35,39 @@ const iconStyle = computed(() => {
 
 const formatNumber = storeData.formatNumber;
 
-const essencesWithMeta = computed(() => {
-  return storeMagic.essences.map((essence) => {
-    const meta = ESSENCE_META.find((m) => m.id === essence.id);
-    return {
-      ...essence,
-      meta: meta || { name: 'Неизвестно', icon: 'fa-question', color: '#666' },
-    };
-  });
+type EssenceMeta = (typeof ESSENCE_META)[number] | { name: string; icon: string; color: string };
+
+const essenceMetaMap = new Map<string, EssenceMeta>(ESSENCE_META.map((m) => [m.id, m]));
+
+const fallbackMeta: EssenceMeta = { name: 'Неизвестно', icon: 'fa-question', color: '#666' };
+
+const requiredByEssence = computed<Record<string, Decimal>>(() => {
+  const result: Record<string, Decimal> = {};
+  for (const e of storeMagic.essences) {
+    const raw = storeMagic.getRequiredEssence(e.id) as unknown as Decimal | number | string | null;
+    let val: Decimal;
+    if (raw instanceof Decimal) val = raw;
+    else if (typeof raw === 'number' || typeof raw === 'string') val = new Decimal(raw);
+    else val = new Decimal(0);
+    result[e.id] = val;
+  }
+  return result;
 });
 
-const getRequiredEssence = (essenceId: string) => {
-  return storeMagic.getRequiredEssence(essenceId);
-};
+interface EssenceForView extends Essence {
+  meta: EssenceMeta;
+  required: Decimal;
+  insufficient: boolean;
+}
+
+const essencesForView = computed<EssenceForView[]>(() =>
+  storeMagic.essences.map((e) => {
+    const meta: EssenceMeta = essenceMetaMap.get(e.id) ?? fallbackMeta;
+    const required = requiredByEssence.value[e.id] || new Decimal(0);
+    const insufficient = e.amount.lt(required);
+    return { ...e, meta, required, insufficient };
+  }),
+);
 </script>
 
 <style scoped lang="scss">
@@ -102,7 +123,6 @@ const getRequiredEssence = (essenceId: string) => {
   font-weight: 600;
 }
 
-// Мобильная адаптация
 @media (max-width: 768px) {
   .essences-grid {
     grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));

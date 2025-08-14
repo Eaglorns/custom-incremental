@@ -46,7 +46,7 @@
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
         <i :class="iconStyle + 'fa-droplet'" size="22px" color="secondary" />
-        <span ref="researchRef" class="text-weight-bold text-h5">
+        <span ref="magicRef" class="text-weight-bold text-h5">
           {{ formatNumber(storeMagic.points) }}
         </span>
       </div>
@@ -221,7 +221,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, nextTick } from 'vue';
+import { ref, computed, watch, onMounted, nextTick, onBeforeUnmount } from 'vue';
 import { useStoreData } from 'stores/data';
 import ShopTemplate from 'src/components/shop/ShopTemplate.vue';
 import ResearchBase from 'src/components/research/ResearchBase.vue';
@@ -274,7 +274,12 @@ const innerPrestige = ref('innerPrestigeBase');
 const innerMagic = ref('innerMagicBattle');
 const splitterModel = ref(20);
 
-const isMobile = computed(() => window.innerWidth < 700);
+const windowWidth = ref(window.innerWidth);
+const onResize = () => {
+  windowWidth.value = window.innerWidth;
+};
+
+const isMobile = computed(() => windowWidth.value < 700);
 
 watch(isMobile, (val) => {
   splitterModel.value = val ? 0 : 20;
@@ -284,6 +289,7 @@ const epicRef = ref<HTMLElement | null>(null);
 const shopRef = ref<HTMLElement | null>(null);
 const prestigeRef = ref<HTMLElement | null>(null);
 const researchRef = ref<HTMLElement | null>(null);
+const magicRef = ref<HTMLElement | null>(null);
 
 const tabLabels = computed(() => ({
   shop: isMobile.value ? 'Ма' : 'Магазин',
@@ -420,12 +426,22 @@ watch(
   () => formatNumber(storeResearch.points),
   () => animateColorEl(researchRef.value),
 );
+watch(
+  () => formatNumber(storeMagic.points),
+  () => animateColorEl(magicRef.value),
+);
 
 onMounted(() => {
+  window.addEventListener('resize', onResize);
   animateColorEl(epicRef.value);
   animateColorEl(shopRef.value);
   animateColorEl(prestigeRef.value);
   animateColorEl(researchRef.value);
+  animateColorEl(magicRef.value);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', onResize);
 });
 
 watch(
@@ -435,6 +451,7 @@ watch(
       if (tab === 'shop') animateColorEl(shopRef.value, true);
       else if (tab === 'prestige') animateColorEl(prestigeRef.value, true);
       else if (tab === 'research') animateColorEl(researchRef.value, true);
+      else if (tab === 'magic') animateColorEl(magicRef.value, true);
       else animateColorEl(epicRef.value);
     }).catch((error) => {
       console.error('Error animating color:', error);

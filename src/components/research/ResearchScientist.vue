@@ -1,8 +1,8 @@
 <template>
   <div class="row q-gutter-md">
     <q-card
-      v-for="scientist in storeResearch.scientists"
-      :key="scientist.id"
+      v-for="sv in scientistsView"
+      :key="sv.id"
       class="q-pa-md flex column items-center bg-blue-grey-9 text-white justify-between"
       style="width: 230px; height: 220px"
       flat
@@ -11,14 +11,10 @@
       <div class="scientist-header-row">
         <div class="scientist-header-left">
           <i :class="iconStyle + 'fa-brain'" color="blue-4" size="18px" class="q-mr-xs" />
-          <span class="text-bold scientist-intellect-value">{{
-            formatNumber(scientist.intellect)
-          }}</span>
+          <span class="text-bold scientist-intellect-value">{{ sv.intellectStr }}</span>
         </div>
         <div class="scientist-header-right">
-          <span class="text-bold scientist-efficiency-value">{{
-            formatNumber(scientist.efficiency)
-          }}</span>
+          <span class="text-bold scientist-efficiency-value">{{ sv.efficiencyStr }}</span>
           <i :class="iconStyle + 'fa-bolt'" color="teal-5" size="18px" class="q-ml-xs" />
         </div>
       </div>
@@ -29,21 +25,12 @@
       </div>
       <div class="scientist-level-row">
         <i :class="iconStyle + 'fa-medal'" color="blue-grey-3" size="22px" class="q-mr-xs" />
-        <span class="scientist-level-value scientist-level-gold">
-          {{ formatNumber(scientist.level) }}
-        </span>
+        <span class="scientist-level-value scientist-level-gold">{{ sv.levelStr }}</span>
       </div>
-      <q-linear-progress
-        :value="scientist.exp.div(expToLevel(scientist.level)).toNumber()"
-        color="primary"
-        class="q-mb-xs"
-        style="height: 8px"
-      />
+      <q-linear-progress :value="sv.progress" color="primary" class="q-mb-xs" style="height: 8px" />
       <div class="scientist-exp-row">
         <i :class="iconStyle + 'fa-circle-dot'" color="deep-orange-4" size="18px" class="q-mr-xs" />
-        <span class="scientist-exp-value scientist-exp-orange">
-          {{ formatNumber(scientist.exp) }}
-        </span>
+        <span class="scientist-exp-value scientist-exp-orange">{{ sv.expStr }}</span>
       </div>
     </q-card>
     <q-card
@@ -79,7 +66,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import Decimal from 'break_eternity.js';
-import { uuidv7 } from 'src/boot/uuid';
+import { v7 as uuidv7 } from 'uuid';
 import { useStoreData } from 'stores/data';
 import { useStoreResearch } from 'stores/research';
 import { useStoreSetting } from 'stores/setting';
@@ -105,6 +92,21 @@ const hireCost = computed(() => {
   if (n === 0) return base;
   const dynamicSoftCap = baseSoftCap.mul(new Decimal(1.2).pow(Math.floor(n / 3)));
   return base.mul(dynamicSoftCap.pow(n * n * n));
+});
+
+const scientistsView = computed(() => {
+  return storeResearch.scientists.map((s) => {
+    const expNeeded = expToLevel(s.level);
+    const progress = expNeeded.gt(0) ? s.exp.div(expNeeded).toNumber() : 0;
+    return {
+      id: s.id,
+      intellectStr: formatNumber(s.intellect),
+      efficiencyStr: formatNumber(s.efficiency),
+      levelStr: formatNumber(s.level),
+      expStr: formatNumber(s.exp),
+      progress,
+    };
+  });
 });
 
 function hireScientist() {

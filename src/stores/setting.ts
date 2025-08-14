@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { Howl } from 'src/boot/hovler';
+import { Howl } from 'howler';
 
 export const useStoreSetting = defineStore('storeSetting', {
   state: () => ({
@@ -23,37 +23,32 @@ export const useStoreSetting = defineStore('storeSetting', {
     },
   },
   actions: {
-    initializeAudio() {
+    initAudio() {
       if (this.audio.initialized) return;
-      const sounds = ['ShopOnBuyValue', 'ShopOnBuyMultiplier', 'MagicOnRuneCraft'];
-      sounds.forEach((file) => {
-        this.preloadedSounds[file] = new Howl({
-          src: [`sounds/${file}.mp3`],
-          preload: true,
-        });
-      });
       this.audio.initialized = true;
     },
-
     playSound(name: string, divider: number = 1) {
       if (!this.audio.enabled) return;
-      if (!this.audio.initialized) {
-        this.initializeAudio();
+      this.initAudio();
+
+      const volume = Math.max(0, Math.min(1, this.audio.volume / divider));
+      let sound = this.preloadedSounds[name];
+
+      if (!sound) {
+        sound = new Howl({
+          src: [`sounds/${name}.mp3`],
+          volume,
+        });
+        this.preloadedSounds[name] = sound;
+      } else {
+        sound.volume(volume);
       }
-      try {
-        const sound =
-          this.preloadedSounds[name] ||
-          new Howl({
-            src: [`sounds/${name}.mp3`],
-            volume: this.audio.volume / divider,
-          });
-        if (this.preloadedSounds[name]) {
-          sound.volume(this.audio.volume / divider);
-        }
-        sound.play();
-      } catch (error) {
-        console.warn(`Не удалось воспроизвести звук ${name}:`, error);
-      }
+
+      sound.play();
+    },
+
+    setVolume(volume: number) {
+      this.audio.volume = Math.max(0, Math.min(1, volume));
     },
 
     load(loaded: { audio: { enabled: boolean; volume: number }; iconStyle: string }) {

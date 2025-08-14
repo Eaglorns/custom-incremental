@@ -14,7 +14,7 @@
         <div
           class="prestige-progress-bar-fill"
           :class="{ 'prestige-progress-bar-can': canPrestige }"
-          :style="{ width: progress.toNumber() * 100 + '%' }"
+          :style="{ width: progressPercent + '%' }"
         />
       </div>
       <div class="prestige-progress-info flex items-center justify-between row">
@@ -43,6 +43,9 @@ import { useStoreData } from 'stores/data';
 import Decimal from 'break_eternity.js';
 import { useStoreSetting } from 'stores/setting';
 
+const D0 = new Decimal(0);
+const D1 = new Decimal(1);
+
 const storePrestige = useStorePrestige();
 const storeData = useStoreData();
 const storeSetting = useStoreSetting();
@@ -54,20 +57,18 @@ const iconStyle = computed(() => {
 const formatNumber = storeData.formatNumber;
 
 const prestige = computed(() => storePrestige.points);
-const prestigeGain = computed(() => {
-  if (storePrestige.prestigeGain.lt(0)) return new Decimal(0);
-  return storePrestige.prestigeGain;
-});
-const target = computed(() => new Decimal(1));
+const prestigeGain = computed(() => Decimal.max(storePrestige.prestigeGain, D0));
 const canPrestige = computed(() => storePrestige.prestigeCan);
-const progress = computed(() => Decimal.min(prestigeGain.value.div(target.value), 1));
+const progress = computed(() => Decimal.min(prestigeGain.value, D1));
+const progressPercent = computed(() => progress.value.toNumber() * 100);
 
 const prestigeTimeLeft = computed(() => {
   const epic = storeData.epicNumber;
   const gain = storeData.epicNumberGain;
   if (canPrestige.value || epic.lte(0) || gain.lte(0)) return null;
 
-  const seconds = storePrestige.getEpicNumberToPrestige.minus(epic).div(storeData.epicNumberGain);
+  const toTarget = Decimal.max(storePrestige.getEpicNumberToPrestige.minus(epic), D0);
+  const seconds = toTarget.div(gain);
 
   if (seconds.lt(1)) return null;
   return storeData.formatTime(seconds);

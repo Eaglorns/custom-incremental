@@ -2,7 +2,11 @@
   <q-card flat class="q-pa-md">
     <div class="text-h5 text-accent q-mb-sm">Улучшения престижа</div>
     <div class="row q-col-gutter-sm q-gutter-y-sm">
-      <div v-for="key in upgradesKeys" :key="key" class="col-12 col-sm-6 col-md-4 flex flex-center">
+      <div
+        v-for="uv in upgradesView"
+        :key="uv.key"
+        class="col-12 col-sm-6 col-md-4 flex flex-center"
+      >
         <q-card
           flat
           bordered
@@ -10,31 +14,18 @@
           style="min-width: 220px; max-width: 320px"
         >
           <div class="row items-center q-mb-sm no-wrap">
-            <i
-              :name="iconStyle + getUpgrade(key).value.icon"
-              size="28px"
-              color="accent"
-              class="q-mr-sm"
-            />
+            <i :class="iconStyle + uv.icon" size="28px" color="accent" class="q-mr-sm" />
             <div class="text-h6 text-bold text-white ellipsis" style="max-width: 200px">
-              <span :title="getUpgrade(key).value.title">
-                {{ getUpgrade(key).value.title }}
-                <q-tooltip class="prestige-tooltip-large">{{
-                  getUpgrade(key).value.title
-                }}</q-tooltip>
+              <span :title="uv.title">
+                {{ uv.title }}
+                <q-tooltip class="prestige-tooltip-large">{{ uv.title }}</q-tooltip>
               </span>
             </div>
-            <q-badge
-              class="q-ml-sm prestige-badge-dark"
-              v-if="getUpgrade(key).value.level !== undefined"
-            >
-              Ур. {{ getUpgrade(key).value.level
-              }}<template v-if="getUpgrade(key).value.maxLevel !== -1">
-                / {{ getUpgrade(key).value.maxLevel }}</template
-              >
+            <q-badge class="q-ml-sm prestige-badge-dark" v-if="uv.level !== undefined">
+              Ур. {{ uv.level }}<template v-if="uv.maxLevel !== -1">/ {{ uv.maxLevel }}</template>
             </q-badge>
           </div>
-          <div class="text-body2 text-grey-3 q-mb-sm">{{ getUpgrade(key).value.description }}</div>
+          <div class="text-body2 text-grey-3 q-mb-sm">{{ uv.description }}</div>
           <div class="row items-center q-mb-sm">
             <i
               :class="iconStyle + 'fa-arrow-up-right-dots'"
@@ -42,18 +33,14 @@
               color="yellow-4"
               class="q-mr-xs"
             />
-            <span class="text-weight-bold text-white">{{ formatNumber(getCost(key)) }}</span>
+            <span class="text-weight-bold text-white">{{ formatNumber(uv.cost) }}</span>
           </div>
           <q-btn
             color="dark"
             label="Купить"
-            @click="buyUpgrade(key)"
+            @click="buyUpgrade(uv.key)"
             class="full-width prestige-btn-dark"
-            :disable="
-              getUpgrade(key).value.maxLevel !== undefined &&
-              getUpgrade(key).value.maxLevel !== -1 &&
-              getUpgrade(key).value.level.gte(getUpgrade(key).value.maxLevel)
-            "
+            :disable="uv.isMaxed || !uv.canAfford"
           />
         </q-card>
       </div>
@@ -78,28 +65,38 @@ const iconStyle = computed(() => {
 
 const formatNumber = storeData.formatNumber;
 
-const upgradesKeys = computed(() => Object.keys(storePrestige.upgrades));
+const upgradesView = computed(() => {
+  return prestigeUpgradeMeta.map((meta) => {
+    const state = storePrestige.upgrades[meta.key as keyof typeof storePrestige.upgrades];
 
-const getUpgrade = (key: string) =>
-  computed(() => {
-    const meta = prestigeUpgradeMeta.find((m) => m.key === key)!;
-    const state = storePrestige.upgrades[key as keyof typeof storePrestige.upgrades] || {};
+    const level = state.level;
+    const maxLevel = state.maxLevel;
+    const baseCost = state.cost;
+    const growth = state.costGrowth;
+    const cost = level.lt(1) ? baseCost : growth.pow(level).mul(baseCost);
+
+    const isMaxed = maxLevel !== -1 && level.gte(maxLevel);
+    const canAfford = storePrestige.points.gte(cost);
+
     return {
-      ...meta,
-      ...state,
+      key: meta.key,
+      title: meta.title,
+      description: meta.description,
+      icon: meta.icon,
+      level,
+      maxLevel,
+      cost,
+      isMaxed,
+      canAfford,
     };
   });
-
-const getCost = (key: string) => {
-  const upgrade = storePrestige.upgrades[key as keyof typeof storePrestige.upgrades];
-  if (upgrade.level.lt(1)) return upgrade.cost;
-  return upgrade.costGrowth.pow(upgrade.level).mul(upgrade.cost);
-};
+});
 
 const buyUpgrade = (key: string) => {
   const upgrade = storePrestige.upgrades[key as keyof typeof storePrestige.upgrades];
   if (upgrade.maxLevel !== -1 && upgrade.level.gte(upgrade.maxLevel)) return;
-  const cost = getCost(key);
+  const baseCost = upgrade.cost;
+  const cost = upgrade.level.lt(1) ? baseCost : upgrade.costGrowth.pow(upgrade.level).mul(baseCost);
   if (storePrestige.points.gte(cost)) {
     storePrestige.points = storePrestige.points.minus(cost);
     upgrade.level = upgrade.level.add(1);

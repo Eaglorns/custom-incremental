@@ -4,17 +4,15 @@
     style="overflow-y: auto"
   >
     <q-card
-      v-for="meta in researchBaseMeta"
-      :key="meta.key"
+      v-for="uv in researchViews"
+      :key="uv.key"
       flat
       bordered
       class="q-pa-md column flex justify-between research-card text-slate-100"
-      :class="{
-        'research-inactive': isMaxLevel(meta.key).value,
-      }"
+      :class="{ 'research-inactive': uv.isMaxed }"
     >
       <div
-        v-if="isMaxLevel(meta.key).value"
+        v-if="uv.isMaxed"
         class="q-pa-md flex flex-center text-white text-bold research-completed-banner"
       >
         <span class="research-completed-text">Завершено</span>
@@ -26,14 +24,14 @@
         class="bg-slate-800 text-slate-100 research-tooltip"
       >
         <div class="text-bold research-tooltip-title">
-          {{ meta.title }}
+          {{ uv.title }}
         </div>
-        <div class="research-tooltip-desc">{{ meta.description }}</div>
+        <div class="research-tooltip-desc">{{ uv.description }}</div>
       </q-tooltip>
       <q-card-section class="q-pa-xs">
         <div class="text-subtitle2 row items-start no-wrap research-title-row q-mb-sm">
-          <i :class="iconStyle + meta.icon" size="18px" class="text-blue-400 q-mr-xs" />
-          <span class="research-title-text">{{ meta.title }}</span>
+          <i :class="iconStyle + uv.icon" size="18px" class="text-blue-400 q-mr-xs" />
+          <span class="research-title-text">{{ uv.title }}</span>
         </div>
       </q-card-section>
       <div class="column q-px-sm q-pt-xs q-pb-none flex-1">
@@ -42,62 +40,38 @@
           style="font-size: 13px; font-weight: 600"
         >
           <i class="fa-duotone fa-signal-bars q-mr-xs text-blue-400" />
-          Уровень: {{ getResearch(meta.key).level }} / {{ getResearch(meta.key).maxLevel }}
+          Уровень: {{ uv.level }} / {{ uv.maxLevel }}
         </div>
         <div class="row justify-between items-center q-mb-md research-info-row">
           <div class="row items-center research-cost-info">
             <i :class="iconStyle + 'fa-flask-vial'" size="15px" class="q-mr-xs text-emerald-400" />
-            <q-badge class="q-pa-xs text-bold research-badge">{{
-              formatNumber(getResearchCost(meta.key).value)
-            }}</q-badge>
+            <q-badge class="q-pa-xs text-bold research-badge">{{ formatNumber(uv.cost) }}</q-badge>
           </div>
           <div class="row items-center research-time-info">
             <i :class="iconStyle + 'fa-clock'" size="15px" class="q-mr-xs text-amber-400" />
             <q-badge class="q-pa-xs text-bold research-badge">{{
-              storeData.formatTime(getResearchTime(meta.key).value)
+              storeData.formatTime(uv.time)
             }}</q-badge>
           </div>
         </div>
-        <div v-if="getResearch(meta.key).maxLevel.gt(1)">
-          <q-linear-progress
-            :value="getResearch(meta.key).level.div(getResearch(meta.key).maxLevel).toNumber()"
-            color="green"
-            size="6px"
-            rounded
-          />
+        <div v-if="uv.hasProgressBar">
+          <q-linear-progress :value="uv.progressValue" color="green" size="6px" rounded />
         </div>
         <div v-else>
-          <q-badge
-            :color="getResearch(meta.key).level ? 'green' : 'grey'"
-            style="font-size: 11px"
-            >{{ getResearch(meta.key).level ? 'Изучено' : 'Не изучено' }}</q-badge
-          >
+          <q-badge :color="uv.isResearched ? 'green' : 'grey'" style="font-size: 11px">{{
+            uv.isResearched ? 'Изучено' : 'Не изучено'
+          }}</q-badge>
         </div>
 
         <div class="research-actions q-mt-sm">
           <q-btn
-            :disable="
-              isMaxLevel(meta.key).value ||
-              (!storeResearch.points.gte(getResearchCost(meta.key).value) &&
-                !getResearch(meta.key).currentTime.gt(0)) ||
-              (getResearchTime(meta.key).value.gt(1000) && !getResearch(meta.key).currentTime.gt(0))
-            "
+            :disable="uv.disable"
             size="sm"
             dense
-            :label="
-              getResearch(meta.key).currentTime.gt(0)
-                ? `Отменить (${storeData.formatTime(getResearch(meta.key).currentTime)})`
-                : 'Улучшить'
-            "
-            @click="startResearch(meta.key, false)"
+            :label="uv.buttonLabel"
+            @click="startResearch(uv.key, false)"
             class="research-btn"
-            :color="
-              isMaxLevel(meta.key).value
-                ? 'grey-8'
-                : getResearch(meta.key).currentTime.gt(0)
-                  ? 'negative'
-                  : 'primary'
-            "
+            :color="uv.buttonColor"
           />
         </div>
       </div>
@@ -138,38 +112,64 @@ function getResearch(key: string) {
       costMultiply: new Decimal(1),
       timeMultiply: new Decimal(1),
       maxLevel: new Decimal(1),
-    };
+      isActive: false,
+    } as ResearchBase;
   return researchList[key];
 }
 
-function isMaxLevel(metaKey: string) {
-  return computed(() => {
-    const research = getResearch(metaKey);
-    return research.level.gte(research.maxLevel);
-  });
+function calcCost(r: ResearchBase) {
+  return r.level.eq(0) ? r.cost : r.cost.mul(r.costMultiply.pow(r.level));
+}
+function calcTime(r: ResearchBase) {
+  const divTime = storeResearch.speed.gt(0) ? storeResearch.getResearchSpeed : new Decimal(1);
+  return r.level.lt(1) ? r.time.div(divTime) : r.time.mul(r.timeMultiply.pow(r.level)).div(divTime);
 }
 
-function getResearchCost(key: string) {
-  const research = researchList[key];
-  if (!research) return computed(() => new Decimal(0));
-  return computed(() =>
-    research.level.eq(0)
-      ? research.cost
-      : research.cost.mul(research.costMultiply.pow(research.level)),
-  );
-}
+const researchViews = computed(() => {
+  return researchBaseMeta.map((meta) => {
+    const r = getResearch(meta.key);
+    const cost = calcCost(r);
+    const time = calcTime(r);
+    const isMaxed = r.level.gte(r.maxLevel);
+    const inProgress = r.currentTime.gt(0);
+    const canAfford = storeResearch.points.gte(cost);
 
-function getResearchTime(key: string) {
-  const research = researchList[key];
-  if (!research) return computed(() => new Decimal(0));
-  return computed(() => {
-    const divTime = storeResearch.speed.gt(0) ? storeResearch.getResearchSpeed : new Decimal(1);
-    const result = research.level.lt(1)
-      ? research.time.div(divTime)
-      : research.time.mul(research.timeMultiply.pow(research.level)).div(divTime);
-    return result;
+    const hasProgressBar = r.maxLevel.gt(1);
+    const progressValue = hasProgressBar ? r.level.div(r.maxLevel).toNumber() : 0;
+    const isResearched = !hasProgressBar && r.level.gt(0);
+
+    const tooLong = time.gt(1000);
+    const disable = isMaxed || (!canAfford && !inProgress) || (tooLong && !inProgress);
+    const buttonLabel = inProgress
+      ? `Отменить (${storeData.formatTime(r.currentTime)})`
+      : 'Улучшить';
+
+    let buttonColor = 'primary';
+    if (isMaxed) {
+      buttonColor = 'grey-8';
+    } else if (inProgress) {
+      buttonColor = 'negative';
+    }
+
+    return {
+      key: meta.key,
+      title: meta.title,
+      description: meta.description,
+      icon: meta.icon,
+      level: r.level,
+      maxLevel: r.maxLevel,
+      isMaxed,
+      cost,
+      time,
+      hasProgressBar,
+      progressValue,
+      isResearched,
+      disable,
+      buttonLabel,
+      buttonColor,
+    };
   });
-}
+});
 
 function startResearch(key: string, isLoad: boolean) {
   const research = researchList[key];
@@ -181,12 +181,12 @@ function startResearch(key: string, isLoad: boolean) {
   }
 
   if (!isLoad) {
-    if (isMaxLevel(key).value) return;
+    if (research.level.gte(research.maxLevel)) return;
     if (research.currentTime.gt(0)) return;
   }
 
-  const cost = getResearchCost(key).value;
-  const time = getResearchTime(key).value;
+  const cost = calcCost(research);
+  const time = calcTime(research);
 
   if (!isLoad) {
     if (!storeResearch.points.gte(cost)) return;
@@ -201,7 +201,7 @@ function startResearch(key: string, isLoad: boolean) {
 function cancelResearch(key: string) {
   const research = researchList[key];
   if (!research) return;
-  storeResearch.points = storeResearch.points.plus(getResearchCost(key).value);
+  storeResearch.points = storeResearch.points.plus(calcCost(research));
   research.currentTime = new Decimal(0);
   research.isActive = false;
 }
@@ -310,7 +310,6 @@ onMounted(() => {
   background: linear-gradient(135deg, #dc2626 0%, #d97706 100%) !important;
 }
 
-// Мобильные устройства (до 480px)
 @media (max-width: 480px) {
   .research-container {
     padding: 8px !important;
@@ -367,7 +366,6 @@ onMounted(() => {
   }
 }
 
-// Планшеты портретная ориентация (481px - 768px)
 @media (min-width: 481px) and (max-width: 768px) {
   .research-container {
     padding: 12px !important;
@@ -389,7 +387,6 @@ onMounted(() => {
   }
 }
 
-// Планшеты альбомная и небольшие десктопы (769px - 1024px)
 @media (min-width: 769px) and (max-width: 1024px) {
   .research-card {
     min-width: 220px;

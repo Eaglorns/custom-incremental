@@ -13,37 +13,37 @@
       style="min-width: 100%; display: flex; flex-wrap: wrap; align-items: center"
     >
       <q-card
-        v-for="ach in achievements"
-        :key="ach.key"
+        v-for="av in achievementViews"
+        :key="av.key"
         class="q-pa-sm q-mb-xs achievement-card-fixed"
-        :class="achievementCardClass(ach)"
+        :class="av.cardClass"
         flat
         bordered
         v-ripple
       >
         <q-tooltip
-          v-if="ach.level !== undefined && ach.hint"
+          v-if="av.hasLevel && av.hint"
           class="bg-dark text-white tooltip-bordered"
           anchor="center middle"
           self="center middle"
           :offset="[0, 12]"
           style="max-width: 220px; min-width: 160px; padding: 10px; text-align: left"
         >
-          <div class="text-subtitle2 text-bold q-mb-xs">{{ ach.title }}</div>
-          <div class="text-caption q-mb-xs">{{ ach.hint }}</div>
+          <div class="text-subtitle2 text-bold q-mb-xs">{{ av.title }}</div>
+          <div class="text-caption q-mb-xs">{{ av.hint }}</div>
         </q-tooltip>
         <div class="flex flex-center q-mb-xs">
-          <i :class="ach.icon" :color="iconColor(ach)" size="32px" />
+          <i :class="iconStyle + av.icon" :color="av.iconColor" size="32px" />
         </div>
-        <div class="text-subtitle2 text-center text-bold" :class="textColor(ach)">
-          {{ ach.title }}
+        <div class="text-subtitle2 text-center text-bold" :class="av.titleClass">
+          {{ av.title }}
         </div>
-        <div class="text-caption text-center" :class="textColor(ach, true)">
-          {{ ach.description }}
+        <div class="text-caption text-center" :class="av.descClass">
+          {{ av.description }}
         </div>
-        <div v-if="ach.level !== undefined" class="achievement-badge-bottom text-center q-mt-xs">
-          <q-badge :color="badgeColor(ach)" :text-color="badgeTextColor(ach)">
-            Уровень: {{ formatNumber(ach.level) }}
+        <div v-if="av.hasLevel" class="achievement-badge-bottom text-center q-mt-xs">
+          <q-badge :color="av.badgeColor" :text-color="av.badgeTextColor">
+            Уровень: {{ av.levelStr }}
           </q-badge>
         </div>
       </q-card>
@@ -69,43 +69,63 @@ const iconStyle = computed(() => {
 
 const formatNumber = storeData.formatNumber;
 
-interface Achievement {
-  key: string;
-  title: string;
-  description: string;
-  icon: string;
-  color: string;
-  unlocked: boolean;
-  level?: Decimal | undefined;
-  hint?: string;
-  levelHint?: string;
-}
+const achievementViews = computed(() => {
+  return achievements.value.map((a) => {
+    const hasLevel = a.level !== undefined;
+    const levelGt0 = hasLevel && a.level.gt(0);
+    const unlocked = a.unlocked;
 
-function achievementCardClass(ach: Achievement) {
-  if (ach.level !== undefined && ach.level.gt(0)) return 'bg-primary';
-  if (ach.unlocked) return 'bg-positive';
-  return 'bg-grey-3';
-}
-function iconColor(ach: Achievement) {
-  if (ach.level !== undefined && ach.level.gt(0)) return 'white';
-  if (ach.unlocked) return 'white';
-  return 'grey-5';
-}
-function textColor(ach: Achievement, isDesc = false) {
-  if (ach.level !== undefined && ach.level.gt(0)) return 'text-white';
-  if (ach.unlocked) return isDesc ? 'text-grey-4' : 'text-white';
-  return isDesc ? 'text-grey-6' : 'text-grey-7';
-}
-function badgeColor(ach: Achievement) {
-  if (ach.level !== undefined && ach.level.gt(0)) return 'white';
-  if (ach.unlocked) return ach.color || 'white';
-  return 'grey-5';
-}
-function badgeTextColor(ach: Achievement) {
-  if (ach.level !== undefined && ach.level.gt(0)) return 'primary';
-  if (ach.unlocked) return 'positive';
-  return 'grey-7';
-}
+    let cardClass = 'bg-grey-3';
+    if (levelGt0) {
+      cardClass = 'bg-primary';
+    } else if (unlocked) {
+      cardClass = 'bg-positive';
+    }
+
+    const iconColor = levelGt0 || unlocked ? 'white' : 'grey-5';
+
+    const titleClass = levelGt0 || unlocked ? 'text-white' : 'text-grey-7';
+
+    let descClass = 'text-grey-6';
+    if (levelGt0) {
+      descClass = 'text-white';
+    } else if (unlocked) {
+      descClass = 'text-grey-4';
+    }
+
+    let badgeColor = 'grey-5';
+    if (levelGt0) {
+      badgeColor = 'white';
+    } else if (unlocked) {
+      badgeColor = a.color || 'white';
+    }
+
+    let badgeTextColor = 'grey-7';
+    if (levelGt0) {
+      badgeTextColor = 'primary';
+    } else if (unlocked) {
+      badgeTextColor = 'positive';
+    }
+
+    const levelStr = hasLevel ? formatNumber(a.level) : '';
+
+    return {
+      key: a.key,
+      title: a.title,
+      description: a.description,
+      icon: a.icon,
+      hint: a.hint,
+      hasLevel,
+      cardClass,
+      iconColor,
+      titleClass,
+      descClass,
+      badgeColor,
+      badgeTextColor,
+      levelStr,
+    };
+  });
+});
 
 const totalAchievements = computed(() => {
   return achievements.value.reduce((sum, ach) => {

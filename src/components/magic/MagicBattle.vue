@@ -33,26 +33,25 @@
           <div class="monster-health">
             <div class="health-label">Здоровье</div>
             <div class="health-bar">
-              <div class="health-fill" :style="{ width: healthPercentage + '%' }"></div>
+              <div class="health-fill" :style="{ width: healthPercent + '%' }"></div>
               <div class="health-text">
-                {{ formatNumber(storeMagic.monster.currentHealth) }} ->
-                {{ formatNumber(storeMagic.monster.maxHealth) }}
+                {{ formatNumber(storeMagic.monster.currentHealth) }}
               </div>
             </div>
           </div>
 
-          <div class="damage-effects" v-if="storeMagic.monster.damageEffects.length > 0">
+          <div class="damage-effects" v-if="hasEffects">
             <div class="effects-label">Активные эффекты:</div>
             <div class="effects-list">
               <div
-                v-for="(effect, index) in storeMagic.monster.damageEffects"
-                :key="`${storeMagic.monster.id}-effect-${index}`"
+                v-for="effect in effectsForView"
+                :key="`${storeMagic.monster.id}-${effect.type}`"
                 class="effect-item"
-                :title="`${damageTypes.find((dt) => dt.type === effect.type)?.name}`"
+                :title="effect.meta?.name || effect.type"
               >
                 <i
-                  :class="iconStyle + damageTypes.find((dt) => dt.type === effect.type)?.icon"
-                  :style="{ color: damageTypes.find((dt) => dt.type === effect.type)?.color }"
+                  :class="iconStyle + (effect.meta?.icon || 'fa-question')"
+                  :style="{ color: effect.meta?.color || '#fff' }"
                 ></i>
                 <span class="effect-stacks" v-if="effect.stacks.gt(1)">{{
                   formatNumber(effect.stacks)
@@ -99,11 +98,30 @@ const storeData = useStoreData();
 const storeMagic = useStoreMagic();
 const formatNumber = storeData.formatNumber;
 
-const healthPercentage = computed(() =>
-  storeMagic.monster.maxHealth.gt(0)
-    ? storeMagic.monster.currentHealth.div(storeMagic.monster.maxHealth).mul(100)
-    : new Decimal(0),
+const damageTypeMap = computed(() => {
+  const map = new Map<string, (typeof damageTypes)[number]>();
+  for (const dt of damageTypes) map.set(dt.type, dt);
+  return map;
+});
+
+const healthPercent = computed(() => {
+  if (storeMagic.monster.maxHealth.lte(0)) return 0;
+  const num = storeMagic.monster.currentHealth
+    .div(storeMagic.monster.maxHealth)
+    .mul(100)
+    .toNumber();
+  return Math.max(0, Math.min(100, num));
+});
+
+const effectsForView = computed(() =>
+  storeMagic.monster.damageEffects.map((e) => ({
+    type: e.type,
+    stacks: e.stacks,
+    meta: damageTypeMap.value.get(e.type),
+  })),
 );
+
+const hasEffects = computed(() => effectsForView.value.length > 0);
 
 const saturationBonus = computed(() => {
   const saturationEffect = storeMagic.monster.damageEffects.find(

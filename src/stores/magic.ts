@@ -436,13 +436,30 @@ export const useStoreMagic = defineStore('storeMagic', {
       );
     },
 
-    canCraftSpecificRune(rune: Rune) {
-      const runeMeta = this.getRuneMeta(rune.id);
-      if (!runeMeta) return false;
+    canCraftRuneById(id: string) {
+      const currentRune = this.runes.find((r) => r.id === id);
+      const runeMeta = this.getRuneMeta(id);
+      if (!currentRune || !runeMeta) return false;
       return runeMeta.requirements.every((requirement) => {
         const essence = this.getEssenceById(requirement.essenceId);
         if (!essence) return false;
-        const requiredAmount = requirement.baseAmount.mul(requirement.multiplier.pow(rune.level));
+        const requiredAmount = requirement.baseAmount.mul(
+          requirement.multiplier.pow(currentRune.level),
+        );
+        return essence.amount.gte(requiredAmount);
+      });
+    },
+
+    canCraftSpecificRune(rune: Rune) {
+      const runeMeta = this.getRuneMeta(rune.id);
+      if (!runeMeta) return false;
+      const currentRune = this.runes.find((r) => r.id === rune.id) || rune;
+      return runeMeta.requirements.every((requirement) => {
+        const essence = this.getEssenceById(requirement.essenceId);
+        if (!essence) return false;
+        const requiredAmount = requirement.baseAmount.mul(
+          requirement.multiplier.pow(currentRune.level),
+        );
         return essence.amount.gte(requiredAmount);
       });
     },

@@ -2,31 +2,28 @@
   <q-card flat class="q-pa-lg">
     <div class="row q-col-gutter-lg q-gutter-y-md">
       <div
-        v-for="key in helperKeys"
-        :key="key"
+        v-for="uv in helpersView"
+        :key="uv.key"
         class="col-12 col-sm-6 col-md-4 flex flex-center helper-wrapper"
       >
         <q-card flat bordered class="q-pa-sm helper-card-custom flex column helper-card">
-          <div
-            class="helper-header"
-            :class="!getHelper(key).value.enabled ? 'helper-card--disabled' : ''"
-          >
+          <div class="helper-header" :class="!uv.enabled ? 'helper-card--disabled' : ''">
             <div class="row items-center q-mb-sm helper-title-row">
               <i
-                :name="iconStyle + getHelper(key).value.icon"
+                :class="iconStyle + uv.icon"
                 size="24px"
                 class="q-mr-sm helper-icon icon-default-custom"
               />
               <span class="text-body1 text-weight-bold helper-title text-blue-4">
-                {{ getHelper(key).value.title }}
+                {{ uv.title }}
               </span>
               <q-toggle
-                v-model="getHelper(key).value.enabled"
+                :model-value="uv.enabled"
                 color="primary"
                 size="sm"
                 class="q-ml-md"
-                :label="getHelper(key).value.enabled ? 'Вкл.' : 'Выкл.'"
-                @update:model-value="(val: any) => setHelperEnabled(key, val)"
+                :label="uv.enabled ? 'Вкл.' : 'Выкл.'"
+                @update:model-value="(val: boolean) => setHelperEnabled(uv.key, val)"
               />
             </div>
           </div>
@@ -44,9 +41,7 @@
                     <span class="text-caption q-mr-xs text-secondary-custom"
                       >{{ $t('components.automatic.automaticBuyers.quantity') }}:</span
                     >
-                    <span class="text-body2 text-weight-bold text-blue-4">{{
-                      getHelper(key).value.count
-                    }}</span>
+                    <span class="text-body2 text-weight-bold text-blue-4">{{ uv.count }}</span>
                   </div>
                   <div class="row items-center q-gutter-xs">
                     <q-chip
@@ -59,7 +54,7 @@
                         size="16px"
                         class="q-mr-xs icon-accent-custom"
                       />
-                      {{ formatNumber(costCount(getHelper(key).value).value) }}
+                      {{ formatNumber(uv.costCount) }}
                     </q-chip>
                     <q-btn
                       label="Нанять"
@@ -68,8 +63,8 @@
                       unelevated
                       class="upgrade-btn-narrow upgrade-btn-custom btn-equal-width"
                       style="min-width: 90px"
-                      @click="hireHelper(getHelper(key).value)"
-                      :disable="!canHireHelper(getHelper(key).value).value"
+                      @click="hireHelper(uv.key)"
+                      :disable="!uv.canHire"
                     />
                   </div>
                 </div>
@@ -83,14 +78,7 @@
                       class="q-mr-xs icon-default-custom"
                     />
                     <span class="text-caption q-mr-xs text-secondary-custom">Шанс покупки:</span>
-                    <span class="text-body2 text-weight-bold text-blue-4"
-                      >{{
-                        getHelperChanceWithCount(
-                          getHelper(key).value.percent,
-                          getHelper(key).value.count,
-                        ).toFixed(1)
-                      }}%</span
-                    >
+                    <span class="text-body2 text-weight-bold text-blue-4">{{ uv.chanceStr }}%</span>
                   </div>
                   <div class="row items-center q-gutter-xs">
                     <q-chip
@@ -103,7 +91,7 @@
                         size="16px"
                         class="q-mr-xs icon-accent-custom"
                       />
-                      {{ formatNumber(costPercent(getHelper(key).value).value) }}
+                      {{ formatNumber(uv.costPercent) }}
                     </q-chip>
                     <q-btn
                       label="Улучшить"
@@ -112,8 +100,8 @@
                       unelevated
                       class="upgrade-btn-narrow upgrade-btn-custom btn-equal-width"
                       style="min-width: 90px"
-                      @click="upgradeHelperChance(getHelper(key).value)"
-                      :disable="!canUpgradeHelperChance(getHelper(key).value).value"
+                      @click="upgradeHelperChance(uv.key)"
+                      :disable="!uv.canUpgrade"
                     />
                   </div>
                 </div>
@@ -129,7 +117,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { automaticShopHelpersMeta } from 'src/constants/automaticShopHelpersMeta';
-import type { AutomaticShopHelpers } from 'src/constants/models';
 import { useStoreData } from 'stores/data';
 import Decimal from 'break_eternity.js';
 import { useStoreAutomatic } from 'stores/automatic';
@@ -145,64 +132,52 @@ const iconStyle = computed(() => {
 
 const formatNumber = storeData.formatNumber;
 
-const helperKeys = computed(() => Object.keys(storeAutomatic.helpersShop));
-
-const getHelper = (key: string) =>
-  computed(() => {
+const helpersView = computed(() => {
+  return Object.keys(storeAutomatic.helpersShop).map((key) => {
     const meta = automaticShopHelpersMeta.find((m) => m.key === key)!;
-    const state = storeAutomatic.helpersShop[key as keyof typeof storeAutomatic.helpersShop];
+    const s = storeAutomatic.helpersShop[key as keyof typeof storeAutomatic.helpersShop];
+    const costCount = s.cost.count.mul(s.cost.countMultiply.pow(s.count));
+    const costPercent = s.cost.percent.mul(s.cost.percentMultiply.pow(s.percent));
+    const canHire = storeData.epicNumber.gte(costCount);
+    const canUpgrade = s.count.gt(0) && storeData.epicNumber.gte(costPercent);
+    const chance = s.count.lte(0) ? new Decimal(0) : storeAutomatic.getHelperChance(s.percent);
     return {
-      ...meta,
-      ...state,
+      key,
+      title: meta.title,
+      icon: meta.icon,
+      enabled: s.enabled,
+      count: s.count,
+      percent: s.percent,
+      costCount,
+      costPercent,
+      canHire,
+      canUpgrade,
+      chanceStr: chance.toFixed(1),
     };
   });
+});
 
 function setHelperEnabled(key: string, val: boolean) {
   const helper = storeAutomatic.helpersShop[key as keyof typeof storeAutomatic.helpersShop];
   helper.enabled = val;
 }
 
-const costCount = (helper: AutomaticShopHelpers) => {
-  return computed(() => {
-    return helper.cost.count.mul(helper.cost.countMultiply.pow(helper.count));
-  });
-};
-
-const costPercent = (helper: AutomaticShopHelpers) => {
-  return computed(() => {
-    return helper.cost.percent.mul(helper.cost.percentMultiply.pow(helper.percent));
-  });
-};
-
-const canHireHelper = (helper: AutomaticShopHelpers) => {
-  return computed(() => storeData.epicNumber.gte(costCount(helper).value));
-};
-
-const canUpgradeHelperChance = (helper: AutomaticShopHelpers) => {
-  return computed(() => helper.count.gt(0) && storeData.epicNumber.gte(costPercent(helper).value));
-};
-
-function hireHelper(helper: AutomaticShopHelpers) {
-  const cost = costCount(helper).value;
+function hireHelper(key: string) {
+  const s = storeAutomatic.helpersShop[key as keyof typeof storeAutomatic.helpersShop];
+  const cost = s.cost.count.mul(s.cost.countMultiply.pow(s.count));
   if (storeData.epicNumber.gte(cost)) {
     storeData.epicNumber = storeData.epicNumber.minus(cost);
-    const key = helper.key as keyof typeof storeAutomatic.helpersShop;
-    storeAutomatic.helpersShop[key].count = storeAutomatic.helpersShop[key].count.add(1);
+    s.count = s.count.add(1);
   }
 }
 
-function upgradeHelperChance(helper: AutomaticShopHelpers) {
-  const cost = costPercent(helper).value;
+function upgradeHelperChance(key: string) {
+  const s = storeAutomatic.helpersShop[key as keyof typeof storeAutomatic.helpersShop];
+  const cost = s.cost.percent.mul(s.cost.percentMultiply.pow(s.percent));
   if (storeData.epicNumber.gte(cost)) {
     storeData.epicNumber = storeData.epicNumber.minus(cost);
-    const key = helper.key as keyof typeof storeAutomatic.helpersShop;
-    storeAutomatic.helpersShop[key].percent = storeAutomatic.helpersShop[key].percent.add(1);
+    s.percent = s.percent.add(1);
   }
-}
-
-function getHelperChanceWithCount(percent: Decimal, count: Decimal): Decimal {
-  if (!count || count.lte(0)) return new Decimal(0);
-  return storeAutomatic.getHelperChance(percent);
 }
 </script>
 

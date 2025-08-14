@@ -58,7 +58,7 @@
       <q-btn
         class="craft-button"
         color="primary"
-        :disable="!storeMagic.canCraftRune()"
+        :disable="!canCraftSelected"
         @click="
           storeMagic.craftRune();
           storeSetting.playSound('MagicOnRuneCraft', 14);
@@ -109,6 +109,11 @@ const selectedRuneWithMeta = computed(() => {
 const getEssenceMetaById = (id: string) => {
   return ESSENCE_META.find((meta) => meta.id === id);
 };
+
+const canCraftSelected = computed(() => {
+  const id = storeMagic.selectedRune?.id;
+  return id ? storeMagic.canCraftRuneById(id) : false;
+});
 </script>
 
 <style scoped lang="scss">
