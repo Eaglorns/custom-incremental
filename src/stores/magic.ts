@@ -437,30 +437,12 @@ export const useStoreMagic = defineStore('storeMagic', {
     },
 
     canCraftSpecificRune(rune: Rune) {
-      const currentRune = this.runes.find((r) => r.id === rune.id) || rune;
-      const runeMeta = this.getRuneMeta(currentRune.id);
+      const runeMeta = this.getRuneMeta(rune.id);
       if (!runeMeta) return false;
       return runeMeta.requirements.every((requirement) => {
         const essence = this.getEssenceById(requirement.essenceId);
         if (!essence) return false;
-        const requiredAmount = requirement.baseAmount.mul(
-          requirement.multiplier.pow(currentRune.level),
-        );
-        return essence.amount.gte(requiredAmount);
-      });
-    },
-
-    canCraftRuneById(runeId: string) {
-      const currentRune = this.runes.find((r) => r.id === runeId);
-      if (!currentRune) return false;
-      const runeMeta = this.getRuneMeta(currentRune.id);
-      if (!runeMeta) return false;
-      return runeMeta.requirements.every((requirement) => {
-        const essence = this.getEssenceById(requirement.essenceId);
-        if (!essence) return false;
-        const requiredAmount = requirement.baseAmount.mul(
-          requirement.multiplier.pow(currentRune.level),
-        );
+        const requiredAmount = requirement.baseAmount.mul(requirement.multiplier.pow(rune.level));
         return essence.amount.gte(requiredAmount);
       });
     },

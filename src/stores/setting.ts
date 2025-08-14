@@ -1,7 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { computed } from 'vue';
-import { useSound } from '@vueuse/sound';
-import type { Howl } from 'howler';
+import { Howl } from 'src/boot/hovler';
 
 export const useStoreSetting = defineStore('storeSetting', {
   state: () => ({
@@ -11,16 +9,7 @@ export const useStoreSetting = defineStore('storeSetting', {
       initialized: false,
     },
     iconStyle: 'fa-duotone ',
-    preloadedSounds: {} as Record<
-      string,
-      {
-        play: (opts?: unknown) => void;
-        stop: (id?: string) => void;
-        pause: (id?: string) => void;
-        isPlaying: boolean;
-        sound: Howl | null;
-      }
-    >,
+    preloadedSounds: {} as Record<string, Howl>,
   }),
   getters: {
     save(state) {
@@ -38,13 +27,10 @@ export const useStoreSetting = defineStore('storeSetting', {
       if (this.audio.initialized) return;
       const sounds = ['ShopOnBuyValue', 'ShopOnBuyMultiplier', 'MagicOnRuneCraft'];
       sounds.forEach((file) => {
-        const url = `sounds/${file}.mp3`;
-        const instance = useSound(url, {
-          volume: computed(() => this.audio.volume).value,
-          soundEnabled: computed(() => this.audio.enabled).value,
+        this.preloadedSounds[file] = new Howl({
+          src: [`sounds/${file}.mp3`],
           preload: true,
         });
-        this.preloadedSounds[file] = instance as unknown as (typeof this.preloadedSounds)[string];
       });
       this.audio.initialized = true;
     },
@@ -55,24 +41,16 @@ export const useStoreSetting = defineStore('storeSetting', {
         this.initializeAudio();
       }
       try {
-        if (!this.preloadedSounds[name]) {
-          const url = `sounds/${name}.mp3`;
-          this.preloadedSounds[name] = useSound(url, {
-            volume: computed(() => this.audio.volume).value,
-            soundEnabled: computed(() => this.audio.enabled).value,
-            preload: true,
-          }) as unknown as (typeof this.preloadedSounds)[string];
+        const sound =
+          this.preloadedSounds[name] ||
+          new Howl({
+            src: [`sounds/${name}.mp3`],
+            volume: this.audio.volume / divider,
+          });
+        if (this.preloadedSounds[name]) {
+          sound.volume(this.audio.volume / divider);
         }
-
-        const entry = this.preloadedSounds[name];
-        const effectiveVolume = this.audio.volume / Math.max(1, divider);
-
-        if (entry?.sound) {
-          const id = entry.sound.play();
-          if (id != null) entry.sound.volume(effectiveVolume, id);
-        } else {
-          entry?.play();
-        }
+        sound.play();
       } catch (error) {
         console.warn(`Не удалось воспроизвести звук ${name}:`, error);
       }
