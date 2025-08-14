@@ -7,33 +7,31 @@
         class="rune-slot"
         :class="{
           selected: storeMagic.selectedRune?.id === rune.id,
-          'yellow-rune': rune.level.equals(0) && !storeMagic.canCraftSpecificRune(rune),
-          'yellow-solid': rune.level.gt(0) && !storeMagic.canCraftSpecificRune(rune),
-          'green-rune': storeMagic.canCraftSpecificRune(rune),
-          crafting: craftingRune?.id === rune.id,
+          'yellow-rune': rune.level.equals(0) && !storeMagic.canCraftRuneById(rune.id),
+          'yellow-solid': rune.level.gt(0) && !storeMagic.canCraftRuneById(rune.id),
+          'green-rune': storeMagic.canCraftRuneById(rune.id),
+          crafting: craftingRuneId === rune.id,
         }"
         @click="storeMagic.selectRune(rune)"
-        @mousedown="startCrafting(rune)"
-        @mouseup="stopCrafting"
-        @mouseleave="stopCrafting"
-        @touchstart="startCrafting(rune)"
-        @touchend="stopCrafting"
-        @touchcancel="stopCrafting"
+        @pointerdown="onPointerDown(rune, $event)"
+        @pointerup="onPointerUp($event)"
+        @pointercancel="onPointerCancel($event)"
+        @pointerleave="onPointerLeave($event)"
         @contextmenu.prevent
       >
         <div class="rune-icon">
           <i :class="iconStyle + rune.meta.icon" :style="{ color: rune.meta.color }"></i>
         </div>
         <div v-if="rune.level.gt(0)" class="rune-level">{{ rune.level }}</div>
-        <div v-if="storeMagic.canCraftSpecificRune(rune)" class="craft-indicator">
+        <div v-if="storeMagic.canCraftRuneById(rune.id)" class="craft-indicator">
           <i class="fas fa-hammer"></i>
         </div>
         <div class="rune-name">{{ rune.meta.name }}</div>
 
         <div
-          v-if="craftingRune?.id === rune.id"
+          v-if="craftingRuneId === rune.id"
           class="craft-progress-bar"
-          :style="{ width: craftProgress + '%' }"
+          :ref="(el) => setProgressRef(rune.id, el)"
         ></div>
       </div>
     </div>
@@ -41,7 +39,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onUnmounted } from 'vue';
+import { computed, ref, onUnmounted, watchEffect, type ComponentPublicInstance } from 'vue';
+import { useTimeoutFn, useEventListener } from '@vueuse/core';
+import { useMotion } from '@vueuse/motion';
 import { useStoreMagic } from 'src/stores/magic';
 import { RUNE_META } from 'src/constants/magicMeta';
 import { useStoreSetting } from 'src/stores/setting';
@@ -50,20 +50,42 @@ import type { Rune } from 'src/stores/magic';
 const storeMagic = useStoreMagic();
 const storeSetting = useStoreSetting();
 
-const craftingRune = ref<Rune | null>(null);
-const craftProgress = ref(0);
-const craftTimer = ref<number | null>(null);
 const craftDuration = 500;
+const craftingRuneId = ref<string | null>(null);
 const isMouseDown = ref(false);
-const currentCraftingRune = ref<Rune | null>(null);
+const currentCraftingRuneId = ref<string | null>(null);
 const isCompleting = ref(false);
+const activePointerId = ref<number | null>(null);
+let stopCompleteTimer: (() => void) | null = null;
 
-const iconStyle = computed(() => {
-  return storeSetting.iconStyle;
-});
+type MotionCtrl = { stop?: () => void; apply?: (variant: string) => Promise<void[]> };
+const progressMotionMap = new Map<string, MotionCtrl>();
 
-const runesWithMeta = computed(() => {
-  return storeMagic.runes.map((rune) => {
+function setProgressRef(id: string, el: Element | ComponentPublicInstance | null) {
+  if (!el) {
+    progressMotionMap.delete(id);
+    return;
+  }
+  const htmlEl: HTMLElement = (el as ComponentPublicInstance)?.$el
+    ? ((el as ComponentPublicInstance).$el as HTMLElement)
+    : (el as HTMLElement);
+  const motion = useMotion(htmlEl, {
+    initial: { width: '0%' },
+    variants: {
+      crafting: {
+        width: '100%',
+        transition: { duration: craftDuration / 1000, easing: 'linear' },
+      },
+      reset: { width: '0%' },
+    },
+  });
+  progressMotionMap.set(id, motion as unknown as MotionCtrl);
+}
+
+const iconStyle = computed(() => storeSetting.iconStyle);
+
+const runesWithMeta = computed(() =>
+  storeMagic.runes.map((rune) => {
     const meta = RUNE_META.find((m) => m.id === rune.id);
     return {
       ...rune,
@@ -74,128 +96,208 @@ const runesWithMeta = computed(() => {
         description: '',
       },
     };
-  });
-});
+  }),
+);
 
-const startCrafting = (rune: Rune) => {
-  if (!storeMagic.canCraftSpecificRune(rune)) {
-    return;
-  }
-
+async function startCrafting(rune: Rune) {
+  if (!storeMagic.canCraftRuneById(rune.id)) return;
   storeMagic.selectRune(rune);
-
   isMouseDown.value = true;
-  currentCraftingRune.value = rune;
+  currentCraftingRuneId.value = rune.id;
+  if (craftingRuneId.value === rune.id) return;
+  await startCraftingCycle(rune);
+}
 
-  if (craftingRune.value?.id === rune.id) {
+async function onPointerDown(rune: Rune, e: PointerEvent) {
+  const el = e.currentTarget as Element | null;
+  try {
+    el?.setPointerCapture?.(e.pointerId);
+  } catch {
+    /* ignore */
+  }
+  activePointerId.value = e.pointerId;
+  await startCrafting(rune);
+}
+
+async function endPointerInteraction(e: PointerEvent) {
+  if (activePointerId.value !== e.pointerId) return;
+  const el = e.currentTarget as Element | null;
+  try {
+    el?.releasePointerCapture?.(e.pointerId);
+  } catch {
+    /* ignore */
+  }
+  activePointerId.value = null;
+  await stopCrafting();
+}
+
+const onPointerUp = endPointerInteraction;
+const onPointerCancel = endPointerInteraction;
+
+async function onPointerLeave(e: PointerEvent) {
+  const el = e.currentTarget as Element | null;
+  const hasCapture = !!el?.hasPointerCapture && el.hasPointerCapture(e.pointerId);
+  if (activePointerId.value === e.pointerId && !hasCapture) {
+    activePointerId.value = null;
+    await stopCrafting();
+  }
+}
+
+async function startCraftingCycle(rune: Rune) {
+  if (!storeMagic.canCraftRuneById(rune.id)) {
+    await stopCrafting();
     return;
   }
+  if (isCompleting.value) return;
+  if (!isMouseDown.value || currentCraftingRuneId.value !== rune.id) return;
 
-  startCraftingCycle(rune);
-};
-
-const startCraftingCycle = (rune: Rune) => {
-  if (!storeMagic.canCraftSpecificRune(rune)) {
-    stopCrafting();
-    return;
-  }
-
-  if (isCompleting.value) {
-    return;
-  }
-
-  if (!isMouseDown.value || currentCraftingRune.value?.id !== rune.id) {
-    return;
-  }
-
-  craftingRune.value = rune;
-  craftProgress.value = 0;
+  craftingRuneId.value = rune.id;
   isCompleting.value = false;
 
-  const startTime = Date.now();
+  const motion = progressMotionMap.get(rune.id);
+  motion?.stop?.();
+  if (motion?.apply) {
+    await motion.apply('reset').catch(() => undefined);
+    await motion.apply('crafting').catch(() => undefined);
+  }
 
-  const updateProgress = () => {
+  if (stopCompleteTimer) {
+    stopCompleteTimer();
+    stopCompleteTimer = null;
+  }
+  const { start, stop } = useTimeoutFn(() => {
     if (
-      isCompleting.value ||
-      !isMouseDown.value ||
-      currentCraftingRune.value?.id !== rune.id ||
-      !storeMagic.canCraftSpecificRune(rune)
+      isMouseDown.value &&
+      currentCraftingRuneId.value === rune.id &&
+      storeMagic.canCraftRuneById(rune.id) &&
+      !isCompleting.value
     ) {
-      if (!isCompleting.value) {
-        stopCrafting();
-      }
-      return;
-    }
-
-    const elapsed = Date.now() - startTime;
-    const progress = Math.min((elapsed / craftDuration) * 100, 100);
-    craftProgress.value = progress;
-
-    if (progress >= 100) {
-      if (storeMagic.canCraftSpecificRune(rune) && !isCompleting.value) {
-        isCompleting.value = true;
-        completeCrafting();
-      } else {
-        stopCrafting();
-      }
+      isCompleting.value = true;
+      completeCrafting().catch(() => undefined);
     } else {
-      craftTimer.value = requestAnimationFrame(updateProgress);
+      stopCrafting().catch(() => undefined);
     }
-  };
+  }, craftDuration);
+  stopCompleteTimer = stop;
+  start();
+}
 
-  craftTimer.value = requestAnimationFrame(updateProgress);
-};
-
-const stopCrafting = () => {
+async function stopCrafting() {
   isMouseDown.value = false;
-  currentCraftingRune.value = null;
+  currentCraftingRuneId.value = null;
   isCompleting.value = false;
-
-  if (craftTimer.value) {
-    cancelAnimationFrame(craftTimer.value);
-    craftTimer.value = null;
+  if (stopCompleteTimer) {
+    stopCompleteTimer();
+    stopCompleteTimer = null;
   }
-  craftingRune.value = null;
-  craftProgress.value = 0;
-};
-
-const completeCrafting = () => {
-  if (!isCompleting.value) {
-    return;
+  const id = craftingRuneId.value;
+  craftingRuneId.value = null;
+  if (id) {
+    const motion = progressMotionMap.get(id);
+    motion?.stop?.();
+    if (motion?.apply) {
+      await motion.apply('reset').catch(() => undefined);
+    }
+  } else {
+    progressMotionMap.forEach((motion) => {
+      motion.stop?.();
+      if (motion?.apply) motion.apply('reset').catch(() => undefined);
+    });
   }
+}
 
-  if (craftingRune.value && storeMagic.canCraftSpecificRune(craftingRune.value)) {
+async function completeCrafting() {
+  if (!isCompleting.value) return;
+
+  if (craftingRuneId.value && storeMagic.canCraftRuneById(craftingRuneId.value)) {
     storeMagic.craftRune();
     storeSetting.playSound('MagicOnRuneCraft', 20);
   }
 
   const wasMouseDown = isMouseDown.value;
-  const runeBeingCrafted = currentCraftingRune.value;
+  const runeBeingCraftedId = currentCraftingRuneId.value;
 
-  if (craftTimer.value) {
-    cancelAnimationFrame(craftTimer.value);
-    craftTimer.value = null;
+  if (stopCompleteTimer) {
+    stopCompleteTimer();
+    stopCompleteTimer = null;
   }
-  craftingRune.value = null;
-  craftProgress.value = 0;
+
+  const id = craftingRuneId.value;
+  craftingRuneId.value = null;
   isCompleting.value = false;
-
-  if (wasMouseDown && runeBeingCrafted) {
-    setTimeout(() => {
-      if (
-        isMouseDown.value &&
-        currentCraftingRune.value?.id === runeBeingCrafted.id &&
-        storeMagic.canCraftSpecificRune(runeBeingCrafted) &&
-        !isCompleting.value
-      ) {
-        startCraftingCycle(runeBeingCrafted);
-      }
-    }, 150);
+  if (id) {
+    const motion = progressMotionMap.get(id);
+    motion?.stop?.();
+    if (motion?.apply) {
+      await motion.apply('reset').catch(() => undefined);
+    }
   }
-};
+
+  if (wasMouseDown && runeBeingCraftedId) {
+    scheduleNextCycle(runeBeingCraftedId);
+  }
+}
+
+function scheduleNextCycle(runeId: string) {
+  const { start, stop } = useTimeoutFn(() => {
+    if (
+      isMouseDown.value &&
+      currentCraftingRuneId.value === runeId &&
+      storeMagic.canCraftRuneById(runeId) &&
+      !isCompleting.value
+    ) {
+      const nextRune = storeMagic.runes.find((r) => r.id === runeId);
+      if (nextRune) startCraftingCycle(nextRune).catch(() => undefined);
+    }
+    stop();
+  }, 150);
+  start();
+}
+
+watchEffect(() => {
+  const id = currentCraftingRuneId.value;
+  if (!id) return;
+  if (!isMouseDown.value) return;
+  if (craftingRuneId.value !== id) return;
+  if (!storeMagic.canCraftRuneById(id)) {
+    stopCrafting().catch(() => undefined);
+  }
+});
 
 onUnmounted(() => {
-  stopCrafting();
+  stopCrafting().catch(() => undefined);
+});
+
+// Global fallbacks in case pointer capture is lost or element is unmounted mid-press
+useEventListener(
+  window,
+  'pointerup',
+  () => {
+    if (activePointerId.value !== null) {
+      activePointerId.value = null;
+      stopCrafting().catch(() => undefined);
+    }
+  },
+  { passive: true },
+);
+
+useEventListener(
+  window,
+  'pointercancel',
+  () => {
+    if (activePointerId.value !== null) {
+      activePointerId.value = null;
+      stopCrafting().catch(() => undefined);
+    }
+  },
+  { passive: true },
+);
+
+useEventListener(document, 'visibilitychange', () => {
+  if (document.hidden) {
+    activePointerId.value = null;
+    stopCrafting().catch(() => undefined);
+  }
 });
 </script>
 
@@ -223,6 +325,7 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  touch-action: none;
 
   &.selected {
     border-color: #007bff;
