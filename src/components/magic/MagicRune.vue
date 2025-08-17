@@ -54,7 +54,7 @@ const craftingRune = ref<Rune | null>(null);
 const craftProgress = ref(0);
 const craftTimer = ref<number | null>(null);
 const craftDuration = 500;
-const holdDelay = 160; // минимальное удержание перед стартом крафта (мс)
+const holdDelay = 100;
 const holdTimeout = ref<number | null>(null);
 const isMouseDown = ref(false);
 const currentCraftingRune = ref<Rune | null>(null);
@@ -80,11 +80,11 @@ const runesWithMeta = computed(() => {
 });
 
 const startCrafting = (rune: Rune) => {
+  storeMagic.selectRune(rune);
+
   if (!storeMagic.canCraftRuneById(rune.id)) {
     return;
   }
-
-  // ВАЖНО: не выбираем руну здесь. Выбор только по клику (@click)
 
   isMouseDown.value = true;
   currentCraftingRune.value = rune;
@@ -93,7 +93,6 @@ const startCrafting = (rune: Rune) => {
     return;
   }
 
-  // Запускаем цикл крафта только если кнопку удерживают не менее holdDelay
   if (holdTimeout.value) {
     clearTimeout(holdTimeout.value);
   }
@@ -117,6 +116,7 @@ const startCraftingCycle = (rune: Rune) => {
     return;
   }
 
+  storeMagic.selectRune(rune);
   craftingRune.value = rune;
   craftProgress.value = 0;
   isCompleting.value = false;
@@ -179,6 +179,7 @@ const completeCrafting = () => {
   }
 
   if (craftingRune.value && storeMagic.canCraftRuneById(craftingRune.value.id)) {
+    storeMagic.selectRune(craftingRune.value);
     storeMagic.craftRune();
     storeSetting.playSound('MagicOnRuneCraft', 20);
   }

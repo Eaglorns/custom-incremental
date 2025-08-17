@@ -12,7 +12,7 @@
           />
         </div>
 
-        <div v-if="mageViews.length === 0" class="no-mages">
+        <div v-if="mageItems.length === 0" class="no-mages">
           <div class="empty-state">
             <i :class="iconStyle + 'fa-users fa-3x'"></i>
             <p>Нет нанятых магов</p>
@@ -20,61 +20,70 @@
         </div>
 
         <div v-else class="mage-list">
-          <div v-for="mv in mageViews" :key="mv.mage.id" class="mage-item">
-            <div class="mage-card">
-              <div class="mage-avatar">
-                <i :class="iconStyle + mv.mage.icon" :style="{ color: mv.mage.iconColor }"></i>
-              </div>
-              <div class="mage-info">
-                <div class="mage-header">
-                  <div class="mage-name">{{ mv.mage.name }}</div>
-                  <div class="mage-rank" :style="{ color: mv.mage.rank.color }">
-                    {{ mv.mage.rank.name }}
-                  </div>
+          <q-virtual-scroll
+            :items="mageItems"
+            :virtual-scroll-item-size="itemSize"
+            :virtual-scroll-slice-size="sliceSize"
+            :virtual-scroll-slice-ratio="sliceRatio"
+            style="height: 60vh; min-height: 240px"
+            v-slot="{ item: mv }"
+          >
+            <div class="mage-item" :key="mv.id">
+              <div class="mage-card">
+                <div class="mage-avatar">
+                  <i :class="iconStyle + mv.icon" :style="{ color: mv.iconColor }"></i>
                 </div>
-                <div class="mage-level">Уровень {{ formatNumber(mv.mage.level) }}</div>
-
-                <div class="mobile-mage-details">
-                  <div class="experience-section">
-                    <div class="exp-header">
-                      <span class="exp-label">Опыт:</span>
-                      <span class="exp-values">
-                        {{ formatNumber(mv.progress.current) }} /
-                        {{ formatNumber(mv.progress.max) }}
-                      </span>
-                    </div>
-                    <div class="exp-bar-container">
-                      <q-linear-progress
-                        :value="mv.progress.percentage / 100"
-                        color="primary"
-                        track-color="grey-8"
-                        size="8px"
-                        rounded
-                        class="exp-progress"
-                      />
+                <div class="mage-info">
+                  <div class="mage-header">
+                    <div class="mage-name">{{ mv.name }}</div>
+                    <div class="mage-rank" :style="{ color: mv.rank.color }">
+                      {{ mv.rank.name }}
                     </div>
                   </div>
+                  <div class="mage-level">Уровень {{ formatNumber(mv.level) }}</div>
 
-                  <div v-if="mv.runes.length > 0" class="mobile-runes">
-                    <div class="runes-label">Руны:</div>
-                    <div class="rune-grid-mobile">
-                      <div
-                        v-for="rune in mv.runes"
-                        :key="rune.id"
-                        class="rune-item-mobile"
-                        :style="{ color: rune.color }"
-                      >
-                        <i :class="iconStyle + rune.icon"></i>
-                        <span class="rune-quantity">
-                          {{ formatNumber(mv.mage.runeQuantities[rune.id] || new Decimal(0)) }}
+                  <div class="mobile-mage-details">
+                    <div class="experience-section">
+                      <div class="exp-header">
+                        <span class="exp-label">Опыт:</span>
+                        <span class="exp-values">
+                          {{ formatNumber(getProgress(mv).current) }} /
+                          {{ formatNumber(getProgress(mv).max) }}
                         </span>
+                      </div>
+                      <div class="exp-bar-container">
+                        <q-linear-progress
+                          :value="getProgress(mv).percentage / 100"
+                          color="primary"
+                          track-color="grey-8"
+                          size="8px"
+                          rounded
+                          class="exp-progress"
+                        />
+                      </div>
+                    </div>
+
+                    <div v-if="getSortedRunes(mv).length > 0" class="mobile-runes">
+                      <div class="runes-label">Руны:</div>
+                      <div class="rune-grid-mobile">
+                        <div
+                          v-for="rune in getSortedRunes(mv)"
+                          :key="rune.id"
+                          class="rune-item-mobile"
+                          :style="{ color: rune.color }"
+                        >
+                          <i :class="iconStyle + rune.icon"></i>
+                          <span class="rune-quantity">
+                            {{ formatNumber(mv.runeQuantities[rune.id] || D0) }}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </q-virtual-scroll>
         </div>
       </div>
     </div>
@@ -100,21 +109,37 @@ const iconStyle = computed(() => {
 const formatNumber = storeData.formatNumber;
 
 const runeMetaMap = new Map<string, (typeof RUNE_META)[number]>(RUNE_META.map((m) => [m.id, m]));
+const D0 = new Decimal(0);
+const D1 = new Decimal(1);
+const itemSize = 120;
+const sliceSize = 30;
+const sliceRatio = 2;
 
-const mageViews = computed(() =>
-  storeMagic.mages.map((mage) => {
-    const progress = storeMagic.getMageExperienceProgress(mage);
-    const runes = mage.runeIds
-      .map((id) => runeMetaMap.get(id))
-      .filter((r): r is NonNullable<typeof r> => Boolean(r))
-      .sort((a, b) => {
-        const qa = mage.runeQuantities[a.id] || new Decimal(0);
-        const qb = mage.runeQuantities[b.id] || new Decimal(0);
-        return qb.cmp(qa);
-      });
-    return { mage, progress, runes };
-  }),
-);
+import type { Mage } from 'stores/magic';
+
+const getMageStrength = (mage: Mage): Decimal => {
+  const sumRunes = Object.values(mage.runeQuantities || {}).reduce(
+    (acc: Decimal, v) => acc.plus(v || D0),
+    D0,
+  );
+  const factor = D1.plus(sumRunes.mul(0.01));
+  return mage.level.mul(factor);
+};
+
+const mageItems = computed(() => {
+  return [...storeMagic.mages].sort((a, b) => getMageStrength(b).cmp(getMageStrength(a)));
+});
+
+const getProgress = (mage: Mage) => storeMagic.getMageExperienceProgress(mage);
+const getSortedRunes = (mage: Mage) =>
+  mage.runeIds
+    .map((id: string) => runeMetaMap.get(id))
+    .filter((r): r is NonNullable<typeof r> => Boolean(r))
+    .sort((a, b) => {
+      const qa = mage.runeQuantities[a.id] || D0;
+      const qb = mage.runeQuantities[b.id] || D0;
+      return qb.cmp(qa);
+    });
 </script>
 
 <style scoped lang="scss">
@@ -244,11 +269,10 @@ const mageViews = computed(() =>
     }
 
     .mage-list {
-      column-width: 320px;
-      column-gap: 12px;
       flex: 1;
-      overflow-y: auto;
-      padding-right: 4px;
+      overflow: hidden;
+      padding-right: 0;
+      will-change: transform;
 
       &::-webkit-scrollbar {
         width: 6px;
@@ -269,12 +293,10 @@ const mageViews = computed(() =>
       }
 
       .mage-item {
-        display: inline-block;
         width: 100%;
         margin: 0 0 12px;
-        break-inside: avoid;
-        -webkit-column-break-inside: avoid;
-        -moz-column-break-inside: avoid;
+        display: flex;
+        justify-content: center;
       }
 
       .mage-card {
@@ -285,6 +307,11 @@ const mageViews = computed(() =>
         background: linear-gradient(145deg, #363a5c, #2d3251);
         border: 1px solid #4a5578;
         border-radius: 8px;
+        width: 100%;
+        max-width: 420px;
+        transform: translateZ(0);
+        contain: content;
+        will-change: transform;
       }
 
       .mage-avatar {
@@ -400,6 +427,7 @@ const mageViews = computed(() =>
       .mage-card {
         gap: 8px;
         padding: 10px;
+        max-width: 100%;
       }
 
       .mobile-mage-details {
