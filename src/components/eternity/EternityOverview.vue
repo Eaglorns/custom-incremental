@@ -33,7 +33,7 @@ const formatNumber = storeData.formatNumber;
   padding-top: 20px;
 }
 .overview-card {
-  width: 720px;
+  width: 500px;
   max-width: 100%;
   position: relative;
   overflow: visible;
@@ -65,14 +65,7 @@ const formatNumber = storeData.formatNumber;
   backdrop-filter: blur(2px);
   position: relative;
 }
-.stat-rune::after {
-  content: '⟐';
-  position: absolute;
-  right: 10px;
-  top: 8px;
-  font-size: 20px;
-  color: rgba(255, 235, 160, 0.08);
-}
+
 .stat.big .value {
   font-weight: 900;
 }

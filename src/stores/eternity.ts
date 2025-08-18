@@ -6,19 +6,186 @@ import { useStorePrestige } from 'stores/prestige';
 import { useStoreResearch } from 'stores/research';
 import { useStoreAutomatic } from 'stores/automatic';
 
+type TechTreeItem = {
+  id: string;
+  description: string;
+  cost: Decimal;
+  baseCost: Decimal;
+  costMultiplier: Decimal;
+  level: Decimal;
+  maxLevel: Decimal;
+};
+
 export const useStoreEternity = defineStore('storeEternity', {
   state: () => ({
     points: new Decimal(0),
     countReset: new Decimal(0),
-  }),
-  getters: {
-    save(state) {
-      return {
-        points: state.points,
-        countReset: state.countReset,
-      };
+    techTree: {
+      shop: [
+        {
+          id: 'shop_1',
+          description: 'При сбросе сохраняется часть процессоров.',
+          cost: new Decimal(10),
+          baseCost: new Decimal(10),
+          costMultiplier: new Decimal(2),
+          level: new Decimal(0),
+          maxLevel: new Decimal(99),
+        },
+        {
+          id: 'shop_2',
+          description: 'При сбросе сохраняется часть жёстких дисков.',
+          cost: new Decimal(100),
+          baseCost: new Decimal(100),
+          costMultiplier: new Decimal(2.2),
+          level: new Decimal(0),
+          maxLevel: new Decimal(99),
+        },
+        {
+          id: 'shop_3',
+          description: 'При сбросе сохраняется часть оперативной памяти.',
+          cost: new Decimal(500),
+          baseCost: new Decimal(500),
+          costMultiplier: new Decimal(2.5),
+          level: new Decimal(0),
+          maxLevel: new Decimal(99),
+        },
+        {
+          id: 'shop_4',
+          description: 'При сбросе сохраняется часть работников.',
+          cost: new Decimal(1200),
+          baseCost: new Decimal(1200),
+          costMultiplier: new Decimal(3),
+          level: new Decimal(0),
+          maxLevel: new Decimal(99),
+        },
+      ] as TechTreeItem[],
+      prestige: [
+        {
+          id: 'prestige_1',
+          description: 'Увеличивает награду за престиж',
+          cost: new Decimal(50),
+          baseCost: new Decimal(50),
+          costMultiplier: new Decimal(2.5),
+          level: new Decimal(0),
+          maxLevel: new Decimal(1000),
+        },
+        {
+          id: 'prestige_2',
+          description: 'Увеличивает базовую награду за каждый престижный сброс',
+          cost: new Decimal(150),
+          baseCost: new Decimal(150),
+          costMultiplier: new Decimal(2),
+          level: new Decimal(0),
+          maxLevel: new Decimal(500),
+        },
+        {
+          id: 'prestige_3',
+          description: 'Снижает требования к наградам для следующего престижа',
+          cost: new Decimal(400),
+          baseCost: new Decimal(400),
+          costMultiplier: new Decimal(2.6),
+          level: new Decimal(0),
+          maxLevel: new Decimal(300),
+        },
+        {
+          id: 'prestige_4',
+          description: 'Улучшает автопокупки и сохранённые бонусы после престижа',
+          cost: new Decimal(800),
+          baseCost: new Decimal(800),
+          costMultiplier: new Decimal(3),
+          level: new Decimal(0),
+          maxLevel: new Decimal(150),
+        },
+      ] as TechTreeItem[],
+      research: [
+        {
+          id: 'research_1',
+          description: 'Повышает скорость исследований',
+          cost: new Decimal(200),
+          baseCost: new Decimal(200),
+          costMultiplier: new Decimal(3),
+          level: new Decimal(0),
+          maxLevel: new Decimal(1000),
+        },
+        {
+          id: 'research_2',
+          description: 'Уменьшает время одиночного исследования',
+          cost: new Decimal(300),
+          baseCost: new Decimal(300),
+          costMultiplier: new Decimal(2.5),
+          level: new Decimal(0),
+          maxLevel: new Decimal(400),
+        },
+        {
+          id: 'research_3',
+          description: 'Повышает шанс появления новых учёных и их эффективность',
+          cost: new Decimal(750),
+          baseCost: new Decimal(750),
+          costMultiplier: new Decimal(3.2),
+          level: new Decimal(0),
+          maxLevel: new Decimal(200),
+        },
+      ] as TechTreeItem[],
+      automatic: [
+        {
+          id: 'automatic_1',
+          description: 'Увеличивает работу автоматических помощников',
+          cost: new Decimal(500),
+          baseCost: new Decimal(500),
+          costMultiplier: new Decimal(3.5),
+          level: new Decimal(0),
+          maxLevel: new Decimal(1000),
+        },
+        {
+          id: 'automatic_2',
+          description: 'Увеличивает скорость действий помощников (частота срабатывания)',
+          cost: new Decimal(700),
+          baseCost: new Decimal(700),
+          costMultiplier: new Decimal(2.8),
+          level: new Decimal(0),
+          maxLevel: new Decimal(300),
+        },
+        {
+          id: 'automatic_3',
+          description: 'Снижает потребление ресурсов автоматическими помощниками',
+          cost: new Decimal(1200),
+          baseCost: new Decimal(1200),
+          costMultiplier: new Decimal(3.5),
+          level: new Decimal(0),
+          maxLevel: new Decimal(150),
+        },
+      ] as TechTreeItem[],
+      magic: [
+        {
+          id: 'magic_1',
+          description: 'Увеличивает эффективность магических заклинаний',
+          cost: new Decimal(500),
+          baseCost: new Decimal(500),
+          costMultiplier: new Decimal(3.5),
+          level: new Decimal(0),
+          maxLevel: new Decimal(1000),
+        },
+        {
+          id: 'magic_2',
+          description: 'Увеличивает максимальную ману и её восстановление',
+          cost: new Decimal(900),
+          baseCost: new Decimal(900),
+          costMultiplier: new Decimal(2.8),
+          level: new Decimal(0),
+          maxLevel: new Decimal(300),
+        },
+        {
+          id: 'magic_3',
+          description: 'Усиление рун — повышает силу эффектов рун и длительность',
+          cost: new Decimal(1600),
+          baseCost: new Decimal(1600),
+          costMultiplier: new Decimal(3.6),
+          level: new Decimal(0),
+          maxLevel: new Decimal(120),
+        },
+      ] as TechTreeItem[],
     },
-  },
+  }),
   actions: {
     reset() {
       this.points = this.points.plus(1);
@@ -123,7 +290,7 @@ export const useStoreEternity = defineStore('storeEternity', {
       storeAutomatic.helpersShop.workerMultiplier.enabled = true;
     },
 
-    load(loaded: { points?: string; countReset?: string }) {
+    load(loaded: { points: string; countReset: string }) {
       this.points = new Decimal(loaded.points || 0);
       this.countReset = new Decimal(loaded.countReset || 0);
     },

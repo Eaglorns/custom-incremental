@@ -182,19 +182,19 @@
               <EternityOverview />
             </template>
             <template #innerEternityTechTreeShop>
-              <EternityTechTree />
+              <EternityTechTree :items="storeEternity.techTree.shop" />
             </template>
             <template #innerEternityTechTreePrestige>
-              <EternityTechTree />
+              <EternityTechTree :items="storeEternity.techTree.prestige" />
             </template>
             <template #innerEternityTechTreeResearch>
-              <EternityTechTree />
+              <EternityTechTree :items="storeEternity.techTree.research" />
             </template>
             <template #innerEternityTechTreeAutomatic>
-              <EternityTechTree />
+              <EternityTechTree :items="storeEternity.techTree.automatic" />
             </template>
             <template #innerEternityTechTreeMagic>
-              <EternityTechTree />
+              <EternityTechTree :items="storeEternity.techTree.magic" />
             </template>
           </TabLayout>
         </q-tab-panel>
@@ -372,11 +372,11 @@ const innerMagicLabels = computed(() => ({
 
 const innerEternityLabels = computed(() => ({
   innerEternityOverview: isMobile.value ? 'Обзо' : 'Обзор',
-  innerEternityTechTreeShop: isMobile.value ? 'Маги' : 'Познание Магии',
+  innerEternityTechTreeShop: isMobile.value ? 'Мага' : 'Познание Магазина',
   innerEternityTechTreePrestige: isMobile.value ? 'Прес' : 'Познание Престижа',
   innerEternityTechTreeResearch: isMobile.value ? 'Исс' : 'Познание Исследований',
   innerEternityTechTreeAutomatic: isMobile.value ? 'Авто' : 'Познание Автоматизации',
-  innerEternityTechTreeMagic: isMobile.value ? 'Авто' : 'Познание Магии',
+  innerEternityTechTreeMagic: isMobile.value ? 'Маги' : 'Познание Магии',
 }));
 
 const shopTabs = computed(() => [
@@ -456,7 +456,7 @@ const eternityTabs = computed(() => [
     label: innerEternityLabels.value.innerEternityOverview,
   },
   {
-    name: 'innerEternityTechTree',
+    name: 'innerEternityTechTreeShop',
     icon: iconStyle.value + 'fa-store',
     label: innerEternityLabels.value.innerEternityTechTreeShop,
   },
