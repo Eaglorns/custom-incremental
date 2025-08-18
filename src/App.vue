@@ -6,9 +6,13 @@
 import { onMounted, onBeforeUnmount, watch } from 'vue';
 import { useStoreGame } from 'stores/game';
 import { useStoreSaveLoad } from 'stores/saveLoad';
+import { useStoreData } from 'stores/data';
+import { useStoreEternity } from 'stores/eternity';
 
 const storeGame = useStoreGame();
 const storeSaveLoad = useStoreSaveLoad();
+const storeData = useStoreData();
+const storeEternity = useStoreEternity();
 
 let timerIdGameTick: ReturnType<typeof setInterval> | null = null;
 let timerIdGameSave: ReturnType<typeof setInterval> | null = null;
@@ -83,6 +87,13 @@ watch(
   () => storeSaveLoad.timerSave,
   () => {
     if (!document.hidden) startGameSaveTimer();
+  },
+);
+
+watch(
+  () => storeData.epicNumber,
+  () => {
+    if (storeData.epicNumber.gte('1.8e308')) storeEternity.reset();
   },
 );
 </script>

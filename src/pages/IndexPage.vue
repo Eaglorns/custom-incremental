@@ -35,7 +35,7 @@
         class="flex items-center"
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
-        <i :class="iconStyle + 'fa-swords'" size="22px" color="secondary" />
+        <i :class="iconStyle + 'fa-flask'" size="22px" color="secondary" />
         <span ref="researchRef" class="text-weight-bold text-h5">
           {{ formatNumber(storeResearch.points) }}
         </span>
@@ -48,6 +48,16 @@
         <i :class="iconStyle + 'fa-droplet'" size="22px" color="secondary" />
         <span ref="magicRef" class="text-weight-bold text-h5">
           {{ formatNumber(storeMagic.points) }}
+        </span>
+      </div>
+      <div
+        v-if="storeData.currentTab === 'eternity'"
+        class="flex items-center"
+        style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
+      >
+        <i :class="iconStyle + 'fa-hourglass-end'" size="22px" color="secondary" />
+        <span ref="eternityRef" class="text-weight-bold text-h5">
+          {{ formatNumber(storeEternity.points) }}
         </span>
       </div>
     </div>
@@ -161,7 +171,33 @@
             </template>
           </TabLayout>
         </q-tab-panel>
-        <q-tab-panel name="eternity" class="panel-flex"></q-tab-panel>
+        <q-tab-panel name="eternity" class="panel-flex">
+          <TabLayout
+            :tabs="eternityTabs"
+            v-model:active-tab="innerEternity"
+            v-model:splitter-model="splitterModel"
+            :is-mobile="isMobile"
+          >
+            <template #innerEternityOverview>
+              <EternityOverview />
+            </template>
+            <template #innerEternityTechTreeShop>
+              <EternityTechTree />
+            </template>
+            <template #innerEternityTechTreePrestige>
+              <EternityTechTree />
+            </template>
+            <template #innerEternityTechTreeResearch>
+              <EternityTechTree />
+            </template>
+            <template #innerEternityTechTreeAutomatic>
+              <EternityTechTree />
+            </template>
+            <template #innerEternityTechTreeMagic>
+              <EternityTechTree />
+            </template>
+          </TabLayout>
+        </q-tab-panel>
         <q-tab-panel name="magic" class="panel-flex">
           <TabLayout
             :tabs="magicTabs"
@@ -240,6 +276,8 @@ import Achievement from 'src/pages/AchievementPage.vue';
 import StatsPage from 'src/pages/StatsPage.vue';
 import SettingPage from 'src/pages/SettingPage.vue';
 import TabLayout from 'src/components/TabLayout.vue';
+import EternityOverview from 'src/components/eternity/EternityOverview.vue';
+import EternityTechTree from 'src/components/eternity/EternityTechTree.vue';
 import Decimal from 'break_eternity.js';
 import { animate } from 'animejs';
 import { useStoreResearch } from 'stores/research';
@@ -247,6 +285,7 @@ import { useStoreShop } from 'stores/shop';
 import { useStorePrestige } from 'stores/prestige';
 import { useStoreSetting } from 'stores/setting';
 import { useStoreMagic } from 'stores/magic';
+import { useStoreEternity } from 'stores/eternity';
 
 const storeData = useStoreData();
 const storeResearch = useStoreResearch();
@@ -254,6 +293,7 @@ const storeShop = useStoreShop();
 const storePrestige = useStorePrestige();
 const storeSetting = useStoreSetting();
 const storeMagic = useStoreMagic();
+const storeEternity = useStoreEternity();
 
 const iconStyle = computed(() => {
   return storeSetting.iconStyle;
@@ -272,6 +312,7 @@ const innerResearch = ref('innerResearchScientist');
 const innerAutomatic = ref('innerAutomaticHelpersShop');
 const innerPrestige = ref('innerPrestigeBase');
 const innerMagic = ref('innerMagicBattle');
+const innerEternity = ref('innerEternityOverview');
 const splitterModel = ref(20);
 
 const windowWidth = ref(window.innerWidth);
@@ -327,6 +368,15 @@ const innerMagicLabels = computed(() => ({
   innerMagicBattle: isMobile.value ? 'Битв' : 'Битва',
   innerMagicEssence: isMobile.value ? 'Эссе' : 'Эссенции',
   innerMagicCraft: isMobile.value ? 'Созд' : 'Создание',
+}));
+
+const innerEternityLabels = computed(() => ({
+  innerEternityOverview: isMobile.value ? 'Обзо' : 'Обзор',
+  innerEternityTechTreeShop: isMobile.value ? 'Маги' : 'Познание Магии',
+  innerEternityTechTreePrestige: isMobile.value ? 'Прес' : 'Познание Престижа',
+  innerEternityTechTreeResearch: isMobile.value ? 'Исс' : 'Познание Исследований',
+  innerEternityTechTreeAutomatic: isMobile.value ? 'Авто' : 'Познание Автоматизации',
+  innerEternityTechTreeMagic: isMobile.value ? 'Авто' : 'Познание Магии',
 }));
 
 const shopTabs = computed(() => [
@@ -396,6 +446,39 @@ const magicTabs = computed(() => [
     name: 'innerMagicCraft',
     icon: iconStyle.value + 'fa-hammer-war',
     label: innerMagicLabels.value.innerMagicCraft,
+  },
+]);
+
+const eternityTabs = computed(() => [
+  {
+    name: 'innerEternityOverview',
+    icon: iconStyle.value + 'fa-eye',
+    label: innerEternityLabels.value.innerEternityOverview,
+  },
+  {
+    name: 'innerEternityTechTree',
+    icon: iconStyle.value + 'fa-store',
+    label: innerEternityLabels.value.innerEternityTechTreeShop,
+  },
+  {
+    name: 'innerEternityTechTreePrestige',
+    icon: iconStyle.value + 'fa-arrow-up-from-dotted-line',
+    label: innerEternityLabels.value.innerEternityTechTreePrestige,
+  },
+  {
+    name: 'innerEternityTechTreeResearch',
+    icon: iconStyle.value + 'fa-flask',
+    label: innerEternityLabels.value.innerEternityTechTreeResearch,
+  },
+  {
+    name: 'innerEternityTechTreeAutomatic',
+    icon: iconStyle.value + 'fa-cart-shopping',
+    label: innerEternityLabels.value.innerEternityTechTreeAutomatic,
+  },
+  {
+    name: 'innerEternityTechTreeMagic',
+    icon: iconStyle.value + 'fa-hat-wizard',
+    label: innerEternityLabels.value.innerEternityTechTreeMagic,
   },
 ]);
 

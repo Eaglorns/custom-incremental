@@ -115,6 +115,4 @@ const formatNumber = storeData.formatNumber;
     font-size: 24px;
   }
 }
-
-/* All animations removed by request */
 </style>

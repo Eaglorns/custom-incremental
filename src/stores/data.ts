@@ -4,6 +4,7 @@ import { useStoreResearch } from 'stores/research';
 import { useStoreShop } from 'stores/shop';
 import { useStoreAchievement } from 'stores/achievement';
 import { useStorePrestige } from 'stores/prestige';
+import { useStoreEternity } from './eternity';
 
 const SECS_IN_MIN = 60;
 const SECS_IN_HOUR = 60 * SECS_IN_MIN;
@@ -11,7 +12,6 @@ const SECS_IN_DAY = 24 * SECS_IN_HOUR;
 const SECS_IN_YEAR = 365 * SECS_IN_DAY;
 const INFINITY_THRESHOLD_SECONDS = new Decimal(SECS_IN_YEAR).mul(100);
 
-// Decimal constants to reduce allocations and unify usage
 const D1 = new Decimal(1);
 const D1_015 = new Decimal(1.015);
 
@@ -205,16 +205,19 @@ export const useStoreData = defineStore('storeData', {
       const storeResearch = useStoreResearch();
       const storeAchievement = useStoreAchievement();
       const storePrestige = useStorePrestige();
+      const storeEternity = useStoreEternity();
       const parShopCPU = storeShop.list.cpu.value;
       const parResearchCPU = storeResearch.base.cpuPow;
       const prestigeMul = storePrestige.points.mul(0.01).add(1);
       const prestigeUpgradeBonus = storePrestige.upgrades.prestigeBonus.level.mul(0.01).add(1);
       const cpuPowExp = parResearchCPU.bonus.mul(parResearchCPU.level).plus(1);
+      const eternityBonus = storeEternity.points.plus(1);
       const result = parShopCPU
         .pow(cpuPowExp)
         .mul(prestigeMul)
         .mul(prestigeUpgradeBonus)
-        .mul(storeAchievement.achievementBonus);
+        .mul(storeAchievement.achievementBonus)
+        .mul(eternityBonus);
       return result;
     },
 

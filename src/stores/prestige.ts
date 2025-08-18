@@ -41,13 +41,13 @@ export const useStorePrestige = defineStore('storePrestige', {
       },
       prestigeBuyValueCount: {
         cost: new Decimal(0.1),
-        level: new Decimal('0'),
+        level: new Decimal(0),
         costGrowth: new Decimal(1.15),
         maxLevel: -1,
       },
       prestigeBuyValueMultiply: {
         cost: new Decimal(0.5),
-        level: new Decimal('0'),
+        level: new Decimal(0),
         costGrowth: new Decimal(1.3),
         maxLevel: -1,
       },

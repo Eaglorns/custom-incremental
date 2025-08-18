@@ -7,7 +7,6 @@
         <span class="text-h6 text-bold">Цель</span>
         <div class="q-mt-sm">
           Найдите самое большое <span class="text-deep-orange-5 text-bold">ЧИСЛО</span>
-          <i :class="iconStyle + 'fa-infinity'" color="deep-orange-5" size="18px" class="q-mx-xs" />
           — основная валюта игры.
         </div>
         <ul class="q-pl-lg q-mt-xs">
@@ -28,8 +27,44 @@
           <li><span class="text-bold">ОЗУ</span> — ускоряет исследования</li>
         </ul>
         <div class="text-grey-7 q-mt-xs">
-          Множители увеличивают прирост при покупке. Престиж — больше покупок за раз.
+          Множители увеличивают прирост при покупке. Престиж открывает массовые покупки и лучшие
+          коэффициенты.
         </div>
+      </div>
+      <div class="help-section purple">
+        <i :class="iconStyle + 'fa-hat-wizard'" color="primary" size="22px" class="q-mr-sm" />
+        <span class="text-h6 text-bold">Магия</span>
+        <ul class="q-pl-lg q-mt-xs">
+          <li>
+            <span class="text-bold">Маги</span> — сражаются с монстрами и получают опыт. Их сила
+            зависит от набора рун; Уровни определяют генерацию маны. На каждых степенях 10 (10, 100,
+            1000 и т.д.) вклад мага дополнительно удваивается.
+          </li>
+          <li>
+            <span class="text-bold">Битвы</span> — по одному монстру за раз. У монстра есть
+            здоровье, броня и регенерация; в бою могут накладываться эффекты (яд, горение, мороз и
+            т. п.), см. вкладку «Крафт» для деталей.
+          </li>
+          <li>
+            <span class="text-bold">Награды</span> — эссенции разных типов. Они выпадают из боёв и
+            используются для крафта рун; количество и тип эссенций зависят от уровня и суффикса
+            монстра.
+          </li>
+          <li>
+            <span class="text-bold">Руны</span> — усиливают конкретные типы урона или эффекты. Для
+            крафта требуются определённые эссенции. Индикаторы: зелёная рамка — крафт доступен;
+            жёлтая — ресурсов недостаточно.
+          </li>
+          <li>
+            <span class="text-bold">Крафт</span> — кликните, чтобы выбрать руну; удерживайте, чтобы
+            запустить прогресс и создать руну. Иконка молотка означает, что крафт возможен. Длинное
+            удержание автоматически повторяет крафт, пока хватает ресурсов.
+          </li>
+          <li>
+            <span class="text-bold">Добыча рун</span> — маги иногда находят дополнительные руны в
+            боях; накопленные копии усиливают эффект рун и повышают общую силу мага.
+          </li>
+        </ul>
       </div>
       <div class="help-section green">
         <i :class="iconStyle + 'fa-flask-vial'" color="primary" size="22px" class="q-mr-sm" />
@@ -54,7 +89,10 @@
       <div class="help-section red">
         <i :class="iconStyle + 'fa-award'" color="primary" size="22px" class="q-mr-sm" />
         <span class="text-h6 text-bold">Престиж</span>
-        <div class="q-mt-xs">Сбросьте прогресс ради очков престижа для особых улучшений.</div>
+        <div class="q-mt-xs">
+          Сбросьте прогресс ради очков престижа для особых улучшений. Они ускоряют генерацию и
+          открывают новые возможности.
+        </div>
       </div>
       <div class="help-section red">
         <i :class="iconStyle + 'fa-trophy-star'" color="primary" size="22px" class="q-mr-sm" />
@@ -106,6 +144,9 @@ const iconStyle = computed(() => {
   }
   &.red {
     background: rgba(244, 67, 54, 0.07);
+  }
+  &.purple {
+    background: rgba(103, 58, 183, 0.08);
   }
 }
 @media (max-width: 600px) {
