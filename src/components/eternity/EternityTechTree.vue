@@ -21,7 +21,7 @@
           <div class="cell-level">
             <i class="fa-solid fa-arrow-up-right-dots" />
             <strong>{{ formatNumber(item.level) }}</strong>
-            <span v-if="item.maxLevel">/ {{ formatNumber(item.maxLevel) }}</span>
+            <span v-if="hasMax(item)">/ {{ formatNumber(item.maxLevel!) }}</span>
           </div>
         </div>
 
@@ -67,7 +67,10 @@ function canBuy(item: Item) {
 }
 
 function isMaxed(item: Item) {
-  return item.maxLevel !== undefined && item.level.gte(item.maxLevel);
+  const m = item.maxLevel;
+  if (!m) return false;
+  if (m.eq(-1)) return false;
+  return item.level.gte(m);
 }
 
 function buy(item: Item) {
@@ -78,10 +81,19 @@ function buy(item: Item) {
 }
 
 function progressWidth(item: Item) {
-  if (!item.maxLevel || item.maxLevel.lte(0)) return '0%';
-  const ratio = item.level.div(item.maxLevel).toNumber();
+  const m = item.maxLevel;
+  if (!m) return '0%';
+  if (m.eq(-1)) return '0%';
+  if (m.lte(0)) return '0%';
+  const ratio = item.level.div(m).toNumber();
   const pct = Math.max(0, Math.min(1, ratio)) * 100;
   return pct + '%';
+}
+
+function hasMax(item: Item) {
+  const m = item.maxLevel;
+  if (!m) return false;
+  return !m.eq(-1);
 }
 </script>
 

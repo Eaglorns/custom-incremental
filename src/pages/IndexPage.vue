@@ -182,19 +182,51 @@
               <EternityOverview />
             </template>
             <template #innerEternityTechTreeShop>
-              <EternityTechTree :items="storeEternity.techTree.shop" />
+              <EternityTechTree
+                :items="
+                  Object.entries(storeEternity.techTree.shop).map(([id, item]) => ({ ...item, id }))
+                "
+              />
             </template>
             <template #innerEternityTechTreePrestige>
-              <EternityTechTree :items="storeEternity.techTree.prestige" />
+              <EternityTechTree
+                :items="
+                  Object.entries(storeEternity.techTree.prestige).map(([id, item]) => ({
+                    ...item,
+                    id,
+                  }))
+                "
+              />
             </template>
             <template #innerEternityTechTreeResearch>
-              <EternityTechTree :items="storeEternity.techTree.research" />
+              <EternityTechTree
+                :items="
+                  Object.entries(storeEternity.techTree.research).map(([id, item]) => ({
+                    ...item,
+                    id,
+                  }))
+                "
+              />
             </template>
             <template #innerEternityTechTreeAutomatic>
-              <EternityTechTree :items="storeEternity.techTree.automatic" />
+              <EternityTechTree
+                :items="
+                  Object.entries(storeEternity.techTree.automatic).map(([id, item]) => ({
+                    ...item,
+                    id,
+                  }))
+                "
+              />
             </template>
             <template #innerEternityTechTreeMagic>
-              <EternityTechTree :items="storeEternity.techTree.magic" />
+              <EternityTechTree
+                :items="
+                  Object.entries(storeEternity.techTree.magic).map(([id, item]) => ({
+                    ...item,
+                    id,
+                  }))
+                "
+              />
             </template>
           </TabLayout>
         </q-tab-panel>

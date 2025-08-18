@@ -533,9 +533,11 @@ export const useStoreMagic = defineStore('storeMagic', {
       this.monster.iconColor = monster.color || '#ffffff';
       this.monster.level = new Decimal(this.monsterGeneratedLevel);
 
-      let baseHealth = new Decimal(this.monster.level.mul(50).plus(100));
-      let baseArmor = new Decimal(this.monster.level.mul(2)).plus(Math.random() * 10);
-      let baseRegen = new Decimal(this.monster.level.mul(7.5)).plus(Math.random() * 15);
+      let baseHealth = new Decimal(
+        this.monster.level.mul(Math.random() * 800 + Math.random() * 90 + Math.random() * 9 + 100),
+      );
+      let baseArmor = new Decimal(this.monster.level.mul(Math.random() * 7 + 2));
+      let baseRegen = new Decimal(this.monster.level.mul(Math.random() * 12 + 5));
 
       const rewardCount = monster.suffix?.rewardCount || 1;
 

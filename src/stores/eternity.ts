@@ -6,184 +6,87 @@ import { useStorePrestige } from 'stores/prestige';
 import { useStoreResearch } from 'stores/research';
 import { useStoreAutomatic } from 'stores/automatic';
 
-type TechTreeItem = {
-  id: string;
-  description: string;
-  cost: Decimal;
-  baseCost: Decimal;
-  costMultiplier: Decimal;
-  level: Decimal;
-  maxLevel: Decimal;
-};
-
 export const useStoreEternity = defineStore('storeEternity', {
   state: () => ({
     points: new Decimal(0),
     countReset: new Decimal(0),
     techTree: {
-      shop: [
-        {
-          id: 'shop_1',
-          description: 'При сбросе сохраняется часть процессоров.',
+      shop: {
+        resetCPUValue: {
+          description: 'При сбросе сохраняется часть процессоров',
           cost: new Decimal(10),
           baseCost: new Decimal(10),
           costMultiplier: new Decimal(2),
           level: new Decimal(0),
           maxLevel: new Decimal(99),
         },
-        {
-          id: 'shop_2',
-          description: 'При сбросе сохраняется часть жёстких дисков.',
+        resetHDDValue: {
+          description: 'При сбросе сохраняется часть жёстких дисков',
           cost: new Decimal(100),
           baseCost: new Decimal(100),
           costMultiplier: new Decimal(2.2),
           level: new Decimal(0),
           maxLevel: new Decimal(99),
         },
-        {
-          id: 'shop_3',
-          description: 'При сбросе сохраняется часть оперативной памяти.',
+        resetRAMValue: {
+          description: 'При сбросе сохраняется часть оперативной памяти',
           cost: new Decimal(500),
           baseCost: new Decimal(500),
           costMultiplier: new Decimal(2.5),
           level: new Decimal(0),
           maxLevel: new Decimal(99),
         },
-        {
-          id: 'shop_4',
-          description: 'При сбросе сохраняется часть работников.',
+        resetWorkerValue: {
+          description: 'При сбросе сохраняется часть работников',
           cost: new Decimal(1200),
           baseCost: new Decimal(1200),
           costMultiplier: new Decimal(3),
           level: new Decimal(0),
           maxLevel: new Decimal(99),
         },
-      ] as TechTreeItem[],
-      prestige: [
-        {
-          id: 'prestige_1',
-          description: 'Увеличивает награду за престиж',
+      },
+      prestige: {
+        resetPrestigePoints: {
+          description: 'Сохраняет часть престижа',
           cost: new Decimal(50),
           baseCost: new Decimal(50),
           costMultiplier: new Decimal(2.5),
           level: new Decimal(0),
-          maxLevel: new Decimal(1000),
+          maxLevel: new Decimal(99),
         },
-        {
-          id: 'prestige_2',
-          description: 'Увеличивает базовую награду за каждый престижный сброс',
-          cost: new Decimal(150),
-          baseCost: new Decimal(150),
-          costMultiplier: new Decimal(2),
-          level: new Decimal(0),
-          maxLevel: new Decimal(500),
-        },
-        {
-          id: 'prestige_3',
-          description: 'Снижает требования к наградам для следующего престижа',
-          cost: new Decimal(400),
-          baseCost: new Decimal(400),
-          costMultiplier: new Decimal(2.6),
-          level: new Decimal(0),
-          maxLevel: new Decimal(300),
-        },
-        {
-          id: 'prestige_4',
-          description: 'Улучшает автопокупки и сохранённые бонусы после престижа',
-          cost: new Decimal(800),
-          baseCost: new Decimal(800),
-          costMultiplier: new Decimal(3),
-          level: new Decimal(0),
-          maxLevel: new Decimal(150),
-        },
-      ] as TechTreeItem[],
-      research: [
-        {
+      },
+      research: {
+        resetResearchPoints: {
           id: 'research_1',
-          description: 'Повышает скорость исследований',
+          description: 'Сохраняет часть очков исследований',
           cost: new Decimal(200),
           baseCost: new Decimal(200),
           costMultiplier: new Decimal(3),
           level: new Decimal(0),
-          maxLevel: new Decimal(1000),
+          maxLevel: new Decimal(99),
         },
-        {
-          id: 'research_2',
-          description: 'Уменьшает время одиночного исследования',
-          cost: new Decimal(300),
-          baseCost: new Decimal(300),
-          costMultiplier: new Decimal(2.5),
-          level: new Decimal(0),
-          maxLevel: new Decimal(400),
-        },
-        {
-          id: 'research_3',
-          description: 'Повышает шанс появления новых учёных и их эффективность',
-          cost: new Decimal(750),
-          baseCost: new Decimal(750),
-          costMultiplier: new Decimal(3.2),
-          level: new Decimal(0),
-          maxLevel: new Decimal(200),
-        },
-      ] as TechTreeItem[],
-      automatic: [
-        {
+      },
+      automatic: {
+        resetAtomaticValue: {
           id: 'automatic_1',
-          description: 'Увеличивает работу автоматических помощников',
+          description: 'Сохраняет часть купленных автоматизаций',
           cost: new Decimal(500),
           baseCost: new Decimal(500),
           costMultiplier: new Decimal(3.5),
           level: new Decimal(0),
-          maxLevel: new Decimal(1000),
+          maxLevel: new Decimal(-1),
         },
-        {
-          id: 'automatic_2',
-          description: 'Увеличивает скорость действий помощников (частота срабатывания)',
-          cost: new Decimal(700),
-          baseCost: new Decimal(700),
-          costMultiplier: new Decimal(2.8),
-          level: new Decimal(0),
-          maxLevel: new Decimal(300),
-        },
-        {
-          id: 'automatic_3',
-          description: 'Снижает потребление ресурсов автоматическими помощниками',
-          cost: new Decimal(1200),
-          baseCost: new Decimal(1200),
-          costMultiplier: new Decimal(3.5),
-          level: new Decimal(0),
-          maxLevel: new Decimal(150),
-        },
-      ] as TechTreeItem[],
-      magic: [
-        {
-          id: 'magic_1',
-          description: 'Увеличивает эффективность магических заклинаний',
+      },
+      magic: {
+        resetMagicPoints: {
+          description: 'Сохраняет часть маны',
           cost: new Decimal(500),
           baseCost: new Decimal(500),
           costMultiplier: new Decimal(3.5),
           level: new Decimal(0),
-          maxLevel: new Decimal(1000),
+          maxLevel: new Decimal(99),
         },
-        {
-          id: 'magic_2',
-          description: 'Увеличивает максимальную ману и её восстановление',
-          cost: new Decimal(900),
-          baseCost: new Decimal(900),
-          costMultiplier: new Decimal(2.8),
-          level: new Decimal(0),
-          maxLevel: new Decimal(300),
-        },
-        {
-          id: 'magic_3',
-          description: 'Усиление рун — повышает силу эффектов рун и длительность',
-          cost: new Decimal(1600),
-          baseCost: new Decimal(1600),
-          costMultiplier: new Decimal(3.6),
-          level: new Decimal(0),
-          maxLevel: new Decimal(120),
-        },
-      ] as TechTreeItem[],
+      },
     },
   }),
   actions: {
