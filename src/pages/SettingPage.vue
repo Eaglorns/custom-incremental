@@ -26,7 +26,12 @@
                 <div class="text-h6 text-weight-bold" :class="{ 'text-grey-6': !audioEnabled }">
                   {{ volumePercent }}%
                 </div>
-                <q-toggle v-model="audioEnabled" color="primary" size="lg" :icon="volumeIcon" />
+                <q-toggle
+                  v-model="audioEnabled"
+                  color="primary"
+                  size="lg"
+                  :icon="iconStyle + volumeIcon"
+                />
               </div>
             </div>
             <div class="row items-center">

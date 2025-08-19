@@ -44,7 +44,7 @@ const { locale } = useI18n({ useScope: 'global' });
 
 const localeOptions = [
   { value: 'ru', label: 'Русский' },
-  { value: 'en', label: 'English' },
+  // { value: 'en', label: 'English' },
 ];
 </script>
 

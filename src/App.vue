@@ -9,7 +9,10 @@ import { useStoreSaveLoad } from 'stores/saveLoad';
 import { useStoreData } from 'stores/data';
 import { useStoreEternity } from 'stores/eternity';
 import { useStorePrestige } from 'stores/prestige';
-import { useStoreResearch } from './stores/research';
+import { useStoreResearch } from 'stores/research';
+import { showLoreDialog } from 'src/utils/showLoreDialog';
+import { lore } from 'src/constants/loreMeta';
+import { useStoreAchievement } from 'stores/achievement';
 
 const storeGame = useStoreGame();
 const storeSaveLoad = useStoreSaveLoad();
@@ -17,6 +20,7 @@ const storeData = useStoreData();
 const storeEternity = useStoreEternity();
 const storePrestige = useStorePrestige();
 const storeResearch = useStoreResearch();
+const storeAchievement = useStoreAchievement();
 
 let timerIdGameTick: ReturnType<typeof setInterval> | null = null;
 let timerIdGameSave: ReturnType<typeof setInterval> | null = null;
@@ -56,26 +60,16 @@ const handleVisibilityChange = () => {
   }
 };
 
-const handleBeforeUnload = () => {
-  try {
-    //storeSaveLoad.saveGame();
-  } catch (e) {
-    console.debug('saveGame beforeunload error:', e);
-  }
-};
-
 onMounted(() => {
   storeSaveLoad.loadGame();
   startGameTickTimer(true);
   startGameSaveTimer();
 
   document.addEventListener('visibilitychange', handleVisibilityChange);
-  window.addEventListener('beforeunload', handleBeforeUnload);
 });
 
 onBeforeUnmount(() => {
   document.removeEventListener('visibilitychange', handleVisibilityChange);
-  window.removeEventListener('beforeunload', handleBeforeUnload);
   clearGameTickTimer();
   clearGameSaveTimer();
 });
@@ -94,26 +88,55 @@ watch(
   },
 );
 
+function handleStageZero() {
+  if (storeData.epicNumber.lte(1) && storeData.stage === storeData.stageZero) {
+    showLoreDialog(lore.stageZero);
+  }
+  if (storeData.stage === storeData.stageZero && storeAchievement.achievementBonus.gte(1.04)) {
+    showLoreDialog(lore.stageAchievement);
+    storeData.stage = storeData.stageAchievement;
+  }
+}
+
+function handleStageAchievement() {
+  if (storeData.stage === storeData.stageAchievement && storeData.epicNumber.gte(1000)) {
+    showLoreDialog(lore.stageScientist);
+    storeData.stage = storeData.stageScientist;
+  }
+}
+
+function handleStageResearch() {
+  if (storeData.stage === storeData.stageResearch && storeData.epicNumber.gte(5000)) {
+    showLoreDialog(lore.stageAutomatic);
+    storeData.stage = storeData.stageAutomatic;
+  }
+}
+
+function handleStageAutomatic() {
+  if (storeData.stage === storeData.stageAutomatic && storePrestige.prestigeCan) {
+    showLoreDialog(lore.stagePrestige);
+    storeData.stage = storeData.stagePrestige;
+  }
+}
+
+function handleEternity() {
+  if (storeData.epicNumber.gte('1.8e308')) {
+    storeEternity.reset();
+    if (storeData.stage === storeData.stagePrestige) {
+      storeData.stage = storeData.stageEternity;
+      showLoreDialog(lore.stageEternity);
+    }
+  }
+}
+
 watch(
   () => storeData.epicNumber,
   () => {
-    if (storeData.epicNumber.gte('1.8e308')) {
-      storeEternity.reset();
-      if (storeData.stage === storeData.stagePrestige) {
-        storeData.stage = storeData.stageEternity;
-      }
-    }
-    if (storeData.stage === storeData.stageZero) {
-      if (storeData.epicNumber.gte(1000)) {
-        storeData.stage = storeData.stageScientist;
-      }
-    }
-
-    if (storeData.stage === storeData.stageResearch) {
-      if (storeData.epicNumber.gte(5000)) {
-        storeData.stage = storeData.stageAutomatic;
-      }
-    }
+    handleStageZero();
+    handleEternity();
+    handleStageAchievement();
+    handleStageResearch();
+    handleStageAutomatic();
   },
 );
 
@@ -122,18 +145,8 @@ watch(
   () => {
     if (storeData.stage === storeData.stageScientist) {
       if (storeResearch.points.gte(1000)) {
+        showLoreDialog(lore.stageResearch);
         storeData.stage = storeData.stageResearch;
-      }
-    }
-  },
-);
-
-watch(
-  () => storePrestige.points,
-  () => {
-    if (storeData.stage === storeData.stageAutomatic) {
-      if (storePrestige.prestigeCan) {
-        storeData.stage = storeData.stagePrestige;
       }
     }
   },

@@ -2,7 +2,7 @@ import { defineStore, acceptHMRUpdate } from 'pinia';
 import { Howl } from 'howler';
 
 const SOUND_NAMES = ['MagicOnRuneCraft', 'ShopOnBuyMultiplier', 'ShopOnBuyValue'] as const;
-const SOUND_COOLDOWN_MS = 75; // защита от «дребезга» при быстрых кликах
+const SOUND_COOLDOWN_MS = 75;
 const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
 
 export const useStoreSetting = defineStore('storeSetting', {

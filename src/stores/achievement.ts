@@ -5,7 +5,6 @@ import { useStoreShop } from 'stores/shop';
 import { useStorePrestige } from 'stores/prestige';
 import { useStoreResearch } from 'stores/research';
 
-// Constants and types for optimization and safety
 const ZERO = new Decimal(0);
 
 type AchievementKey =
@@ -20,13 +19,13 @@ type AchievementKey =
 
 const DIVIDERS: Record<AchievementKey, Decimal> = {
   epicNumberValue: new Decimal(10),
-  shopCpuValue: new Decimal(5),
-  shopHddValue: new Decimal(4),
+  shopCpuValue: new Decimal(10),
+  shopHddValue: new Decimal(6),
   shopRamValue: new Decimal(3),
   shopWorkerValue: new Decimal(2),
   prestigePoints: new Decimal(1.5),
-  researchPoints: new Decimal(2),
-  shopPoints: new Decimal(4),
+  researchPoints: new Decimal(1.3),
+  shopPoints: new Decimal(5),
 } as const;
 
 export const useStoreAchievement = defineStore('storeAchievement', {

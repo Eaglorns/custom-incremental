@@ -75,11 +75,11 @@ const achievementViews = computed(() => {
     const levelGt0 = hasLevel && a.level.gt(0);
     const unlocked = a.unlocked;
 
-    let cardClass = 'bg-grey-3';
+    let cardClass = 'achievement-card-dark-default';
     if (levelGt0) {
-      cardClass = 'bg-primary';
+      cardClass = 'achievement-card-dark-level';
     } else if (unlocked) {
-      cardClass = 'bg-positive';
+      cardClass = 'achievement-card-dark-unlocked';
     }
 
     const iconColor = levelGt0 || unlocked ? 'white' : 'grey-5';
@@ -190,7 +190,6 @@ const achievementBonus = computed(() => {
 .achievement-card-fixed .text-caption {
   font-size: 12px;
   line-height: 1.2;
-  /* показать весь текст без сокращения */
   max-height: none;
   overflow: visible;
   display: block;
@@ -232,7 +231,6 @@ const achievementBonus = computed(() => {
   }
   .achievement-card-fixed .text-caption {
     font-size: 11px;
-    /* не обрезать описание на мобильных тоже */
     line-clamp: unset;
     -webkit-line-clamp: unset;
   }
@@ -241,5 +239,27 @@ const achievementBonus = computed(() => {
     min-width: 100px !important;
     padding: 6px !important;
   }
+}
+
+.achievement-card-dark-default {
+  background: #2b2f31 !important;
+  color: #dfeaf3 !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  box-shadow: 0 6px 14px rgba(10, 12, 14, 0.5);
+}
+.achievement-card-dark-unlocked {
+  background: #3a3e41 !important;
+  color: #eef3f8 !important;
+  border: 1px solid rgba(255, 255, 255, 0.03) !important;
+}
+.achievement-card-dark-level {
+  background: #34383b !important;
+  color: #f8fbfe !important;
+  border: 1px solid rgba(255, 255, 255, 0.03) !important;
+}
+
+.achievement-card-fixed .text-subtitle2.text-white,
+.achievement-card-fixed .text-caption.text-white {
+  color: #eaf1f8 !important;
 }
 </style>

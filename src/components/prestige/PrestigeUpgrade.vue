@@ -1,6 +1,5 @@
 <template>
   <q-card flat class="q-pa-md">
-    <div class="text-h5 text-accent q-mb-sm">Улучшения престижа</div>
     <div class="row q-col-gutter-sm q-gutter-y-sm">
       <div
         v-for="uv in upgradesView"

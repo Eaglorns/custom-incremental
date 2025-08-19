@@ -317,7 +317,6 @@ function upgradeHelperChance(key: string) {
   }
 }
 
-/* Улучшения для небольших экранов: перенос строк и компактные элементы */
 @media (max-width: 600px) {
   .helper-title-row {
     flex-wrap: wrap;
@@ -338,7 +337,6 @@ function upgradeHelperChance(key: string) {
 }
 
 @media (max-width: 480px) {
-  /* Скрыть текстовую метку у тумблера ради экономии места */
   .helper-card .q-toggle .q-toggle__label {
     display: none;
   }
@@ -351,7 +349,6 @@ function upgradeHelperChance(key: string) {
     width: 100% !important;
     min-width: 0 !important;
   }
-  /* Стек чипа и кнопки в колонку, если очень узко */
   .helper-card .row.items-center.q-gutter-xs {
     flex-direction: column;
     align-items: stretch;

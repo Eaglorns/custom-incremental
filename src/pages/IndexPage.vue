@@ -153,8 +153,24 @@
             "
           />
         </q-tab>
-        <q-tab name="achievement" :label="tabLabels.achievement">
-          <i :class="iconStyle + 'fa-trophy-star'" />
+        <q-tab
+          :class="{ 'cursor-not-allowed': stage < storeData.stageAchievement }"
+          name="achievement"
+          :label="tabLabels.achievement"
+        >
+          <i
+            :class="
+              stage < storeData.stageAchievement
+                ? iconStyle + 'fa-circle-question'
+                : iconStyle + 'fa-trophy-star'
+            "
+          />
+        </q-tab>
+        <q-tab name="lore" :label="tabLabels.lore">
+          <i :class="iconStyle + 'fa-book-open'" />
+        </q-tab>
+        <q-tab name="cheat" :label="tabLabels.cheat">
+          <i :class="iconStyle + 'fa-bug'" />
         </q-tab>
         <q-tab name="stats" :label="tabLabels.stats">
           <i :class="iconStyle + 'fa-chart-line'" />
@@ -321,6 +337,12 @@
         <q-tab-panel name="achievement" class="panel-flex">
           <Achievement />
         </q-tab-panel>
+        <q-tab-panel name="lore" class="panel-flex">
+          <LorePage />
+        </q-tab-panel>
+        <q-tab-panel name="cheat" class="panel-flex">
+          <CheatPage />
+        </q-tab-panel>
         <q-tab-panel name="stats" class="panel-flex">
           <StatsPage />
         </q-tab-panel>
@@ -370,6 +392,8 @@ import SettingPage from 'src/pages/SettingPage.vue';
 import TabLayout from 'src/components/TabLayout.vue';
 import EternityOverview from 'src/components/eternity/EternityOverview.vue';
 import EternityTechTree from 'src/components/eternity/EternityTechTree.vue';
+import CheatPage from 'src/pages/CheatPage.vue';
+import LorePage from 'src/pages/LorePage.vue';
 import Decimal from 'break_eternity.js';
 import { animate } from 'animejs';
 import { useStoreResearch } from 'stores/research';
@@ -398,6 +422,9 @@ const stage = computed(() => storeData.stage);
 const tab = computed({
   get: () => storeData.currentTab,
   set: (val: string) => {
+    if (stage.value < storeData.stageAchievement && val === 'achievement') {
+      return;
+    }
     if (stage.value < storeData.stageScientist && val === 'research') {
       return;
     }
@@ -487,6 +514,13 @@ const prestigeLabel = computed(() => {
     return isMobile.value ? 'Пр' : 'Престиж';
   }
 });
+const achievementLabel = computed(() => {
+  if (stage.value < storeData.stageAchievement) {
+    return isMobile.value ? '?' : '???';
+  } else {
+    return isMobile.value ? 'До' : 'Достижения';
+  }
+});
 
 const tabLabels = computed(() => ({
   shop: isMobile.value ? 'Ма' : 'Магазин',
@@ -496,36 +530,38 @@ const tabLabels = computed(() => ({
   eternity: eternityLabel.value,
   magic: magicLabel.value,
   infinity: infinityLabel.value,
-  achievement: isMobile.value ? 'До' : 'Достижения',
+  achievement: achievementLabel.value,
+  lore: isMobile.value ? 'Сю' : 'Сюжет',
+  cheat: isMobile.value ? 'Чи' : 'Читы',
   stats: isMobile.value ? 'Ст' : 'Статистика',
   help: isMobile.value ? 'По' : 'Помощь',
   setting: isMobile.value ? 'На' : 'Настройки',
 }));
 
 const innerShopLabels = computed(() => ({
-  innerShopWorker: isMobile.value ? 'Работ' : 'Работники',
+  innerShopWorker: isMobile.value ? 'Рабо' : 'Работники',
 }));
 
 const innerPrestigeLabels = computed(() => ({
-  innerPrestigeBase: isMobile.value ? 'Основ' : 'Основа',
-  innerPrestigeUpgrade: isMobile.value ? 'Улучш' : 'Улучшения',
+  innerPrestigeBase: isMobile.value ? 'Осно' : 'Основа',
+  innerPrestigeUpgrade: isMobile.value ? 'Улуч' : 'Улучшения',
 }));
 
 const innerResearchBaseLabel = () => {
   if (stage.value < storeData.stageResearch) {
     return isMobile.value ? '?' : '???';
   } else {
-    return isMobile.value ? 'Базов' : 'Базовые';
+    return isMobile.value ? 'Базо' : 'Базовые';
   }
 };
 
 const innerResearchLabels = computed(() => ({
-  innerResearchScientist: isMobile.value ? 'Учёны' : 'Учён.',
+  innerResearchScientist: isMobile.value ? 'Учён' : 'Учён.',
   innerResearchBase: innerResearchBaseLabel(),
 }));
 
 const innerAutomaticLabels = computed(() => ({
-  innerAutomaticHelpersShop: isMobile.value ? 'Скупщ' : 'Скупщики комплектующих',
+  innerAutomaticHelpersShop: isMobile.value ? 'Скуп' : 'Скупщики комплектующих',
 }));
 
 const innerMagicLabels = computed(() => ({
