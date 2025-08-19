@@ -7,10 +7,19 @@
         align="justify"
         class="text-teal"
       >
-        <q-tab v-for="tab in tabs" :key="tab.name" :name="tab.name">
+        <q-tab
+          v-for="tab in tabs"
+          :key="tab.name"
+          :name="tab.name"
+          :disable="tab.disabled"
+          :class="{ 'cursor-not-allowed': tab.disabled }"
+        >
           <template v-slot:default>
             <div class="q-tab__content row">
-              <i :class="tab.icon" class="q-tab__icon" />
+              <i
+                :class="tab.disabled && tab.disabledIcon ? tab.disabledIcon : tab.icon"
+                class="q-tab__icon"
+              />
               <div class="q-tab__label">{{ tab.label }}</div>
             </div>
           </template>
@@ -41,10 +50,19 @@
             align="left"
             class="text-teal"
           >
-            <q-tab v-for="tab in tabs" :key="tab.name" :name="tab.name">
+            <q-tab
+              v-for="tab in tabs"
+              :key="tab.name"
+              :name="tab.name"
+              :disable="tab.disabled"
+              :class="{ 'cursor-not-allowed': tab.disabled }"
+            >
               <template v-slot:default>
                 <div class="q-tab__content column">
-                  <i :class="tab.icon" class="q-tab__icon" />
+                  <i
+                    :class="tab.disabled && tab.disabledIcon ? tab.disabledIcon : tab.icon"
+                    class="q-tab__icon"
+                  />
                   <div class="q-tab__label">{{ tab.label }}</div>
                 </div>
               </template>
@@ -73,6 +91,8 @@ interface Tab {
   name: string;
   icon: string;
   label: string;
+  disabled?: boolean;
+  disabledIcon?: string;
 }
 
 interface Props {

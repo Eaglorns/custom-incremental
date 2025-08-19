@@ -121,7 +121,7 @@ export const useStorePrestige = defineStore('storePrestige', {
     },
 
     prestigeCan(): boolean {
-      return (this.prestigeGain as unknown as Decimal).gte(1);
+      return this.prestigeGain.gte(1);
     },
 
     save(state) {

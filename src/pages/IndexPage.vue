@@ -75,23 +75,83 @@
         <q-tab name="shop" :label="tabLabels.shop">
           <i :class="iconStyle + 'fa-store'" />
         </q-tab>
-        <q-tab name="prestige" :label="tabLabels.prestige">
-          <i :class="iconStyle + 'fa-arrow-up-right-dots'" />
+        <q-tab
+          :class="{ 'cursor-not-allowed': stage < storeData.stageScientist }"
+          name="research"
+          :label="tabLabels.research"
+        >
+          <i
+            :class="
+              stage < storeData.stageScientist
+                ? iconStyle + 'fa-circle-question'
+                : iconStyle + 'fa-flask-vial'
+            "
+          />
         </q-tab>
-        <q-tab name="research" :label="tabLabels.research">
-          <i :class="iconStyle + 'fa-flask-vial'" />
+        <q-tab
+          :class="{ 'cursor-not-allowed': stage < storeData.stageAutomatic }"
+          name="automatic"
+          :label="tabLabels.automatic"
+        >
+          <i
+            :class="
+              stage < storeData.stageAutomatic
+                ? iconStyle + 'fa-circle-question'
+                : iconStyle + 'fa-microchip-ai'
+            "
+          />
         </q-tab>
-        <q-tab name="automatic" :label="tabLabels.automatic">
-          <i :class="iconStyle + 'fa-microchip-ai'" />
+        <q-tab
+          :class="{ 'cursor-not-allowed': stage < storeData.stagePrestige }"
+          name="prestige"
+          :label="tabLabels.prestige"
+        >
+          <i
+            :class="
+              stage < storeData.stagePrestige
+                ? iconStyle + 'fa-circle-question'
+                : iconStyle + 'fa-arrow-up-right-dots'
+            "
+          />
         </q-tab>
-        <q-tab name="eternity" :label="tabLabels.eternity">
-          <i :class="iconStyle + 'fa-hourglass-end'" />
+        <q-tab
+          :class="{ 'cursor-not-allowed': stage < storeData.stageEternity }"
+          name="eternity"
+          :label="tabLabels.eternity"
+        >
+          <i
+            :class="
+              stage < storeData.stageEternity
+                ? iconStyle + 'fa-circle-question'
+                : iconStyle + 'fa-hourglass-end'
+            "
+          />
         </q-tab>
-        <q-tab name="magic" :label="tabLabels.magic">
-          <i :class="iconStyle + 'fa-hat-wizard'" />
+        <q-tab
+          :class="{ 'cursor-not-allowed': stage < storeData.stageEternity }"
+          name="magic"
+          :label="tabLabels.magic"
+        >
+          <i
+            :class="
+              stage < storeData.stageEternity
+                ? iconStyle + 'fa-circle-question'
+                : iconStyle + 'fa-hat-wizard'
+            "
+          />
         </q-tab>
-        <q-tab name="infinity" :label="tabLabels.infinity">
-          <i :class="iconStyle + 'fa-infinity'" />
+        <q-tab
+          :class="{ 'cursor-not-allowed': stage < storeData.stageInfinity }"
+          name="infinity"
+          :label="tabLabels.infinity"
+        >
+          <i
+            :class="
+              stage < storeData.stageInfinity
+                ? iconStyle + 'fa-circle-question'
+                : iconStyle + 'fa-infinity'
+            "
+          />
         </q-tab>
         <q-tab name="achievement" :label="tabLabels.achievement">
           <i :class="iconStyle + 'fa-trophy-star'" />
@@ -333,9 +393,26 @@ const iconStyle = computed(() => {
 
 const formatNumber = storeData.formatNumber;
 
+const stage = computed(() => storeData.stage);
+
 const tab = computed({
   get: () => storeData.currentTab,
   set: (val: string) => {
+    if (stage.value < storeData.stageScientist && val === 'research') {
+      return;
+    }
+    if (stage.value < storeData.stageAutomatic && val === 'automatic') {
+      return;
+    }
+    if (stage.value < storeData.stagePrestige && val === 'prestige') {
+      return;
+    }
+    if (stage.value < storeData.stageEternity && (val === 'eternity' || val === 'magic')) {
+      return;
+    }
+    if (stage.value < storeData.stageInfinity && val === 'infinity') {
+      return;
+    }
     storeData.currentTab = val;
   },
 });
@@ -364,14 +441,61 @@ const prestigeRef = ref<HTMLElement | null>(null);
 const researchRef = ref<HTMLElement | null>(null);
 const magicRef = ref<HTMLElement | null>(null);
 
+const eternityLabel = computed(() => {
+  if (stage.value < storeData.stageEternity) {
+    return isMobile.value ? '?' : '???';
+  } else {
+    return isMobile.value ? 'Ве' : 'Вечность';
+  }
+});
+
+const researchLabel = computed(() => {
+  if (stage.value < storeData.stageScientist) {
+    return isMobile.value ? '?' : '???';
+  } else {
+    return isMobile.value ? 'Ис' : 'Исследования';
+  }
+});
+const magicLabel = computed(() => {
+  if (stage.value < storeData.stageEternity) {
+    return isMobile.value ? '?' : '???';
+  } else {
+    return isMobile.value ? 'Ма' : 'Магия';
+  }
+});
+
+const infinityLabel = computed(() => {
+  if (stage.value < storeData.stageInfinity) {
+    return isMobile.value ? '?' : '???';
+  } else {
+    return isMobile.value ? 'Бе' : 'Бесконечность';
+  }
+});
+
+const automaticLabel = computed(() => {
+  if (stage.value < storeData.stageAutomatic) {
+    return isMobile.value ? '?' : '???';
+  } else {
+    return isMobile.value ? 'Ав' : 'Автоматизация';
+  }
+});
+
+const prestigeLabel = computed(() => {
+  if (stage.value < storeData.stagePrestige) {
+    return isMobile.value ? '?' : '???';
+  } else {
+    return isMobile.value ? 'Пр' : 'Престиж';
+  }
+});
+
 const tabLabels = computed(() => ({
   shop: isMobile.value ? 'Ма' : 'Магазин',
-  prestige: isMobile.value ? 'Пр' : 'Престиж',
-  research: isMobile.value ? 'Ис' : 'Исследования',
-  automatic: isMobile.value ? 'Ав' : 'Автоматизация',
-  eternity: isMobile.value ? 'Ве' : 'Вечность',
-  magic: isMobile.value ? 'Ма' : 'Магия',
-  infinity: isMobile.value ? 'Бе' : 'Бесконечность',
+  prestige: prestigeLabel.value,
+  research: researchLabel.value,
+  automatic: automaticLabel.value,
+  eternity: eternityLabel.value,
+  magic: magicLabel.value,
+  infinity: infinityLabel.value,
   achievement: isMobile.value ? 'До' : 'Достижения',
   stats: isMobile.value ? 'Ст' : 'Статистика',
   help: isMobile.value ? 'По' : 'Помощь',
@@ -387,9 +511,17 @@ const innerPrestigeLabels = computed(() => ({
   innerPrestigeUpgrade: isMobile.value ? 'Улучш' : 'Улучшения',
 }));
 
+const innerResearchBaseLabel = () => {
+  if (stage.value < storeData.stageResearch) {
+    return isMobile.value ? '?' : '???';
+  } else {
+    return isMobile.value ? 'Базов' : 'Базовые';
+  }
+};
+
 const innerResearchLabels = computed(() => ({
   innerResearchScientist: isMobile.value ? 'Учёны' : 'Учён.',
-  innerResearchBase: isMobile.value ? 'Базов' : 'Базовые',
+  innerResearchBase: innerResearchBaseLabel(),
 }));
 
 const innerAutomaticLabels = computed(() => ({
@@ -444,7 +576,9 @@ const researchTabs = computed(() => [
   {
     name: 'innerResearchBase',
     icon: iconStyle.value + 'fa-flask',
+    disabledIcon: iconStyle.value + 'fa-circle-question',
     label: innerResearchLabels.value.innerResearchBase,
+    disabled: stage.value < storeData.stageResearch,
   },
 ]);
 

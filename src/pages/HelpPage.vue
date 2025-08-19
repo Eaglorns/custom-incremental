@@ -6,16 +6,7 @@
         <i :class="iconStyle + 'fa-bullseye'" color="primary" size="22px" class="q-mr-sm" />
         <span class="text-h6 text-bold">Цель</span>
         <div class="q-mt-sm">
-          Найдите самое большое <span class="text-deep-orange-5 text-bold">ЧИСЛО</span>
-          — основная валюта игры.
-        </div>
-        <ul class="q-pl-lg q-mt-xs">
-          <li>Покупайте и улучшайте ресурсы</li>
-          <li>Исследуйте технологии</li>
-          <li>Нанимайте помощников</li>
-        </ul>
-        <div class="text-grey-7 q-mt-xs">
-          Прогресс идёт даже без действий, но активность ускоряет развитие.
+          Найдите самое большое <span class="text-deep-orange-5 text-bold">ЧИСЛО</span>.
         </div>
       </div>
       <div class="help-section blue">
@@ -25,13 +16,42 @@
           <li><span class="text-bold">Процессоры</span> — увеличивают генерацию</li>
           <li><span class="text-bold">Жёсткие диски</span> — множитель генерации</li>
           <li><span class="text-bold">ОЗУ</span> — ускоряет исследования</li>
+          <li>
+            <span class="text-bold">Работники</span> — зарабатывают монеты для покупки комплектующих
+          </li>
         </ul>
-        <div class="text-grey-7 q-mt-xs">
-          Множители увеличивают прирост при покупке. Престиж открывает массовые покупки и лучшие
-          коэффициенты.
+      </div>
+      <div class="help-section green" v-if="storeData.stage >= storeData.stageScientist">
+        <i :class="iconStyle + 'fa-flask-vial'" color="primary" size="22px" class="q-mr-sm" />
+        <span class="text-h6 text-bold">Исследования</span>
+        <ul class="q-pl-lg q-mt-xs">
+          <li><span class="text-bold">Учёные</span> — генерируют очки исследований</li>
+          <li v-if="storeData.stage >= storeData.stageResearch">
+            <span class="text-bold">Базовые исследования</span> — бонусы к генерации, снижению цен и
+            др.
+          </li>
+        </ul>
+        <div class="text-grey-7 q-mt-xs" v-if="storeData.stage >= storeData.stageResearch">
+          Прокачка увеличивает бонус, но растёт цена и время.
         </div>
       </div>
-      <div class="help-section purple">
+      <div class="help-section yellow" v-if="storeData.stage >= storeData.stageAutomatic">
+        <i :class="iconStyle + 'fa-robot'" color="primary" size="22px" class="q-mr-sm" />
+        <span class="text-h6 text-bold">Автоматизация</span>
+        <ul class="q-pl-lg q-mt-xs">
+          <li><span class="text-bold">Помощники</span> — автоматически увеличивают ресурсы</li>
+        </ul>
+        <div class="text-grey-7 q-mt-xs">Можно прокачивать количество и шанс срабатывания.</div>
+      </div>
+      <div class="help-section red" v-if="storeData.stage >= storeData.stagePrestige">
+        <i :class="iconStyle + 'fa-award'" color="primary" size="22px" class="q-mr-sm" />
+        <span class="text-h6 text-bold">Престиж</span>
+        <div class="q-mt-xs">
+          Сбросьте прогресс ради очков престижа для особых улучшений. Они ускоряют генерацию и
+          открывают новые возможности.
+        </div>
+      </div>
+      <div class="help-section purple" v-if="storeData.stage >= storeData.stageEternity">
         <i :class="iconStyle + 'fa-hat-wizard'" color="primary" size="22px" class="q-mr-sm" />
         <span class="text-h6 text-bold">Магия</span>
         <ul class="q-pl-lg q-mt-xs">
@@ -66,34 +86,6 @@
           </li>
         </ul>
       </div>
-      <div class="help-section green">
-        <i :class="iconStyle + 'fa-flask-vial'" color="primary" size="22px" class="q-mr-sm" />
-        <span class="text-h6 text-bold">Исследования</span>
-        <ul class="q-pl-lg q-mt-xs">
-          <li><span class="text-bold">Учёные</span> — генерируют очки исследований</li>
-          <li>
-            <span class="text-bold">Базовые исследования</span> — бонусы к генерации, снижению цен и
-            др.
-          </li>
-        </ul>
-        <div class="text-grey-7 q-mt-xs">Прокачка увеличивает бонус, но растёт цена и время.</div>
-      </div>
-      <div class="help-section yellow">
-        <i :class="iconStyle + 'fa-robot'" color="primary" size="22px" class="q-mr-sm" />
-        <span class="text-h6 text-bold">Автоматизация</span>
-        <ul class="q-pl-lg q-mt-xs">
-          <li><span class="text-bold">Помощники</span> — автоматически увеличивают ресурсы</li>
-        </ul>
-        <div class="text-grey-7 q-mt-xs">Можно прокачивать количество и шанс срабатывания.</div>
-      </div>
-      <div class="help-section red">
-        <i :class="iconStyle + 'fa-award'" color="primary" size="22px" class="q-mr-sm" />
-        <span class="text-h6 text-bold">Престиж</span>
-        <div class="q-mt-xs">
-          Сбросьте прогресс ради очков престижа для особых улучшений. Они ускоряют генерацию и
-          открывают новые возможности.
-        </div>
-      </div>
       <div class="help-section red">
         <i :class="iconStyle + 'fa-trophy-star'" color="primary" size="22px" class="q-mr-sm" />
         <span class="text-h6 text-bold">Достижения</span>
@@ -108,9 +100,11 @@
 
 <script setup lang="ts">
 import { useStoreSetting } from 'stores/setting';
+import { useStoreData } from 'stores/data';
 import { computed } from 'vue';
 
 const storeSetting = useStoreSetting();
+const storeData = useStoreData();
 
 const iconStyle = computed(() => {
   return storeSetting.iconStyle;

@@ -41,6 +41,14 @@ export const useStoreData = defineStore('storeData', {
   state: () => ({
     version: '0.0.0',
     epicNumber: new Decimal(0),
+    stage: 0,
+    stageZero: 0,
+    stageScientist: 1,
+    stageResearch: 2,
+    stageAutomatic: 3,
+    stagePrestige: 4,
+    stageEternity: 5,
+    stageInfinity: 6,
     multiplierEpicNumber: new Decimal(0),
     currentTab: 'shop',
   }),
@@ -226,6 +234,7 @@ export const useStoreData = defineStore('storeData', {
         version: state.version,
         epicNumber: state.epicNumber,
         multiplierEpicNumber: state.multiplierEpicNumber,
+        stage: state.stage,
       };
     },
   },
@@ -235,10 +244,16 @@ export const useStoreData = defineStore('storeData', {
       this.epicNumber = this.epicNumber.plus(this.epicNumberGain);
     },
 
-    load(loaded: { version?: string; epicNumber?: string; multiplierEpicNumber?: string }) {
+    load(loaded: {
+      version?: string;
+      epicNumber?: string;
+      multiplierEpicNumber?: string;
+      stage?: number;
+    }) {
       this.version = loaded?.version ?? this.version;
       this.epicNumber = new Decimal(loaded?.epicNumber ?? '0');
       this.multiplierEpicNumber = new Decimal(loaded?.multiplierEpicNumber ?? '0');
+      this.stage = loaded?.stage ?? 0;
     },
   },
 });

@@ -43,7 +43,7 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
         percent: new Decimal(0),
         enabled: true,
         cost: {
-          count: new Decimal(1000),
+          count: new Decimal(5000),
           countMultiply: new Decimal(5),
           percent: new Decimal(2500),
           percentMultiply: new Decimal(150),
