@@ -15,6 +15,7 @@ import {
   damageTypes,
 } from '../constants/magicMeta';
 import Decimal from 'break_eternity.js';
+import { toDec } from 'src/utils/storeUtils';
 
 const D0 = new Decimal(0);
 const D1 = new Decimal(1);
@@ -629,73 +630,57 @@ export const useStoreMagic = defineStore('storeMagic', {
       const loadMages = (mages?: Mage[]) =>
         (mages || []).map((mage) => ({
           ...mage,
-          level: new Decimal(mage.level),
-          currentExp: new Decimal(mage.currentExp),
-          maxExp: new Decimal(mage.maxExp),
+          level: toDec(mage.level),
+          currentExp: toDec(mage.currentExp),
+          maxExp: toDec(mage.maxExp),
           runeQuantities: Object.fromEntries(
-            Object.entries(mage.runeQuantities || {}).map(([key, value]) => [
-              key,
-              new Decimal(value),
-            ]),
+            Object.entries(mage.runeQuantities || {}).map(([key, value]) => [key, toDec(value)]),
           ),
         }));
 
       const loadEssences = (essences?: Essence[], defaultEssences?: Essence[]) =>
         (essences || defaultEssences || []).map((essence) => ({
           ...essence,
-          amount: new Decimal(essence.amount),
+          amount: toDec(essence.amount),
         }));
 
       const loadRunes = (runes?: Rune[], defaultRunes?: Rune[]) =>
         (runes || defaultRunes || []).map((rune) => ({
           ...rune,
-          level: new Decimal(rune.level),
+          level: toDec(rune.level),
         }));
 
       const loadMonster = (monster?: Monster) =>
         monster
           ? {
               ...monster,
-              level: new Decimal(monster.level),
-              currentHealth: new Decimal(monster.currentHealth),
-              maxHealth: new Decimal(monster.maxHealth),
-              armor: new Decimal(monster.armor),
-              regeneration: new Decimal(monster.regeneration),
+              level: toDec(monster.level),
+              currentHealth: toDec(monster.currentHealth),
+              maxHealth: toDec(monster.maxHealth),
+              armor: toDec(monster.armor),
+              regeneration: toDec(monster.regeneration),
               damageEffects: (monster.damageEffects || []).map((effect) => ({
                 ...effect,
-                stacks: new Decimal(effect.stacks),
+                stacks: toDec(effect.stacks),
               })),
               rewards: (monster.rewards || []).map((reward) => ({
                 ...reward,
-                amount: new Decimal(reward.amount),
+                amount: toDec(reward.amount),
               })),
             }
           : undefined;
 
       const loadPoints = (points?: Decimal | number | string) => {
         if (points === undefined) return undefined;
-        if (typeof points === 'number' || typeof points === 'string') {
-          return new Decimal(points);
-        }
-        const v = points as unknown as {
-          toString?: () => string;
-          toNumber?: () => number;
-        };
-        if (v && typeof v.toString === 'function') {
-          return new Decimal(v.toString());
-        }
-        if (v && typeof v.toNumber === 'function') {
-          return new Decimal(v.toNumber());
-        }
-        return new Decimal(0);
+        return toDec(points);
       };
 
       if (loaded) {
         this.mages = loadMages(loaded.mages);
         this.essences = loadEssences(loaded.essences, this.essences);
         this.runes = loadRunes(loaded.runes, this.runes);
-        this.monsterKillCount = loadPoints(loaded.monsterKillCount) || new Decimal(10);
-        this.monsterGeneratedLevel = loadPoints(loaded.monsterGeneratedLevel) || new Decimal(1);
+        this.monsterKillCount = loadPoints(loaded.monsterKillCount) || toDec('10');
+        this.monsterGeneratedLevel = loadPoints(loaded.monsterGeneratedLevel) || toDec('1');
         if (loaded.monster) {
           this.monster = loadMonster(loaded.monster)!;
         }

@@ -3,6 +3,7 @@ import { defineStore, acceptHMRUpdate } from 'pinia';
 import { useStoreData } from 'stores/data';
 import { useStoreShop } from 'stores/shop';
 import { useStoreResearch } from 'stores/research';
+import { toDec } from 'src/utils/storeUtils';
 
 const D0 = new Decimal(0);
 const D1 = new Decimal(1);
@@ -203,9 +204,9 @@ export const useStorePrestige = defineStore('storePrestige', {
         autoShopWorkerMultiply?: { level?: string | number };
       };
     }) {
-      const toDec = (v?: string | number, def = '0') => new Decimal(v ?? def);
+      const toDecLocal = (v?: string | number, def = '0') => toDec(v ?? def);
 
-      this.points = toDec(loaded?.points, '0');
+      this.points = toDecLocal(loaded?.points, '0');
       const u = loaded?.upgrades ?? {};
 
       this.upgrades.prestigeBonus.level = toDec(u.prestigeBonus?.level);

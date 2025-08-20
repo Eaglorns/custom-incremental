@@ -27,6 +27,20 @@
             <q-btn
               dense
               class="col-12 col-sm-auto"
+              color="negative"
+              label="Вычесть"
+              @click="onSub(item)"
+            />
+            <q-btn
+              dense
+              class="col-12 col-sm-auto"
+              color="secondary"
+              label="Разделить"
+              @click="onDiv(item)"
+            />
+            <q-btn
+              dense
+              class="col-12 col-sm-auto"
               color="warning"
               label="Возвести в степень"
               @click="onPow(item)"
@@ -34,7 +48,7 @@
           </div>
           <div class="col-12 col-md-auto current-value q-gutter-xs">
             <div class="current-label">Текущее:</div>
-            <div class="current-number">{{ format(item.get()) }}</div>
+            <div class="current-number">{{ formatNumber(item.get()) }}</div>
           </div>
         </div>
       </div>
@@ -70,6 +84,8 @@ const storeShop = useStoreShop();
 const storeResearch = useStoreResearch();
 const storePrestige = useStorePrestige();
 const storeEternity = useStoreEternity();
+
+const formatNumber = storeData.formatNumber;
 
 type Target = {
   key: string;
@@ -125,14 +141,6 @@ function parseInput(raw: string): Decimal {
   }
 }
 
-function format(d: Decimal) {
-  try {
-    return d.toString();
-  } catch {
-    return '0';
-  }
-}
-
 function onAdd(item: Target) {
   const val = parseInput(item.input);
   item.set(item.get().plus(val));
@@ -152,6 +160,30 @@ function onPow(item: Target) {
     $q.notify({ type: 'warning', message: `${item.label} ^ ${val.toString()}` });
   } catch {
     $q.notify({ type: 'negative', message: 'Операция степени не удалась' });
+  }
+}
+
+function onSub(item: Target) {
+  const val = parseInput(item.input);
+  item.set(item.get().minus ? item.get().minus(val) : item.get().sub(val));
+  $q.notify({ type: 'negative', message: `${item.label} - ${val.toString()}` });
+}
+
+function onDiv(item: Target) {
+  const val = parseInput(item.input);
+  try {
+    let result;
+    if (item.get().div) {
+      result = item.get().div(val);
+    } else if (item.get().dividedBy) {
+      result = item.get().dividedBy(val);
+    } else {
+      result = item.get().div(val);
+    }
+    item.set(result);
+    $q.notify({ type: 'info', message: `${item.label} / ${val.toString()}` });
+  } catch {
+    $q.notify({ type: 'negative', message: 'Операция деления не удалась' });
   }
 }
 

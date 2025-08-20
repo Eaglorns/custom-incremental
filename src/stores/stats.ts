@@ -1,6 +1,7 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import Decimal from 'break_eternity.js';
 import { useStoreData } from 'stores/data';
+import { toDec } from 'src/utils/storeUtils';
 import { useStoreResearch } from 'stores/research';
 import { useStorePrestige } from 'stores/prestige';
 import { useStoreShop } from 'stores/shop';
@@ -73,15 +74,15 @@ export const useStoreStats = defineStore('storeStats', {
       this.gameTime = loaded?.gameTime ?? this.gameTime;
 
       const msb = loaded?.maxShopBuy ?? {};
-      this.maxShopBuy.cpu = new Decimal(msb.cpu || this.maxShopBuy.cpu);
-      this.maxShopBuy.hdd = new Decimal(msb.hdd || this.maxShopBuy.hdd);
-      this.maxShopBuy.ram = new Decimal(msb.ram || this.maxShopBuy.ram);
-      this.maxShopBuy.worker = new Decimal(msb.worker || this.maxShopBuy.worker);
+      this.maxShopBuy.cpu = toDec(msb.cpu ?? this.maxShopBuy.cpu);
+      this.maxShopBuy.hdd = toDec(msb.hdd ?? this.maxShopBuy.hdd);
+      this.maxShopBuy.ram = toDec(msb.ram ?? this.maxShopBuy.ram);
+      this.maxShopBuy.worker = toDec(msb.worker ?? this.maxShopBuy.worker);
 
-      this.maxEpicNumber = new Decimal(loaded?.maxEpicNumber || this.maxEpicNumber);
-      this.maxShopPoints = new Decimal(loaded?.maxShopPoints || this.maxShopPoints);
-      this.maxPrestigePoints = new Decimal(loaded?.maxPrestigePoints || this.maxPrestigePoints);
-      this.maxResearchPoints = new Decimal(loaded?.maxResearchPoints || this.maxResearchPoints);
+      this.maxEpicNumber = toDec(loaded?.maxEpicNumber ?? this.maxEpicNumber);
+      this.maxShopPoints = toDec(loaded?.maxShopPoints ?? this.maxShopPoints);
+      this.maxPrestigePoints = toDec(loaded?.maxPrestigePoints ?? this.maxPrestigePoints);
+      this.maxResearchPoints = toDec(loaded?.maxResearchPoints ?? this.maxResearchPoints);
     },
   },
 });

@@ -3,6 +3,7 @@ import { defineStore, acceptHMRUpdate } from 'pinia';
 import { useStoreShop } from 'stores/shop';
 import { useStoreData } from 'stores/data';
 import { useStorePrestige } from 'stores/prestige';
+import { buyMax, toDec } from 'src/utils/storeUtils';
 
 interface Helper {
   count: string;
@@ -10,7 +11,6 @@ interface Helper {
   enabled: boolean;
 }
 
-const ZERO = new Decimal(0);
 const ONE = new Decimal(1);
 const NINETY_NINE = new Decimal(99);
 const HUNDRED = new Decimal(100);
@@ -25,15 +25,6 @@ const MULTIPLIER_KEYS = [
 ] as const;
 
 type HelperState = { count: Decimal; percent: Decimal; enabled: boolean };
-
-const buyMax = (points: Decimal, price: Decimal, count: Decimal) => {
-  if (!price || price.lte(0) || !points || points.lte(0) || !count || count.lte(0))
-    return { bought: ZERO, rest: ZERO };
-  const maxCanBuy = points.div(price).floor();
-  const bought = Decimal.min(count, maxCanBuy);
-  const rest = bought.mul(price);
-  return { bought, rest };
-};
 
 export const useStoreAutomatic = defineStore('storeAutomatic', {
   state: () => ({
@@ -222,8 +213,8 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
       };
     }) {
       const assign = (dst: HelperState, src?: Helper) => {
-        dst.count = new Decimal(src?.count ?? '0');
-        dst.percent = new Decimal(src?.percent ?? '0');
+        dst.count = toDec(src?.count, '0');
+        dst.percent = toDec(src?.percent, '0');
         dst.enabled = !!src?.enabled;
       };
 

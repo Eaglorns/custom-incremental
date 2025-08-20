@@ -1,5 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import Decimal from 'break_eternity.js';
+import { toDec } from 'src/utils/storeUtils';
 import type { ResearchScientist } from 'src/constants/models';
 import { useStoreShop } from 'stores/shop';
 
@@ -322,8 +323,6 @@ export const useStoreResearch = defineStore('storeResearch', {
       this.speed = this.speed.plus(result);
     },
     load(loaded: Partial<ResearchLoadData>) {
-      const toDec = (v?: string | number | Decimal, def = '0') => new Decimal(v ?? def);
-
       this.points = toDec(loaded?.points);
       this.speed = toDec(loaded?.speed);
 
