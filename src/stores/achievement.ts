@@ -56,14 +56,14 @@ export const useStoreAchievement = defineStore('storeAchievement', {
 
     save(state) {
       return {
-        epicNumberValue: state.list.epicNumberValue,
-        shopCpuValue: state.list.shopCpuValue,
-        shopHddValue: state.list.shopHddValue,
-        shopRamValue: state.list.shopRamValue,
-        shopWorkerValue: state.list.shopWorkerValue,
-        prestigePoints: state.list.prestigePoints,
-        researchPoints: state.list.researchPoints,
-        shopPoints: state.list.shopPoints,
+        epicNumberValue: state.list.epicNumberValue.toString(),
+        shopCpuValue: state.list.shopCpuValue.toString(),
+        shopHddValue: state.list.shopHddValue.toString(),
+        shopRamValue: state.list.shopRamValue.toString(),
+        shopWorkerValue: state.list.shopWorkerValue.toString(),
+        prestigePoints: state.list.prestigePoints.toString(),
+        researchPoints: state.list.researchPoints.toString(),
+        shopPoints: state.list.shopPoints.toString(),
       };
     },
   },

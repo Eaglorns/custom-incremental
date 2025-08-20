@@ -163,7 +163,7 @@ function resetInputs() {
 
 <style scoped>
 .cheat-section {
-  padding: 12px;
+  padding: 6px;
   border-radius: 8px;
 }
 
@@ -172,7 +172,7 @@ function resetInputs() {
   color: #e6eef8;
   box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.03);
-  padding: 16px;
+  padding: 12px;
   transition:
     transform 120ms ease,
     box-shadow 120ms ease;
@@ -182,7 +182,7 @@ function resetInputs() {
 }
 
 .cheat-actions .action-buttons {
-  gap: 8px;
+  gap: 6px;
 }
 
 .cheat-actions .q-input {
@@ -192,11 +192,15 @@ function resetInputs() {
 }
 
 .input-col {
-  max-width: 360px;
+  max-width: 240px;
   box-sizing: border-box;
 }
 .full-input :deep(.q-field__control) {
   width: 100%;
+  padding: 4px 8px;
+  font-size: 13px;
+  min-height: 30px;
+  box-sizing: border-box;
 }
 
 .current-value {
@@ -204,16 +208,17 @@ function resetInputs() {
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  margin-left: 12px;
-  min-width: 120px;
+  margin-left: 8px;
+  min-width: 84px;
 }
 .current-label {
-  font-size: 12px;
+  font-size: 10px;
   color: rgba(230, 238, 248, 0.75);
 }
 .current-number {
   font-weight: 600;
   color: #ffffff;
+  font-size: 13px;
 }
 
 .full-input :deep(input),
@@ -223,32 +228,33 @@ function resetInputs() {
 
 @media (min-width: 600px) {
   .cheat-actions .q-input {
-    max-width: 360px;
+    max-width: 240px;
   }
 }
 
 @media (min-width: 1024px) {
   .cheat-actions .q-input {
-    max-width: 320px;
+    max-width: 280px;
   }
 }
 
 @media (max-width: 599px) {
   .cheat-section {
-    padding: 10px;
+    padding: 8px;
   }
 
   .action-buttons .q-btn {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    font-size: 14px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 12px;
+    line-height: 1;
   }
 }
 
 .cheat-header {
   align-items: center;
-  margin-bottom: 6px;
-  gap: 8px;
+  margin-bottom: 4px;
+  gap: 6px;
 }
 
 .cheat-header > .col-12 {
@@ -258,9 +264,9 @@ function resetInputs() {
 }
 
 .reset-btn {
-  padding-left: 18px;
-  padding-right: 18px;
-  min-width: 220px;
+  padding-left: 12px;
+  padding-right: 12px;
+  min-width: 140px;
 }
 @media (min-width: 600px) {
   .cheat-header > .col-md-8 {
@@ -279,6 +285,10 @@ function resetInputs() {
   transition:
     filter 120ms ease,
     box-shadow 120ms ease;
+  height: 30px;
+  min-width: 56px;
+  padding: 0 8px;
+  font-size: 13px;
 }
 .cheat-card :deep(.q-btn:hover) {
   filter: brightness(0.95) saturate(1);

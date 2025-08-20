@@ -11,7 +11,6 @@ import { useStoreAchievement } from 'stores/achievement';
 import { useStoreStats } from 'stores/stats';
 import { useStoreSetting } from 'stores/setting';
 import { useStoreMagic } from 'stores/magic';
-import Decimal from 'break_eternity.js';
 
 const STORAGE_KEY = 'save';
 const SECRET = 'incremental';
@@ -41,23 +40,6 @@ function readVersion(section: unknown): string | number | undefined {
   }
   return undefined;
 }
-
-function isDecimalLike(v: unknown): v is Decimal {
-  if (!v || typeof v !== 'object') return false;
-  const obj = v as Record<string, unknown>;
-  return (
-    typeof (v as { toString?: unknown }).toString === 'function' &&
-    'mantissa' in obj &&
-    'exponent' in obj &&
-    'sign' in obj
-  );
-}
-
-const jsonReplacer = (_key: string, value: unknown): unknown => {
-  if (value instanceof Decimal) return value.toString();
-  if (isDecimalLike(value)) return value.toString();
-  return value;
-};
 
 function hasLegacyDecimal(x: unknown): x is { __decimal__: string } {
   return (
@@ -108,7 +90,7 @@ export const useStoreSaveLoad = defineStore('storeSaveLoad', {
           stats: storeStats.save,
           setting: storeSetting.save,
         };
-        const plainState = JSON.stringify(saveData, jsonReplacer);
+        const plainState = JSON.stringify(saveData);
         const encrypted = CryptoJS.AES.encrypt(plainState, SECRET).toString();
         LocalStorage.setItem(STORAGE_KEY, encrypted);
         console.log('save game');
@@ -147,6 +129,15 @@ export const useStoreSaveLoad = defineStore('storeSaveLoad', {
         unknown
       >;
       const sameVersion = readVersion(loaded['data']) === storeGame.version;
+
+      if (!sameVersion) {
+        storeData.version = storeGame.version;
+        console.warn('load aborted: save version mismatch', {
+          saveVersion: readVersion(loaded['data']),
+          currentVersion: storeGame.version,
+        });
+        return;
+      }
 
       const loaders: Array<readonly [key: string, fn: (v: unknown) => void]> = [
         ['data', (v) => (storeData.load as (x: unknown) => void)(v)],

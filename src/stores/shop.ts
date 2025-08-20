@@ -190,29 +190,27 @@ export const useStoreShop = defineStore('storeShop', {
         worker: ShopItem;
       };
     }) {
-      const toDec = (v?: string | number | Decimal, def = '0') => new Decimal(v ?? def);
-
-      this.points = toDec(loaded?.points);
-      this.list.cpu.value = toDec(loaded.list.cpu.value);
-      this.list.cpu.multiply = toDec(loaded.list.cpu.multiply);
+      this.points = new Decimal(loaded.points);
+      this.list.cpu.value = new Decimal(loaded.list.cpu.value);
+      this.list.cpu.multiply = new Decimal(loaded.list.cpu.multiply);
       this.list.cpu.buyModeValue = loaded.list.cpu.buyModeValue ?? this.list.cpu.buyModeValue;
       this.list.cpu.buyModeMultiply =
         loaded.list.cpu.buyModeMultiply ?? this.list.cpu.buyModeMultiply;
 
-      this.list.hdd.value = toDec(loaded.list.hdd.value);
-      this.list.hdd.multiply = toDec(loaded.list.hdd.multiply);
+      this.list.hdd.value = new Decimal(loaded.list.hdd.value);
+      this.list.hdd.multiply = new Decimal(loaded.list.hdd.multiply);
       this.list.hdd.buyModeValue = loaded.list.hdd.buyModeValue ?? this.list.hdd.buyModeValue;
       this.list.hdd.buyModeMultiply =
         loaded.list.hdd.buyModeMultiply ?? this.list.hdd.buyModeMultiply;
 
-      this.list.ram.value = toDec(loaded.list.ram.value);
-      this.list.ram.multiply = toDec(loaded.list.ram.multiply);
+      this.list.ram.value = new Decimal(loaded.list.ram.value);
+      this.list.ram.multiply = new Decimal(loaded.list.ram.multiply);
       this.list.ram.buyModeValue = loaded.list.ram.buyModeValue ?? this.list.ram.buyModeValue;
       this.list.ram.buyModeMultiply =
         loaded.list.ram.buyModeMultiply ?? this.list.ram.buyModeMultiply;
 
-      this.list.worker.value = toDec(loaded.list.worker.value);
-      this.list.worker.multiply = toDec(loaded.list.worker.multiply);
+      this.list.worker.value = new Decimal(loaded.list.worker.value);
+      this.list.worker.multiply = new Decimal(loaded.list.worker.multiply);
       this.list.worker.buyModeValue =
         loaded.list.worker.buyModeValue ?? this.list.worker.buyModeValue;
       this.list.worker.buyModeMultiply =

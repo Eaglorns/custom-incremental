@@ -97,8 +97,8 @@ export const useStoreMagic = defineStore('storeMagic', {
       level: new Decimal(0),
     })) as Rune[],
     selectedRune: null as Rune | null,
-    monsterKillCount: 11,
-    monsterGeneratedLevel: 1,
+    monsterKillCount: new Decimal(10),
+    monsterGeneratedLevel: new Decimal(1),
     monster: {
       id: -1,
       name: '',
@@ -174,13 +174,57 @@ export const useStoreMagic = defineStore('storeMagic', {
     },
     save(state) {
       return {
-        mages: state.mages,
-        essences: state.essences,
-        runes: state.runes,
-        monsterKillCount: state.monsterKillCount,
-        monsterGeneratedLevel: state.monsterGeneratedLevel,
-        monster: state.monster,
-        points: state.points,
+        mages: state.mages.map((m) => ({
+          id: m.id,
+          name: m.name,
+          level: m.level.toString(),
+          currentExp: m.currentExp.toString(),
+          maxExp: m.maxExp.toString(),
+          icon: m.icon,
+          iconColor: m.iconColor,
+          runeIds: m.runeIds,
+          runeQuantities: Object.fromEntries(
+            Object.entries(m.runeQuantities || {}).map(([k, v]) => [k, v.toString()]),
+          ),
+          rank: m.rank
+            ? {
+                id: m.rank.id,
+                name: m.rank.name,
+                class: m.rank.class,
+                minLevel: m.rank.minLevel.toString(),
+                color: m.rank.color,
+              }
+            : null,
+        })),
+        essences: state.essences.map((e) => ({ id: e.id, amount: e.amount.toString() })),
+        runes: state.runes.map((r) => ({ id: r.id, level: r.level.toString() })),
+        monsterKillCount: state.monsterKillCount.toString(),
+        monsterGeneratedLevel: state.monsterGeneratedLevel.toString(),
+        monster: state.monster
+          ? {
+              id: state.monster.id,
+              name: state.monster.name,
+              level: state.monster.level.toString(),
+              icon: state.monster.icon,
+              iconColor: state.monster.iconColor,
+              currentHealth: state.monster.currentHealth.toString(),
+              maxHealth: state.monster.maxHealth.toString(),
+              armor: state.monster.armor.toString(),
+              regeneration: state.monster.regeneration.toString(),
+              damageEffects: (state.monster.damageEffects || []).map((ef) => ({
+                type: ef.type,
+                stacks: ef.stacks.toString(),
+              })),
+              rewards: (state.monster.rewards || []).map((rw) => ({
+                id: rw.id,
+                name: rw.name,
+                icon: rw.icon,
+                color: rw.color,
+                amount: rw.amount.toString(),
+              })),
+            }
+          : undefined,
+        points: state.points.toString(),
       };
     },
   },
@@ -306,10 +350,10 @@ export const useStoreMagic = defineStore('storeMagic', {
       this.mages.forEach((mage) => {
         this.addMageExperience(mage, finalExp.div(Math.random() * 9 + 1));
       });
-      this.monsterKillCount--;
-      if (this.monsterKillCount <= 0) {
-        this.monsterGeneratedLevel++;
-        this.monsterKillCount = 10;
+      this.monsterKillCount = this.monsterKillCount.minus(1);
+      if (this.monsterKillCount.lte(0)) {
+        this.monsterGeneratedLevel = this.monsterGeneratedLevel.plus(1);
+        this.monsterKillCount = new Decimal(10);
       }
 
       this.generateMonster();
@@ -650,8 +694,8 @@ export const useStoreMagic = defineStore('storeMagic', {
         this.mages = loadMages(loaded.mages);
         this.essences = loadEssences(loaded.essences, this.essences);
         this.runes = loadRunes(loaded.runes, this.runes);
-        this.monsterKillCount = loaded.monsterKillCount || 10;
-        this.monsterGeneratedLevel = loaded.monsterGeneratedLevel || 1;
+        this.monsterKillCount = loadPoints(loaded.monsterKillCount) || new Decimal(10);
+        this.monsterGeneratedLevel = loadPoints(loaded.monsterGeneratedLevel) || new Decimal(1);
         if (loaded.monster) {
           this.monster = loadMonster(loaded.monster)!;
         }

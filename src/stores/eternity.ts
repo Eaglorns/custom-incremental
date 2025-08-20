@@ -135,6 +135,14 @@ export const useStoreEternity = defineStore('storeEternity', {
       },
     },
   }),
+  getters: {
+    save(state) {
+      return {
+        points: state.points.toString(),
+        countReset: state.countReset.toString(),
+      };
+    },
+  },
   actions: {
     reset() {
       this.points = this.points.plus(1);

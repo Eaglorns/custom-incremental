@@ -49,7 +49,7 @@ export const useStoreData = defineStore('storeData', {
     stageAutomatic: 4,
     stagePrestige: 5,
     stageEternity: 6,
-    stageMagic: 7,
+    stageMage: 7,
     stageInfinity: 8,
     multiplierEpicNumber: new Decimal(0),
     currentTab: 'shop',
@@ -234,8 +234,8 @@ export const useStoreData = defineStore('storeData', {
     save(state) {
       return {
         version: state.version,
-        epicNumber: state.epicNumber,
-        multiplierEpicNumber: state.multiplierEpicNumber,
+        epicNumber: state.epicNumber.toString(),
+        multiplierEpicNumber: state.multiplierEpicNumber.toString(),
         stage: state.stage,
       };
     },

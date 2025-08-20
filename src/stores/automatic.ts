@@ -139,8 +139,8 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
 
     save(state) {
       const serialize = (h: HelperState) => ({
-        count: h.count,
-        percent: h.percent,
+        count: h.count.toString(),
+        percent: h.percent.toString(),
         enabled: h.enabled,
       });
       return {

@@ -13,7 +13,7 @@ const TICK_MAX_STEPS = 1000;
 export const useStoreGame = defineStore('storeGame', {
   state: () => ({
     name: 'cIncremental',
-    version: '0.1.6',
+    version: '0.1.7',
     timerTick: 1000,
     lastTick: Date.now(),
   }),

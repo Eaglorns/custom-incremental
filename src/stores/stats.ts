@@ -28,15 +28,15 @@ export const useStoreStats = defineStore('storeStats', {
       return {
         gameTime: state.gameTime,
         maxShopBuy: {
-          cpu: state.maxShopBuy.cpu,
-          hdd: state.maxShopBuy.hdd,
-          ram: state.maxShopBuy.ram,
-          worker: state.maxShopBuy.worker,
+          cpu: state.maxShopBuy.cpu.toString(),
+          hdd: state.maxShopBuy.hdd.toString(),
+          ram: state.maxShopBuy.ram.toString(),
+          worker: state.maxShopBuy.worker.toString(),
         },
-        maxEpicNumber: state.maxEpicNumber,
-        maxShopPoints: state.maxShopPoints,
-        maxPrestigePoints: state.maxPrestigePoints,
-        maxResearchPoints: state.maxResearchPoints,
+        maxEpicNumber: state.maxEpicNumber.toString(),
+        maxShopPoints: state.maxShopPoints.toString(),
+        maxPrestigePoints: state.maxPrestigePoints.toString(),
+        maxResearchPoints: state.maxResearchPoints.toString(),
       };
     },
   },
