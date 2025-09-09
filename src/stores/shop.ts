@@ -20,6 +20,7 @@ type ShopKey = 'cpu' | 'hdd' | 'ram' | 'worker';
 
 const D1 = new Decimal(1);
 const D100 = new Decimal(100);
+const buyMode = 100;
 
 export const useStoreShop = defineStore('storeShop', {
   state: () => ({
@@ -28,8 +29,8 @@ export const useStoreShop = defineStore('storeShop', {
       cpu: {
         value: new Decimal(1),
         multiply: new Decimal(1),
-        buyModeValue: 1,
-        buyModeMultiply: 1,
+        buyModeValue: buyMode,
+        buyModeMultiply: buyMode,
         cost: {
           value: new Decimal(1),
           multiply: new Decimal(10000),
@@ -38,8 +39,8 @@ export const useStoreShop = defineStore('storeShop', {
       hdd: {
         value: new Decimal(0),
         multiply: new Decimal(1),
-        buyModeValue: 1,
-        buyModeMultiply: 1,
+        buyModeValue: buyMode,
+        buyModeMultiply: buyMode,
         cost: {
           value: new Decimal(15),
           multiply: new Decimal(50000),
@@ -48,8 +49,8 @@ export const useStoreShop = defineStore('storeShop', {
       ram: {
         value: new Decimal(0),
         multiply: new Decimal(1),
-        buyModeValue: 1,
-        buyModeMultiply: 1,
+        buyModeValue: buyMode,
+        buyModeMultiply: buyMode,
         cost: {
           value: new Decimal(50),
           multiply: new Decimal(170000),
@@ -58,8 +59,8 @@ export const useStoreShop = defineStore('storeShop', {
       worker: {
         value: new Decimal(1),
         multiply: new Decimal(1),
-        buyModeValue: 1,
-        buyModeMultiply: 1,
+        buyModeValue: buyMode,
+        buyModeMultiply: buyMode,
         cost: {
           value: new Decimal(1000),
           multiply: new Decimal('1e15'),
