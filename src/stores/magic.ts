@@ -344,8 +344,8 @@ export const useStoreMagic = defineStore('storeMagic', {
       const ultimateEffect = this.monster.damageEffects.find(
         (effect) => effect.type === 'ultimate',
       );
-      const ultimateBonus = ultimateEffect ? ultimateEffect.stacks.toNumber() : 0;
-      const expMultiplier = 1 + ultimateBonus * 0.01;
+      const ultimateBonus = ultimateEffect ? ultimateEffect.stacks : new Decimal(0);
+      const expMultiplier = ultimateBonus.mul(0.01).plus(1);
       const baseExp = this.monster.level;
       const finalExp = baseExp.mul(expMultiplier);
       this.mages.forEach((mage) => {
