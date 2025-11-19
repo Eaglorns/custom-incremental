@@ -85,7 +85,7 @@ export const useStorePrestige = defineStore('storePrestige', {
       autoShopHDDMultiply: {
         cost: new Decimal(3.5),
         level: new Decimal(0),
-        costGrowth: new Decimal(2.0),
+        costGrowth: new Decimal(2),
         maxLevel: -1,
       },
       autoShopRAMMultiply: {
@@ -97,7 +97,7 @@ export const useStorePrestige = defineStore('storePrestige', {
       autoShopWorkerMultiply: {
         cost: new Decimal(20),
         level: new Decimal(0),
-        costGrowth: new Decimal(4.0),
+        costGrowth: new Decimal(4),
         maxLevel: -1,
       },
     },

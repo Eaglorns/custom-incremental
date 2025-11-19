@@ -254,7 +254,7 @@ export const useStoreResearch = defineStore('storeResearch', {
   },
   actions: {
     processResearch() {
-      Object.values(this.base).forEach((research) => {
+      for (const research of Object.values(this.base)) {
         if (research.isActive && research.currentTime.gt(0)) {
           research.currentTime = research.currentTime.minus(1);
           if (research.currentTime.lte(0)) {
@@ -262,7 +262,7 @@ export const useStoreResearch = defineStore('storeResearch', {
             research.isActive = false;
           }
         }
-      });
+      }
     },
     randomUpgrade(scientist: ResearchScientist) {
       const statsResearch = this.base.researchScientistsMultiplierStats;
@@ -294,23 +294,25 @@ export const useStoreResearch = defineStore('storeResearch', {
       return level.pow(2).mul(D100).plus(D50);
     },
     processScientists() {
-      this.scientists.forEach((s) => {
-        if (Math.random() < 0.01) this.randomUpgrade(s);
-      });
+      for (const scientist of this.scientists) {
+        if (Math.random() < 0.01) this.randomUpgrade(scientist);
+      }
 
       const { level, bonus } = this.base.researchScientistsMultiplierExperience;
       const expMultiplier = level.gte(1) ? level.mul(bonus).plus(1) : D1;
 
       let totalResearch = D0;
-      this.scientists.forEach((s) => {
-        s.exp = s.exp.add(s.intellect.mul(expMultiplier));
-        const need = this.expToLevel(s.level);
-        if (s.exp.gte(need)) {
-          s.exp = s.exp.sub(need);
-          s.level = s.level.add(1);
+      for (const scientist of this.scientists) {
+        scientist.exp = scientist.exp.add(scientist.intellect.mul(expMultiplier));
+        const need = this.expToLevel(scientist.level);
+        if (scientist.exp.gte(need)) {
+          scientist.exp = scientist.exp.sub(need);
+          scientist.level = scientist.level.add(1);
         }
-        totalResearch = totalResearch.add(s.level.mul(s.efficiency.div(100).add(1)));
-      });
+        totalResearch = totalResearch.add(
+          scientist.level.mul(scientist.efficiency.div(100).add(1)),
+        );
+      }
 
       this.points = this.points.add(totalResearch);
     },

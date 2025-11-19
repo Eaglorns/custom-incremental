@@ -84,6 +84,21 @@ export interface Monster {
   }>;
 }
 
+const VALID_DAMAGE_TYPES = [
+  'poison',
+  'bleeding',
+  'death_curse',
+  'ignite',
+  'frost',
+  'storm',
+  'ultimate',
+  'saturation',
+] as const;
+
+const isValidDamageType = (type: string): type is DamageEffect['type'] => {
+  return VALID_DAMAGE_TYPES.includes(type as DamageEffect['type']);
+};
+
 export const useStoreMagic = defineStore('storeMagic', {
   state: () => ({
     points: new Decimal(0),
@@ -132,7 +147,7 @@ export const useStoreMagic = defineStore('storeMagic', {
           return rank;
         }
       }
-      return RANKS[0]!;
+      return RANKS.at(0)!;
     },
     getMageExperienceProgress: () => (mage: Mage) => {
       if (mage.maxExp.lte(0)) {
@@ -269,34 +284,31 @@ export const useStoreMagic = defineStore('storeMagic', {
         }
       };
 
-      this.mages.forEach((mage) => {
+      for (const mage of this.mages) {
         totalPointsGain = totalPointsGain.plus(mage.level);
+
         const randomRune = getRandomRune();
-        if (!randomRune) return;
-        const runeId = randomRune.id;
-        if (!damageTypes.some((dt) => dt.type === runeId)) return;
+        if (!randomRune || !isValidDamageType(randomRune.id)) continue;
 
-        const runeState = this.runes.find((r) => r.id === runeId);
+        const runeState = this.runes.find((r) => r.id === randomRune.id);
         const runeLevel = runeState ? runeState.level : D0;
-        const effectAmount = calculateEffectAmount(mage, runeId, runeLevel);
+        const effectAmount = calculateEffectAmount(mage, randomRune.id, runeLevel);
 
-        this.applyDamageEffect(runeId as DamageEffect['type'], effectAmount);
-        maybeAddRuneQuantity(mage, runeId);
-      });
-
-      if (totalPointsGain.gt(0)) {
-        this.points = this.points.plus(totalPointsGain);
+        this.applyDamageEffect(randomRune.id, effectAmount);
+        maybeAddRuneQuantity(mage, randomRune.id);
       }
     },
     processEffects() {
-      this.monster.damageEffects.forEach((effect) => {
-        if (this.monster.currentHealth.lte(0)) return;
+      if (this.monster.currentHealth.lte(0)) return;
+
+      for (const effect of this.monster.damageEffects) {
+        if (this.monster.currentHealth.lte(0)) break;
 
         if (effect.type === 'death_curse') {
           if (this.monster.currentHealth.lte(effect.stacks)) {
             this.monster.currentHealth = new Decimal(0);
             this.onMonsterDefeated();
-            return;
+            break;
           }
         }
 
@@ -312,7 +324,7 @@ export const useStoreMagic = defineStore('storeMagic', {
           effect.stacks = effect.stacks.div(1.001);
         }
         this.monsterDealDamage(effectStack);
-      });
+      }
     },
     monsterDealDamage(amount: Decimal) {
       const effectiveArmor = this.monsterEffectiveArmor;
@@ -335,12 +347,12 @@ export const useStoreMagic = defineStore('storeMagic', {
       );
       const saturationBonus = saturationEffect ? saturationEffect.stacks : new Decimal(0);
       const essenceMultiplier = new Decimal(saturationBonus).mul(0.01).plus(1);
-      this.monster.rewards.forEach((reward) => {
+      for (const reward of this.monster.rewards) {
         if (reward.id) {
           const finalAmount = reward.amount.mul(essenceMultiplier);
           this.addEssence(reward.id, finalAmount);
         }
-      });
+      }
       const ultimateEffect = this.monster.damageEffects.find(
         (effect) => effect.type === 'ultimate',
       );
@@ -348,9 +360,9 @@ export const useStoreMagic = defineStore('storeMagic', {
       const expMultiplier = ultimateBonus.mul(0.01).plus(1);
       const baseExp = this.monster.level;
       const finalExp = baseExp.mul(expMultiplier);
-      this.mages.forEach((mage) => {
+      for (const mage of this.mages) {
         this.addMageExperience(mage, finalExp.div(Math.random() * 9 + 1));
-      });
+      }
       this.monsterKillCount = this.monsterKillCount.minus(1);
       if (this.monsterKillCount.lte(0)) {
         this.monsterGeneratedLevel = this.monsterGeneratedLevel.plus(1);
@@ -414,7 +426,7 @@ export const useStoreMagic = defineStore('storeMagic', {
         iconColor: randomIcon.color,
         runeIds: [],
         runeQuantities: {},
-        rank: RANKS[0]!,
+        rank: RANKS.at(0)!,
       };
 
       this.mages.push(newMage);
@@ -516,12 +528,12 @@ export const useStoreMagic = defineStore('storeMagic', {
       const runeMeta = this.getRuneMeta(this.selectedRune.id);
       if (!runeMeta) return;
 
-      runeMeta.requirements.forEach((requirement) => {
+      for (const requirement of runeMeta.requirements) {
         const essence = this.getEssenceById(requirement.essenceId);
         if (essence) {
           essence.amount = essence.amount.minus(this.getRequiredEssenceAmount(requirement));
         }
-      });
+      }
 
       const runeInArray = this.runes.find((r) => r.id === this.selectedRune!.id);
       if (runeInArray) {
@@ -549,7 +561,7 @@ export const useStoreMagic = defineStore('storeMagic', {
           return suffix;
         }
       }
-      return monsterSuffixes[monsterSuffixes.length - 1];
+      return monsterSuffixes.at(-1);
     },
 
     generateRandomMonsterName() {
@@ -607,7 +619,7 @@ export const useStoreMagic = defineStore('storeMagic', {
 
       for (let i = 0; i < rewardCount && availableEssences.length > 0; i++) {
         const randomIndex = Math.floor(Math.random() * availableEssences.length);
-        const essence = availableEssences.splice(randomIndex, 1)[0];
+        const essence = availableEssences.splice(randomIndex, 1).at(0);
 
         this.monster.rewards.push({
           id: essence?.id || `essence`,

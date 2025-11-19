@@ -8,8 +8,6 @@ import { useStoreShop } from 'stores/shop';
 
 const SHOP_KEYS = ['cpu', 'hdd', 'ram', 'worker'] as const;
 
-type ShopKey = (typeof SHOP_KEYS)[number];
-
 export const useStoreStats = defineStore('storeStats', {
   state: () => ({
     gameTime: 0,
@@ -48,9 +46,9 @@ export const useStoreStats = defineStore('storeStats', {
       const storePrestige = useStorePrestige();
       const storeShop = useStoreShop();
 
-      SHOP_KEYS.forEach((k: ShopKey) => {
+      for (const k of SHOP_KEYS) {
         this.maxShopBuy[k] = Decimal.max(this.maxShopBuy[k], storeShop.list[k].value);
-      });
+      }
 
       this.maxEpicNumber = Decimal.max(this.maxEpicNumber, storeData.epicNumber);
       this.maxShopPoints = Decimal.max(this.maxShopPoints, storeShop.points);

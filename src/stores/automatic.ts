@@ -5,6 +5,30 @@ import { useStoreData } from 'stores/data';
 import { useStorePrestige } from 'stores/prestige';
 import { buyMax, toDec } from 'src/utils/storeUtils';
 
+// Типы из store/shop
+type ShopKey = 'cpu' | 'hdd' | 'ram' | 'worker';
+
+interface ShopItem {
+  value: Decimal;
+  multiply: Decimal;
+  buyModeValue: number;
+  buyModeMultiply: number;
+  cost: {
+    value: Decimal;
+    multiply: Decimal;
+  };
+}
+
+type ShopStore = {
+  points: Decimal;
+  list: Record<ShopKey, ShopItem>;
+  costMultiply: (key: ShopKey) => Decimal;
+};
+
+type DataStore = {
+  epicNumber: Decimal;
+};
+
 interface Helper {
   count: string;
   percent: string;
@@ -162,42 +186,74 @@ export const useStoreAutomatic = defineStore('storeAutomatic', {
         ? storePrestige.upgrades.prestigeBuyValueMultiply.level
         : ONE;
 
-      VALUE_KEYS.forEach((key) => {
-        const helper = this.helpersShop[key];
-        if (!helper.enabled || helper.count.lte(0)) return;
-        if (this.getHelperChance(helper.percent).gte(rand)) {
-          const buyResult = buyMax(
-            storeShop.points,
-            storeShop.list[key].cost.value,
-            helper.count.mul(buyCountMult),
-          );
-          if (buyResult.bought.gt(0)) {
-            storeShop.list[key].value = storeShop.list[key].value.plus(
-              buyResult.bought.mul(storeShop.list[key].multiply),
-            );
-            storeShop.points = storeShop.points.minus(buyResult.rest);
-          }
-        }
-      });
+      this.processValueHelpers(storeShop, rand, buyCountMult);
+      this.processMultiplierHelpers(storeShop, storeData, rand, buyMultiplyMult);
+    },
 
-      MULTIPLIER_KEYS.forEach((key) => {
-        const baseKey = key.replace('Multiplier', '') as keyof typeof storeShop.list;
+    processValueHelpers(storeShop: ShopStore, rand: Decimal, buyCountMult: Decimal) {
+      for (const key of VALUE_KEYS) {
         const helper = this.helpersShop[key];
-        if (!helper.enabled || helper.count.lte(0)) return;
+        if (!this.isHelperActive(helper)) continue;
+
         if (this.getHelperChance(helper.percent).gte(rand)) {
-          const buyResult = buyMax(
-            storeData.epicNumber,
-            storeShop.costMultiply(baseKey),
-            helper.count.mul(buyMultiplyMult),
-          );
-          if (buyResult.bought.gt(0)) {
-            storeShop.list[baseKey].multiply = storeShop.list[baseKey].multiply.plus(
-              buyResult.bought,
-            );
-            storeData.epicNumber = storeData.epicNumber.minus(buyResult.rest);
-          }
+          this.buyValueItem(storeShop, key, helper, buyCountMult);
         }
-      });
+      }
+    },
+
+    processMultiplierHelpers(
+      storeShop: ShopStore,
+      storeData: DataStore,
+      rand: Decimal,
+      buyMultiplyMult: Decimal,
+    ) {
+      for (const key of MULTIPLIER_KEYS) {
+        const helper = this.helpersShop[key];
+        if (!this.isHelperActive(helper)) continue;
+
+        if (this.getHelperChance(helper.percent).gte(rand)) {
+          this.buyMultiplierItem(storeShop, storeData, key, helper, buyMultiplyMult);
+        }
+      }
+    },
+
+    isHelperActive(helper: HelperState): boolean {
+      return helper.enabled && helper.count.gt(0);
+    },
+
+    buyValueItem(storeShop: ShopStore, key: string, helper: HelperState, buyCountMult: Decimal) {
+      const buyResult = buyMax(
+        storeShop.points,
+        storeShop.list[key as ShopKey].cost.value,
+        helper.count.mul(buyCountMult),
+      );
+
+      if (buyResult.bought.gt(0)) {
+        storeShop.list[key as ShopKey].value = storeShop.list[key as ShopKey].value.plus(
+          buyResult.bought.mul(storeShop.list[key as ShopKey].multiply),
+        );
+        storeShop.points = storeShop.points.minus(buyResult.rest);
+      }
+    },
+
+    buyMultiplierItem(
+      storeShop: ShopStore,
+      storeData: DataStore,
+      key: string,
+      helper: HelperState,
+      buyMultiplyMult: Decimal,
+    ) {
+      const baseKey = key.replace('Multiplier', '') as ShopKey;
+      const buyResult = buyMax(
+        storeData.epicNumber,
+        storeShop.costMultiply(baseKey),
+        helper.count.mul(buyMultiplyMult),
+      );
+
+      if (buyResult.bought.gt(0)) {
+        storeShop.list[baseKey].multiply = storeShop.list[baseKey].multiply.plus(buyResult.bought);
+        storeData.epicNumber = storeData.epicNumber.minus(buyResult.rest);
+      }
     },
 
     load(loaded: {

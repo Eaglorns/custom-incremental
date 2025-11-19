@@ -188,7 +188,9 @@ function onDiv(item: Target) {
 }
 
 function resetInputs() {
-  targets.value.forEach((t) => (t.input = '1'));
+  for (const t of targets.value) {
+    t.input = '1';
+  }
   $q.notify({ type: 'info', message: 'Входные значения сброшены' });
 }
 </script>

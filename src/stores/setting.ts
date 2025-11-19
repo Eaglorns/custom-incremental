@@ -45,7 +45,9 @@ export const useStoreSetting = defineStore('storeSetting', {
     },
 
     preloadAll() {
-      SOUND_NAMES.forEach((n) => this.preload(n));
+      for (const n of SOUND_NAMES) {
+        this.preload(n);
+      }
     },
 
     canPlay(name: string) {
@@ -76,7 +78,9 @@ export const useStoreSetting = defineStore('storeSetting', {
     },
 
     stopAll() {
-      Object.values(this.preloadedSounds).forEach((s) => s.stop());
+      for (const s of Object.values(this.preloadedSounds)) {
+        s.stop();
+      }
     },
 
     toggleAudio(enabled?: boolean) {
@@ -88,7 +92,9 @@ export const useStoreSetting = defineStore('storeSetting', {
     setVolume(volume: number) {
       this.audio.volume = clamp(volume, 0, 1);
       const base = this.audio.volume;
-      Object.values(this.preloadedSounds).forEach((s) => s.volume(base));
+      for (const s of Object.values(this.preloadedSounds)) {
+        s.volume(base);
+      }
     },
 
     setIconStyle(style: string) {

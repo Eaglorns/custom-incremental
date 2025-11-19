@@ -151,16 +151,16 @@ export const useStoreSaveLoad = defineStore('storeSaveLoad', {
         ['setting', (v) => (storeSetting.load as (x: unknown) => void)(v)],
       ];
 
-      loaders.forEach(([key, fn]) => {
+      for (const [key, fn] of loaders) {
         const section = loaded[key];
         if (section != null) fn(section);
-      });
+      }
 
-      if (!sameVersion) {
+      if (sameVersion) {
+        console.log('load game');
+      } else {
         storeData.version = storeGame.version;
         console.log('load game (partial/migrated)');
-      } else {
-        console.log('load game');
       }
     },
     clearSave() {
