@@ -16,7 +16,7 @@ const D1 = new Decimal(1);
 const D1_015 = new Decimal(1.015);
 
 function cleanExp(str: string) {
-  str = str.replaceAll(/\.0+([e[])/, '$1').replaceAll(/(\.\d*[1-9])0+([e[])/, '$1$2');
+  str = str.replace(/\.0+([e[])/, '$1').replace(/(\.\d*[1-9])0+([e[])/, '$1$2');
   return str.replaceAll(/e(-?\d{4,})/g, (_m, p1: string) => {
     const sign = p1.startsWith('-') ? '-' : '';
     const digits = sign ? p1.slice(1) : p1;

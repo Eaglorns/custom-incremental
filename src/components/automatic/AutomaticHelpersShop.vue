@@ -261,7 +261,7 @@ function upgradeHelperChance(key: string) {
 
 .upgrade-btn-custom {
   background: #d3d6de !important;
-  color: #2563eb !important;
+  color: #595959 !important;
   border: 2px solid #c2cbe0;
   border-radius: 8px;
   box-shadow: 0 2px 8px 0 rgba(80, 100, 200, 0.1);

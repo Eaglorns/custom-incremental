@@ -134,7 +134,7 @@ const getProgress = (mage: Mage) => storeMagic.getMageExperienceProgress(mage);
 const getSortedRunes = (mage: Mage) =>
   mage.runeIds
     .map((id: string) => runeMetaMap.get(id))
-    .filter((r): r is NonNullable<typeof r> => Boolean(r))
+    .filter((r): r is NonNullable<typeof r> => !!r)
     .sort((a, b) => {
       const qa = mage.runeQuantities[a.id] || D0;
       const qb = mage.runeQuantities[b.id] || D0;
@@ -389,12 +389,13 @@ const getSortedRunes = (mage: Mage) =>
               }
             }
             .more-runes {
-              color: #a1a1aa;
-              font-size: 10px;
+              font-size: 9px;
               font-style: italic;
-              padding: 2px 6px;
-              background: rgba(161, 161, 170, 0.2);
+              padding: 2px 4px;
+              background: rgba(0, 0, 0, 0.85);
               border-radius: 4px;
+              color: #ffffff;
+              text-shadow: 0 1px 1px rgba(0, 0, 0, 0.7);
             }
           }
         }
@@ -500,12 +501,13 @@ const getSortedRunes = (mage: Mage) =>
             }
 
             .more-runes {
-              color: #a1a1aa;
               font-size: 9px;
               font-style: italic;
               padding: 2px 4px;
-              background: rgba(161, 161, 170, 0.2);
+              background: rgba(0, 0, 0, 0.85);
               border-radius: 4px;
+              color: #ffffff;
+              text-shadow: 0 1px 1px rgba(0, 0, 0, 0.7);
             }
           }
         }

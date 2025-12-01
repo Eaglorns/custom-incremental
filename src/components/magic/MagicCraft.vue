@@ -132,7 +132,7 @@ const canCraftSelected = computed(() => {
   text-align: center;
   padding: 30px 20px;
   color: #adb5bd;
-  background: rgba(73, 80, 87, 0.3);
+  background: #2c2c2c;
   border-radius: 12px;
   border: 1px dashed #6c757d;
 }
@@ -268,19 +268,13 @@ const canCraftSelected = computed(() => {
   transition: all 0.2s ease;
 
   &:not(:disabled) {
-    background: linear-gradient(135deg, #4dabf7, #339af0);
-    color: white;
-    box-shadow: 0 4px 12px rgba(77, 171, 247, 0.4);
-
-    &:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(77, 171, 247, 0.5);
-    }
+    background: linear-gradient(135deg, #1e7ed6, #1864ab);
+    box-shadow: 0 4px 12px rgba(30, 126, 214, 0.4);
   }
 
   &:disabled {
     opacity: 0.6;
-    background: #495057;
+    background: #343a40;
     color: #adb5bd;
     cursor: not-allowed;
   }

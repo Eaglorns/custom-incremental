@@ -106,15 +106,15 @@ const onPrestige = () => {
 .prestige-main-value-modern {
   font-size: 1.7rem;
   font-weight: 700;
-  color: #f8fafc;
   letter-spacing: 0.7px;
   line-height: 1.1;
   text-shadow:
     0 2px 8px #23243a,
     0 0 2px #23243a22;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.6);
   border-radius: 10px;
   padding: 4px 16px;
+  color: #ffffff;
 }
 
 .prestige-progress-modern {
@@ -168,16 +168,13 @@ const onPrestige = () => {
 }
 
 .prestige-possible-modern {
-  color: #6bbf6b;
-  text-shadow:
-    0 2px 8px #23243a,
-    0 0 2px #23243a22;
   font-size: 1.13rem;
   font-weight: 600;
   z-index: 2;
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(0, 0, 0, 0.7);
   border-radius: 7px;
   padding: 3px 10px;
+  color: #ffffff;
 }
 
 .prestige-btn-modern {

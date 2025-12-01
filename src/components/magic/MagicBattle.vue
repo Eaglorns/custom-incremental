@@ -225,17 +225,14 @@ const displayedRewards = computed(() => {
           }
 
           .monster-kill-counter {
-            color: #fbbf24;
-            font-size: 12px;
             font-weight: 500;
             margin-bottom: 4px;
             padding: 3px 8px;
-            background: linear-gradient(145deg, rgba(251, 191, 36, 0.1), rgba(251, 191, 36, 0.05));
-            border: 1px solid rgba(251, 191, 36, 0.2);
+            background: rgba(31, 41, 55, 0.9);
+            border: 1px solid rgba(251, 191, 36, 0.4);
             border-radius: 6px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
           }
 
           .monster-stats {
@@ -388,15 +385,16 @@ const displayedRewards = computed(() => {
         .saturation-info {
           margin-top: 8px;
           padding: 4px 8px;
-          background: linear-gradient(145deg, rgba(50, 205, 50, 0.1), rgba(50, 205, 50, 0.05));
+          align-items: center;
+          gap: 4px;
           border: 1px solid rgba(50, 205, 50, 0.3);
           border-radius: 8px;
           font-size: 11px;
-          color: #32cd32;
+          color: #ffffff;
           font-weight: 500;
           display: flex;
-          align-items: center;
-          gap: 4px;
+          background: rgba(0, 0, 0, 0.8);
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
         }
       }
     }

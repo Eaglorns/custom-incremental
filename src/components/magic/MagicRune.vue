@@ -390,20 +390,20 @@ onUnmounted(() => {
 
 .rune-level {
   position: absolute;
-  top: 6px;
-  right: 6px;
-  background: linear-gradient(145deg, #007bff, #0056b3);
-  color: white;
-  border-radius: 50%;
-  width: 24px;
   height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
-  font-weight: bold;
+  font-weight: 700;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+  top: 6px;
+  right: 6px;
+  background: linear-gradient(145deg, #007bff, #0056b3);
+  color: #000000;
+  border-radius: 50%;
+  width: 24px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
 }
 
 .craft-indicator {

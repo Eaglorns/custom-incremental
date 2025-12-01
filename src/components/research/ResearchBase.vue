@@ -188,12 +188,12 @@ function startResearch(key: string, isLoad: boolean) {
   const cost = calcCost(research);
   const time = calcTime(research);
 
-  if (!isLoad) {
+  if (isLoad) {
+    research.isActive = true;
+  } else {
     if (!storeResearch.points.gte(cost)) return;
     storeResearch.points = storeResearch.points.minus(cost);
     research.currentTime = time;
-    research.isActive = true;
-  } else {
     research.isActive = true;
   }
 }
@@ -272,24 +272,13 @@ onMounted(() => {
 }
 
 .research-btn {
-  min-width: 120px;
-  max-width: 90%;
-  width: auto;
-  border-radius: 12px;
   font-weight: 600;
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   border: none;
-  color: white;
+  color: #000000;
   box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  box-sizing: border-box;
-  padding: 10px 16px;
-  font-size: 13px;
-  flex-shrink: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
 }
 
 .research-btn:hover:not(:disabled) {
@@ -423,27 +412,10 @@ onMounted(() => {
 
 .research-completed-banner {
   background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-  color: white;
+  color: #000000;
   font-size: 18px;
   letter-spacing: 1px;
-  z-index: 2;
-  pointer-events: none;
-  border-radius: 12px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(100% - 32px);
-  transform: translate(-50%, -50%);
-  text-align: center;
-  font-weight: 700;
-  box-shadow: 0 8px 32px rgba(5, 150, 105, 0.4);
-  user-select: none;
-  padding: 16px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #34d399;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .research-completed-text {
