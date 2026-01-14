@@ -1,5 +1,15 @@
 import { Dialog } from 'quasar';
 
+const HTML_ENTITIES: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#039;',
+};
+
+const HTML_ESCAPE_REGEX = /[&<>"']/g;
+
 function escapeHtml(input: unknown): string {
   if (input === null || input === undefined) return '';
   let s: string;
@@ -14,12 +24,7 @@ function escapeHtml(input: unknown): string {
   } else {
     s = '';
   }
-  return s
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
+  return s.replaceAll(HTML_ESCAPE_REGEX, (match) => HTML_ENTITIES[match] ?? match);
 }
 
 export function showLoreDialog(item: { title?: string; text?: string }, okLabel = 'Продолжить') {
