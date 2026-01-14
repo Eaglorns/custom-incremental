@@ -5,7 +5,6 @@ import { useStoreData } from 'stores/data';
 import { useStorePrestige } from 'stores/prestige';
 import { buyMax, toDec } from 'src/utils/storeUtils';
 
-// Типы из store/shop
 type ShopKey = 'cpu' | 'hdd' | 'ram' | 'worker';
 
 interface ShopItem {
