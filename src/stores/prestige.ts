@@ -7,8 +7,9 @@ import { toDec } from 'src/utils/storeUtils';
 
 const D0 = new Decimal(0);
 const D1 = new Decimal(1);
-const BASE = new Decimal(1.3);
-const FACTOR = new Decimal(0.00001);
+const BASE = new Decimal(1.25);
+const FACTOR = new Decimal(0.00003);
+const SOFT_PER_LEVEL = new Decimal(0.15);
 
 const VALUE_UPGRADES = [
   ['autoShopCPUValue', 'cpu'],
@@ -31,73 +32,73 @@ export const useStorePrestige = defineStore('storePrestige', {
       prestigeBonus: {
         cost: new Decimal(5),
         level: new Decimal(0),
-        costGrowth: new Decimal(1.2),
+        costGrowth: new Decimal(1.15),
         maxLevel: -1,
       },
       prestigeSoftening: {
         cost: new Decimal(5),
         level: new Decimal(0),
-        costGrowth: new Decimal(1.05),
+        costGrowth: new Decimal(1.04),
         maxLevel: -1,
       },
       prestigeBuyValueCount: {
         cost: new Decimal(0.1),
         level: new Decimal(0),
-        costGrowth: new Decimal(1.15),
+        costGrowth: new Decimal(1.12),
         maxLevel: -1,
       },
       prestigeBuyValueMultiply: {
         cost: new Decimal(0.5),
         level: new Decimal(0),
-        costGrowth: new Decimal(1.3),
+        costGrowth: new Decimal(1.22),
         maxLevel: -1,
       },
       autoShopCPUValue: {
         cost: new Decimal(0.05),
         level: new Decimal(0),
-        costGrowth: new Decimal(1.1),
+        costGrowth: new Decimal(1.08),
         maxLevel: -1,
       },
       autoShopHDDValue: {
         cost: new Decimal(0.12),
         level: new Decimal(0),
-        costGrowth: new Decimal(1.1),
+        costGrowth: new Decimal(1.08),
         maxLevel: -1,
       },
       autoShopRAMValue: {
         cost: new Decimal(0.2),
         level: new Decimal(0),
-        costGrowth: new Decimal(1.1),
+        costGrowth: new Decimal(1.08),
         maxLevel: -1,
       },
       autoShopWorkerValue: {
         cost: new Decimal(5),
         level: new Decimal(0),
-        costGrowth: new Decimal(1.3),
+        costGrowth: new Decimal(1.2),
         maxLevel: -1,
       },
       autoShopCPUMultiply: {
-        cost: new Decimal(2),
+        cost: new Decimal(200),
         level: new Decimal(0),
-        costGrowth: new Decimal(1.5),
+        costGrowth: new Decimal(1.35),
         maxLevel: -1,
       },
       autoShopHDDMultiply: {
-        cost: new Decimal(3.5),
+        cost: new Decimal(300),
         level: new Decimal(0),
-        costGrowth: new Decimal(2),
+        costGrowth: new Decimal(1.7),
         maxLevel: -1,
       },
       autoShopRAMMultiply: {
-        cost: new Decimal(5),
+        cost: new Decimal(500),
         level: new Decimal(0),
-        costGrowth: new Decimal(2.5),
+        costGrowth: new Decimal(2.1),
         maxLevel: -1,
       },
       autoShopWorkerMultiply: {
-        cost: new Decimal(20),
+        cost: new Decimal(2000),
         level: new Decimal(0),
-        costGrowth: new Decimal(4),
+        costGrowth: new Decimal(3.2),
         maxLevel: -1,
       },
     },
@@ -105,9 +106,9 @@ export const useStorePrestige = defineStore('storePrestige', {
   getters: {
     getEpicNumberToPrestige: (state): Decimal => {
       const soft = state.upgrades.prestigeSoftening.level.gt(0)
-        ? state.upgrades.prestigeSoftening.level
+        ? D1.add(state.upgrades.prestigeSoftening.level.mul(SOFT_PER_LEVEL))
         : D1;
-      return BASE.div(FACTOR.mul(soft));
+      return BASE.minus(1).div(FACTOR.mul(soft));
     },
 
     prestigeGain: (state): Decimal => {
@@ -115,9 +116,9 @@ export const useStorePrestige = defineStore('storePrestige', {
       const n = storeData.epicNumber;
       if (n.lte(0)) return D0;
       const soft = state.upgrades.prestigeSoftening.level.gt(0)
-        ? state.upgrades.prestigeSoftening.level
+        ? D1.add(state.upgrades.prestigeSoftening.level.mul(SOFT_PER_LEVEL))
         : D1;
-      const scaled = n.mul(FACTOR).mul(soft);
+      const scaled = n.mul(FACTOR).mul(soft).add(1);
       return scaled.log(BASE);
     },
 

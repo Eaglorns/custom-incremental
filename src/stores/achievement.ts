@@ -18,14 +18,14 @@ type AchievementKey =
   | 'shopPoints';
 
 const DIVIDERS: Record<AchievementKey, Decimal> = {
-  epicNumberValue: new Decimal(10),
-  shopCpuValue: new Decimal(10),
-  shopHddValue: new Decimal(6),
-  shopRamValue: new Decimal(3),
-  shopWorkerValue: new Decimal(2),
-  prestigePoints: new Decimal(1.5),
-  researchPoints: new Decimal(1.3),
-  shopPoints: new Decimal(5),
+  epicNumberValue: new Decimal(12),
+  shopCpuValue: new Decimal(6),
+  shopHddValue: new Decimal(4.5),
+  shopRamValue: new Decimal(3.2),
+  shopWorkerValue: new Decimal(2.2),
+  prestigePoints: new Decimal(1.7),
+  researchPoints: new Decimal(1.6),
+  shopPoints: new Decimal(6),
 } as const;
 
 export const useStoreAchievement = defineStore('storeAchievement', {

@@ -26,7 +26,7 @@ export const achievements = computed<AchievementsType[]>(() => [
     color: 'primary',
     level: achievementLevels.value.epicNumberValue,
     unlocked: achievementLevels.value.epicNumberValue.gt(0),
-    hint: 'Копите число. Каждый новый уровень требует в 10 раз больше.',
+    hint: 'Копите число. Каждый новый уровень требует в 12 раз больше.',
   },
   {
     key: 'shopCpuValue',
@@ -36,7 +36,7 @@ export const achievements = computed<AchievementsType[]>(() => [
     color: 'teal',
     level: achievementLevels.value.shopCpuValue,
     unlocked: achievementLevels.value.shopCpuValue.gt(0),
-    hint: 'Покупайте CPU, чтобы повышать уровень достижения. Каждый новый уровень требует в 5 раз больше CPU.',
+    hint: 'Покупайте CPU, чтобы повышать уровень достижения. Каждый новый уровень требует в 6 раз больше CPU.',
   },
   {
     key: 'shopHddValue',
@@ -46,7 +46,7 @@ export const achievements = computed<AchievementsType[]>(() => [
     color: 'blue-grey',
     level: achievementLevels.value.shopHddValue,
     unlocked: achievementLevels.value.shopHddValue.gt(0),
-    hint: 'Покупайте HDD, чтобы повышать уровень достижения. Каждый новый уровень требует в 4 раза больше HDD.',
+    hint: 'Покупайте HDD, чтобы повышать уровень достижения. Каждый новый уровень требует в 4.5 раза больше HDD.',
   },
   {
     key: 'shopRamValue',
@@ -56,17 +56,17 @@ export const achievements = computed<AchievementsType[]>(() => [
     color: 'deep-orange',
     level: achievementLevels.value.shopRamValue,
     unlocked: achievementLevels.value.shopRamValue.gt(0),
-    hint: 'Покупайте RAM, чтобы повышать уровень достижения. Каждый новый уровень требует в 3 раза больше RAM.',
+    hint: 'Покупайте RAM, чтобы повышать уровень достижения. Каждый новый уровень требует в 3.2 раза больше RAM.',
   },
   {
-    key: 'shopRamValue',
+    key: 'shopWorkerValue',
     title: 'Коллекционер работников',
     description: 'Получайте новые уровни за большее количество работников',
-    icon: 'fa-memory',
-    color: 'deep-orange',
+    icon: 'fa-users',
+    color: 'indigo',
     level: achievementLevels.value.shopWorkerValue,
     unlocked: achievementLevels.value.shopWorkerValue.gt(0),
-    hint: 'Покупайте работников, чтобы повышать уровень достижения. Каждый новый уровень требует в 2 раза больше работников.',
+    hint: 'Покупайте работников, чтобы повышать уровень достижения. Каждый новый уровень требует в 2.2 раза больше работников.',
   },
   {
     key: 'prestigePoints',
@@ -76,7 +76,7 @@ export const achievements = computed<AchievementsType[]>(() => [
     color: 'purple',
     level: achievementLevels.value.prestigePoints,
     unlocked: achievementLevels.value.prestigePoints.gt(0),
-    hint: 'Получайте очки престижа, чтобы повышать уровень достижения. Каждый новый уровень требует в 1.5 раз больше очков престижа.',
+    hint: 'Получайте очки престижа, чтобы повышать уровень достижения. Каждый новый уровень требует в 1.7 раз больше очков престижа.',
   },
   {
     key: 'researchPoints',
@@ -86,7 +86,7 @@ export const achievements = computed<AchievementsType[]>(() => [
     color: 'green',
     level: achievementLevels.value.researchPoints,
     unlocked: achievementLevels.value.researchPoints.gt(0),
-    hint: 'Получайте очки исследований, чтобы повышать уровень достижения. Каждый новый уровень требует в 2 раза больше очков исследований.',
+    hint: 'Получайте очки исследований, чтобы повышать уровень достижения. Каждый новый уровень требует в 1.6 раза больше очков исследований.',
   },
   {
     key: 'shopPoints',
@@ -96,6 +96,6 @@ export const achievements = computed<AchievementsType[]>(() => [
     color: 'blue',
     level: achievementLevels.value.shopPoints,
     unlocked: achievementLevels.value.shopPoints.gt(0),
-    hint: 'Получайте монеты, чтобы повышать уровень достижения. Каждый новый уровень требует в 4 раза больше монет.',
+    hint: 'Получайте монеты, чтобы повышать уровень достижения. Каждый новый уровень требует в 6 раз больше монет.',
   },
 ]);

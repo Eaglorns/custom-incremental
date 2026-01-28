@@ -39,8 +39,6 @@ const D0 = new Decimal(0);
 const D1 = new Decimal(1);
 const D1_1 = new Decimal(1.1);
 const D350 = new Decimal(350);
-const D100 = new Decimal(100);
-const D50 = new Decimal(50);
 
 export const useStoreResearch = defineStore('storeResearch', {
   state: () => ({
@@ -50,123 +48,123 @@ export const useStoreResearch = defineStore('storeResearch', {
     base: {
       cpuPow: {
         isActive: false,
-        cost: new Decimal(1000),
+        cost: new Decimal(900),
         currentTime: new Decimal(0),
         time: new Decimal(5),
-        bonus: new Decimal(0.001),
+        bonus: new Decimal(0.0012),
+        level: new Decimal(0),
+        costMultiply: new Decimal(1.45),
+        timeMultiply: new Decimal(1.18),
+        maxLevel: new Decimal(1000),
+      },
+      hddPow: {
+        isActive: false,
+        cost: new Decimal(4500),
+        currentTime: new Decimal(0),
+        time: new Decimal(6),
+        bonus: new Decimal(0.0011),
+        level: new Decimal(0),
+        costMultiply: new Decimal(1.6),
+        timeMultiply: new Decimal(1.19),
+        maxLevel: new Decimal(1000),
+      },
+      ramPow: {
+        isActive: false,
+        cost: new Decimal(800000),
+        currentTime: new Decimal(0),
+        time: new Decimal(8),
+        bonus: new Decimal(0.0011),
         level: new Decimal(0),
         costMultiply: new Decimal(1.5),
         timeMultiply: new Decimal(1.2),
         maxLevel: new Decimal(1000),
       },
-      hddPow: {
-        isActive: false,
-        cost: new Decimal(5000),
-        currentTime: new Decimal(0),
-        time: new Decimal(6),
-        bonus: new Decimal(0.001),
-        level: new Decimal(0),
-        costMultiply: new Decimal(1.7),
-        timeMultiply: new Decimal(1.21),
-        maxLevel: new Decimal(1000),
-      },
-      ramPow: {
-        isActive: false,
-        cost: new Decimal(1000000),
-        currentTime: new Decimal(0),
-        time: new Decimal(8),
-        bonus: new Decimal(0.001),
-        level: new Decimal(0),
-        costMultiply: new Decimal(1.6),
-        timeMultiply: new Decimal(1.23),
-        maxLevel: new Decimal(1000),
-      },
       workerPow: {
         isActive: false,
-        cost: new Decimal('1e10'),
+        cost: new Decimal('6e9'),
         currentTime: new Decimal(0),
-        time: new Decimal(15),
-        bonus: new Decimal(0.001),
+        time: new Decimal(14),
+        bonus: new Decimal(0.0011),
         level: new Decimal(0),
-        costMultiply: new Decimal(1.8),
-        timeMultiply: new Decimal(1.3),
+        costMultiply: new Decimal(1.65),
+        timeMultiply: new Decimal(1.25),
         maxLevel: new Decimal(10000),
       },
       shopCostMultiplierDecrease: {
         isActive: false,
-        cost: new Decimal(1000),
+        cost: new Decimal(900),
         currentTime: new Decimal(0),
         time: new Decimal(6),
         bonus: new Decimal(1.05),
         level: new Decimal(0),
-        costMultiply: new Decimal(1.7),
-        timeMultiply: new Decimal(1.2),
+        costMultiply: new Decimal(1.6),
+        timeMultiply: new Decimal(1.15),
         maxLevel: new Decimal(100),
       },
       epicNumberMultiplierDecrease: {
         isActive: false,
-        cost: new Decimal(20000),
+        cost: new Decimal(18000),
         currentTime: new Decimal(0),
-        time: new Decimal(15),
+        time: new Decimal(14),
         bonus: new Decimal(1.1),
         level: new Decimal(0),
-        costMultiply: new Decimal(2),
-        timeMultiply: new Decimal(1.3),
+        costMultiply: new Decimal(1.8),
+        timeMultiply: new Decimal(1.2),
         maxLevel: new Decimal(1000),
       },
       researchTimeMultiplierDecrease: {
         isActive: false,
-        cost: new Decimal(15000),
+        cost: new Decimal(14000),
         currentTime: new Decimal(0),
-        time: new Decimal(15),
+        time: new Decimal(14),
         bonus: new Decimal(1.1),
         level: new Decimal(0),
-        costMultiply: new Decimal(1.8),
-        timeMultiply: new Decimal(1.3),
+        costMultiply: new Decimal(1.6),
+        timeMultiply: new Decimal(1.2),
         maxLevel: new Decimal(1000),
       },
       researchScientistsChance: {
         isActive: false,
-        cost: new Decimal(5000),
+        cost: new Decimal(3500),
         currentTime: new Decimal(0),
         time: new Decimal(8),
         bonus: new Decimal(1),
         level: new Decimal(0),
-        costMultiply: new Decimal(5),
-        timeMultiply: new Decimal(1.25),
+        costMultiply: new Decimal(3.5),
+        timeMultiply: new Decimal(1.2),
         maxLevel: new Decimal(99),
       },
       researchScientistsMultiplierStats: {
         isActive: false,
-        cost: new Decimal(2000),
+        cost: new Decimal(1800),
         currentTime: new Decimal(0),
         time: new Decimal(8),
-        bonus: new Decimal(0.1),
+        bonus: new Decimal(0.12),
         level: new Decimal(0),
-        costMultiply: new Decimal(1.2),
-        timeMultiply: new Decimal(1.15),
+        costMultiply: new Decimal(1.15),
+        timeMultiply: new Decimal(1.12),
         maxLevel: new Decimal(1e50),
       },
       researchScientistsMultiplierExperience: {
         isActive: false,
-        cost: new Decimal(2000),
+        cost: new Decimal(1800),
         currentTime: new Decimal(0),
         time: new Decimal(8),
-        bonus: new Decimal(0.1),
+        bonus: new Decimal(0.12),
         level: new Decimal(0),
-        costMultiply: new Decimal(1.2),
-        timeMultiply: new Decimal(1.15),
+        costMultiply: new Decimal(1.15),
+        timeMultiply: new Decimal(1.12),
         maxLevel: new Decimal(1e50),
       },
       shopMultiplierChanceReturn: {
         isActive: false,
-        cost: new Decimal(500),
+        cost: new Decimal(450),
         currentTime: new Decimal(0),
         time: new Decimal(10),
-        bonus: new Decimal(0.01),
+        bonus: new Decimal(0.012),
         level: new Decimal(0),
-        costMultiply: new Decimal(3.5),
-        timeMultiply: new Decimal(1.2),
+        costMultiply: new Decimal(3),
+        timeMultiply: new Decimal(1.15),
         maxLevel: new Decimal(100),
       },
     },
@@ -291,11 +289,11 @@ export const useStoreResearch = defineStore('storeResearch', {
       }
     },
     expToLevel(level: Decimal) {
-      return level.pow(2).mul(D100).plus(D50);
+      return level.pow(2).mul(new Decimal(80)).plus(new Decimal(40));
     },
     processScientists() {
       for (const scientist of this.scientists) {
-        if (Math.random() < 0.01) this.randomUpgrade(scientist);
+        if (Math.random() < 0.02) this.randomUpgrade(scientist);
       }
 
       const { level, bonus } = this.base.researchScientistsMultiplierExperience;
@@ -303,7 +301,8 @@ export const useStoreResearch = defineStore('storeResearch', {
 
       let totalResearch = D0;
       for (const scientist of this.scientists) {
-        scientist.exp = scientist.exp.add(scientist.intellect.mul(expMultiplier));
+        const baseExp = scientist.intellect.add(1).mul(expMultiplier);
+        scientist.exp = scientist.exp.add(baseExp);
         const need = this.expToLevel(scientist.level);
         if (scientist.exp.gte(need)) {
           scientist.exp = scientist.exp.sub(need);

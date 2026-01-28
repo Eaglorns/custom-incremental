@@ -95,6 +95,8 @@ const VALID_DAMAGE_TYPES = [
   'saturation',
 ] as const;
 
+const DAMAGE_RUNE_IDS = RUNE_META.map((rune) => rune.id);
+
 const isValidDamageType = (type: string): type is DamageEffect['type'] => {
   return VALID_DAMAGE_TYPES.includes(type as DamageEffect['type']);
 };
@@ -258,44 +260,37 @@ export const useStoreMagic = defineStore('storeMagic', {
 
     processMage() {
       let totalPointsGain = D0;
-      const getRandomRune = () => {
-        const rand = Math.floor(Math.random() * RUNE_META.length);
-        return RUNE_META[rand];
-      };
+      if (this.mages.length === 0) return;
 
-      const calculateEffectAmount = (mage: Mage, runeId: string, runeLevel: Decimal) => {
-        let effectAmount = Decimal.max(D1, runeLevel);
-        if (mage.runeIds.includes(runeId) && mage.runeQuantities[runeId]) {
-          const runeQuantity = mage.runeQuantities[runeId] || D0;
-          const bonus = effectAmount.mul(runeQuantity).div(100);
-          effectAmount = effectAmount.plus(bonus);
-        }
-        return effectAmount;
-      };
+      const runeLevelById = new Map<string, Decimal>();
+      for (const rune of this.runes) {
+        runeLevelById.set(rune.id, rune.level);
+      }
 
-      const maybeAddRuneQuantity = (mage: Mage, runeId: string) => {
-        if (Math.random() > 0.01) return;
-        const current = mage.runeQuantities[runeId];
-        if (mage.runeIds.includes(runeId)) {
-          mage.runeQuantities[runeId] = (current ?? D0).plus(1);
-        } else {
-          mage.runeIds.push(runeId);
-          mage.runeQuantities[runeId] = D1;
-        }
-      };
+      const runeCount = DAMAGE_RUNE_IDS.length;
 
       for (const mage of this.mages) {
         totalPointsGain = totalPointsGain.plus(mage.level);
 
-        const randomRune = getRandomRune();
-        if (!randomRune || !isValidDamageType(randomRune.id)) continue;
+        const runeId = DAMAGE_RUNE_IDS[Math.floor(Math.random() * runeCount)];
+        if (!runeId || !isValidDamageType(runeId)) continue;
 
-        const runeState = this.runes.find((r) => r.id === randomRune.id);
-        const runeLevel = runeState ? runeState.level : D0;
-        const effectAmount = calculateEffectAmount(mage, randomRune.id, runeLevel);
+        const runeLevel = runeLevelById.get(runeId) ?? D0;
+        let effectAmount = Decimal.max(D1, runeLevel);
+        const quantity = mage.runeQuantities?.[runeId] ?? D0;
+        if (quantity.gt(0)) {
+          effectAmount = effectAmount.plus(effectAmount.mul(quantity).div(100));
+        }
 
-        this.applyDamageEffect(randomRune.id, effectAmount);
-        maybeAddRuneQuantity(mage, randomRune.id);
+        this.applyDamageEffect(runeId, effectAmount);
+
+        if (Math.random() <= 0.01) {
+          const current = mage.runeQuantities?.[runeId] ?? D0;
+          mage.runeQuantities[runeId] = current.plus(1);
+          if (current.lte(0)) {
+            mage.runeIds.push(runeId);
+          }
+        }
       }
     },
     processEffects() {

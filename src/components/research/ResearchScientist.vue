@@ -84,14 +84,20 @@ const formatNumber = storeData.formatNumber;
 const expToLevel = (...args: Parameters<typeof storeResearch.expToLevel>) =>
   storeResearch.expToLevel(...args);
 
-const base = new Decimal(1000);
-const baseSoftCap = new Decimal(2);
+const base = new Decimal(500);
+const baseSoftCap = new Decimal(1.4);
+const growth = new Decimal(1.08);
 
 const hireCost = computed(() => {
   const n = storeResearch.scientists.length;
   if (n === 0) return base;
-  const dynamicSoftCap = baseSoftCap.mul(new Decimal(1.2).pow(Math.floor(n / 3)));
-  return base.mul(dynamicSoftCap.pow(n * n * n));
+  const nDec = new Decimal(n);
+  const early = nDec.pow(3.5).mul(1.5);
+  const lateCount = Decimal.max(0, nDec.minus(4));
+  const late = lateCount.pow(4.5).mul(2.2);
+  const hardCount = Decimal.max(0, nDec.minus(7));
+  const hard = hardCount.pow(6).mul(6);
+  return base.mul(baseSoftCap.pow(nDec)).mul(growth.pow(early.plus(late).plus(hard)));
 });
 
 const scientistsView = computed(() => {
@@ -119,8 +125,8 @@ function hireScientist() {
       id,
       level: new Decimal(1),
       exp: new Decimal(0),
-      intellect: new Decimal(0),
-      efficiency: new Decimal(0),
+      intellect: new Decimal(1),
+      efficiency: new Decimal(1),
     });
   }
 }
