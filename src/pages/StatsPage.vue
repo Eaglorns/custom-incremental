@@ -1,11 +1,11 @@
 <template>
-  <q-page class="q-pa-md bg-dark text-white">
+  <q-page class="p-2 sm:p-4 bg-dark text-white text-xs sm:text-sm">
     <q-card flat bordered class="bg-grey-10 text-white stat-card">
       <q-card-section>
         <div v-for="stat in statsView" :key="stat.label" class="stat-row">
           <template v-if="stat.kind === 'multi'">
             <div class="stat-label">{{ stat.label }}</div>
-            <div class="row items-center">
+            <div class="row items-center q-gutter-xs">
               <q-input
                 v-for="(item, idx) in stat.items"
                 :label="item.label"

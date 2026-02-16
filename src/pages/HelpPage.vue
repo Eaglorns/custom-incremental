@@ -1,17 +1,17 @@
 <template>
-  <q-page class="q-pa-lg">
-    <q-card class="q-pa-xl q-mx-auto help-card">
-      <div class="text-h4 text-primary q-mb-lg">Справка</div>
+  <q-page class="p-2 sm:p-6 text-xs sm:text-sm">
+    <q-card class="p-3 sm:p-8 q-mx-auto help-card">
+      <div class="text-2xl sm:text-h4 text-primary q-mb-lg">Справка</div>
       <div class="help-section orange">
         <i :class="iconStyle + 'fa-bullseye'" color="primary" size="22px" class="q-mr-sm" />
-        <span class="text-h6 text-bold">Цель</span>
+        <span class="text-base sm:text-h6 text-bold">Цель</span>
         <div class="q-mt-sm">
           Найдите самое большое <span class="text-deep-orange-5 text-bold">ЧИСЛО</span>.
         </div>
       </div>
       <div class="help-section blue">
         <i :class="iconStyle + 'fa-store'" color="primary" size="22px" class="q-mr-sm" />
-        <span class="text-h6 text-bold">Магазин</span>
+        <span class="text-base sm:text-h6 text-bold">Магазин</span>
         <ul class="q-pl-lg q-mt-xs">
           <li><span class="text-bold">Процессоры</span> — увеличивают генерацию</li>
           <li><span class="text-bold">Жёсткие диски</span> — множитель генерации</li>
@@ -23,7 +23,7 @@
       </div>
       <div class="help-section green" v-if="storeData.stage >= storeData.stageScientist">
         <i :class="iconStyle + 'fa-flask-vial'" color="primary" size="22px" class="q-mr-sm" />
-        <span class="text-h6 text-bold">Исследования</span>
+        <span class="text-base sm:text-h6 text-bold">Исследования</span>
         <ul class="q-pl-lg q-mt-xs">
           <li><span class="text-bold">Учёные</span> — генерируют очки исследований</li>
           <li v-if="storeData.stage >= storeData.stageResearch">
@@ -37,7 +37,7 @@
       </div>
       <div class="help-section yellow" v-if="storeData.stage >= storeData.stageAutomatic">
         <i :class="iconStyle + 'fa-robot'" color="primary" size="22px" class="q-mr-sm" />
-        <span class="text-h6 text-bold">Автоматизация</span>
+        <span class="text-base sm:text-h6 text-bold">Автоматизация</span>
         <ul class="q-pl-lg q-mt-xs">
           <li><span class="text-bold">Помощники</span> — автоматически увеличивают ресурсы</li>
         </ul>
@@ -45,7 +45,7 @@
       </div>
       <div class="help-section red" v-if="storeData.stage >= storeData.stagePrestige">
         <i :class="iconStyle + 'fa-award'" color="primary" size="22px" class="q-mr-sm" />
-        <span class="text-h6 text-bold">Престиж</span>
+        <span class="text-base sm:text-h6 text-bold">Престиж</span>
         <div class="q-mt-xs">
           Сбросьте прогресс ради очков престижа для особых улучшений. Они ускоряют генерацию и
           открывают новые возможности.
@@ -53,7 +53,7 @@
       </div>
       <div class="help-section purple" v-if="storeData.stage >= storeData.stageEternity">
         <i :class="iconStyle + 'fa-hat-wizard'" color="primary" size="22px" class="q-mr-sm" />
-        <span class="text-h6 text-bold">Магия</span>
+        <span class="text-base sm:text-h6 text-bold">Магия</span>
         <ul class="q-pl-lg q-mt-xs">
           <li>
             <span class="text-bold">Маги</span> — сражаются с монстрами и получают опыт. Их сила
@@ -88,7 +88,7 @@
       </div>
       <div class="help-section red">
         <i :class="iconStyle + 'fa-trophy-star'" color="primary" size="22px" class="q-mr-sm" />
-        <span class="text-h6 text-bold">Достижения</span>
+        <span class="text-base sm:text-h6 text-bold">Достижения</span>
         <div class="q-mt-xs">
           Дают бонус к генерации <span class="text-deep-orange-5 text-bold">ЧИСЛА</span>.
           Сохраняются при сбросах.

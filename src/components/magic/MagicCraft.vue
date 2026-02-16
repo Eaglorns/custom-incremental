@@ -1,5 +1,5 @@
 <template>
-  <div class="magic-craft">
+  <div class="magic-craft text-xs sm:text-sm">
     <div v-if="!storeMagic.selectedRune" class="no-selection">
       <div class="no-selection-icon">
         <i :class="iconStyle + 'fa-hand-pointer'"></i>

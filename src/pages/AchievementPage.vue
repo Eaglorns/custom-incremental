@@ -1,17 +1,14 @@
 <template>
-  <q-page class="q-pa-lg">
-    <div class="q-mb-md text-h6 text-bold row items-center">
+  <q-page class="p-2 sm:p-6 text-xs sm:text-sm">
+    <div class="q-mb-md text-base sm:text-h6 text-bold row items-center">
       <i :class="iconStyle + 'fa-sparkles'" color="amber" size="28px" class="q-mr-sm" />
       Выполнено: {{ formatNumber(totalAchievements) }}
-      <q-chip color="primary" text-color="white" class="q-ml-md">
+      <q-chip color="primary" text-color="white" class="ml-2 sm:ml-4 text-xs sm:text-sm">
         <i :class="iconStyle + 'fa-arrow-trend-up'" left size="18px" />
         Бонус: x{{ achievementBonus.toFixed(2) }}
       </q-chip>
     </div>
-    <div
-      class="q-gutter-md"
-      style="min-width: 100%; display: flex; flex-wrap: wrap; align-items: center"
-    >
+    <div class="q-gutter-md flex flex-wrap items-center w-full">
       <q-card
         v-for="av in achievementViews"
         :key="av.key"
@@ -27,7 +24,6 @@
           anchor="center middle"
           self="center middle"
           :offset="[0, 12]"
-          style="max-width: 220px; min-width: 160px; padding: 10px; text-align: left"
         >
           <div class="text-subtitle2 text-bold q-mb-xs">{{ av.title }}</div>
           <div class="text-caption q-mb-xs">{{ av.hint }}</div>

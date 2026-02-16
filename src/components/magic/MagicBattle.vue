@@ -1,5 +1,5 @@
 <template>
-  <div class="battle-panel">
+  <div class="battle-panel text-xs sm:text-sm">
     <div class="battle-area">
       <div class="battle-grid">
         <div class="monster-card">
@@ -211,12 +211,12 @@ const displayedRewards = computed(() => {
           }
 
           .monster-rewards {
-            color: #f59e0b;
+            color: #ffe4b5;
             font-size: 13px;
             font-weight: 600;
             margin-bottom: 4px;
             padding: 2px 6px;
-            background: linear-gradient(145deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+            background: linear-gradient(145deg, rgba(99, 58, 6, 0.92), rgba(58, 33, 4, 0.92));
             border: 1px solid rgba(245, 158, 11, 0.3);
             border-radius: 6px;
             display: inline-flex;

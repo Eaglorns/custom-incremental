@@ -1,5 +1,5 @@
 <template>
-  <div class="magic-mana">
+  <div class="magic-mana text-xs sm:text-sm">
     <q-card flat bordered class="mana-card">
       <div class="points-display q-pa-lg">
         <div class="points-value">

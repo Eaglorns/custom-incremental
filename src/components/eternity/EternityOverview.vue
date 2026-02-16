@@ -1,15 +1,17 @@
 <template>
-  <q-page class="q-pa-md eternity-overview-page">
-    <q-card class="q-pa-lg q-mx-auto overview-card game-card">
+  <q-page class="p-2 sm:p-4 eternity-overview-page text-xs sm:text-sm">
+    <q-card class="p-2 sm:p-6 q-mx-auto overview-card game-card">
       <div class="overview-body q-mt-md">
         <div class="stat big stat-rune">
           <div class="label">Значение вечности</div>
-          <div class="value text-h3 shimmer">{{ formatNumber(storeEternity.points) }}</div>
+          <div class="value text-2xl sm:text-h3 shimmer">
+            {{ formatNumber(storeEternity.points) }}
+          </div>
         </div>
 
         <div class="stat big stat-rune">
           <div class="label">Количество сбросов</div>
-          <div class="value text-h6">{{ formatNumber(storeEternity.countReset) }}</div>
+          <div class="value text-base sm:text-h6">{{ formatNumber(storeEternity.countReset) }}</div>
         </div>
       </div>
     </q-card>

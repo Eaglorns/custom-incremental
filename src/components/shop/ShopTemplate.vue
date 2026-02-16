@@ -2,12 +2,12 @@
   <q-card
     flat
     bordered
-    class="q-pa-lg"
+    class="p-2 sm:p-6 text-xs sm:text-sm"
     :style="{ background: 'var(--color-card-bg)', borderColor: 'var(--color-card-border)' }"
   >
-    <div class="row items-center q-mb-lg">
+    <div class="row items-center mb-2 sm:mb-6">
       <i :class="iconStyle + props.icon" class="text-primary q-mr-md" size="32px" />
-      <span class="text-h5 text-weight-bold text-primary">{{ props.label }}</span>
+      <span class="text-lg sm:text-h5 text-weight-bold text-primary">{{ props.label }}</span>
     </div>
     <q-form>
       <div class="row q-col-gutter-lg">
@@ -19,7 +19,7 @@
             :disable="true"
             dense
             label-class="text-weight-bold text-body1 text-primary"
-            input-class="text-h6 text-blue-4"
+            input-class="text-base sm:text-h6 text-blue-4"
             color="primary"
             outlined
           >
@@ -36,7 +36,7 @@
             :disable="true"
             dense
             label-class="text-weight-bold text-body1 text-primary"
-            input-class="text-h6 text-blue-4"
+            input-class="text-base sm:text-h6 text-blue-4"
             color="primary"
             outlined
           >
@@ -53,7 +53,7 @@
             :disable="true"
             dense
             label-class="text-weight-bold text-body1 text-primary"
-            input-class="text-h6 text-blue-4"
+            input-class="text-base sm:text-h6 text-blue-4"
             color="primary"
             outlined
           >
@@ -70,7 +70,7 @@
             :disable="true"
             dense
             label-class="text-weight-bold text-body1 text-primary"
-            input-class="text-h6 text-blue-4"
+            input-class="text-base sm:text-h6 text-blue-4"
             color="primary"
             outlined
           >
@@ -100,7 +100,7 @@
             color="primary"
             outline
             :label="labelBuyValue"
-            class="full-width"
+            class="full-width text-xs sm:text-sm"
             @click="onBuyValueCustom(props.name)"
             size="lg"
             :disable="!canBuyValue"
@@ -127,7 +127,7 @@
             color="primary"
             outline
             :label="labelBuyMultiply"
-            class="full-width"
+            class="full-width text-xs sm:text-sm"
             @click="onBuyMultiplyCustom(props.name)"
             size="lg"
             :disable="!canBuyMultiply"

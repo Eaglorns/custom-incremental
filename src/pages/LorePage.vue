@@ -1,11 +1,11 @@
 <template>
-  <q-page class="q-pa-lg flex flex-center">
+  <q-page class="p-2 sm:p-6 flex flex-center text-xs sm:text-sm">
     <div class="lore-container">
       <div v-for="(key, i) in STAGE_KEYS" :key="key" class="q-mb-md">
         <div v-if="storeData.stage >= i">
           <q-card class="lore-card q-pa-sm">
             <q-card-section>
-              <div class="text-h6">{{ (lore as any)[key]?.title || key }}</div>
+              <div class="text-base sm:text-h6">{{ (lore as any)[key]?.title || key }}</div>
               <div class="q-mt-sm">{{ (lore as any)[key]?.text || 'Нет описания.' }}</div>
             </q-card-section>
           </q-card>

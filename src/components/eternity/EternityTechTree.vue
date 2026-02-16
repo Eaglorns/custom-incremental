@@ -1,5 +1,5 @@
 <template>
-  <div class="eternity-column">
+  <div class="eternity-column text-xs sm:text-sm">
     <div class="grid">
       <button
         v-for="item in props.items"

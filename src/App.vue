@@ -1,5 +1,7 @@
 <template>
-  <router-view />
+  <div class="min-h-screen text-xs sm:text-sm">
+    <router-view />
+  </div>
 </template>
 
 <script setup lang="ts">

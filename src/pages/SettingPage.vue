@@ -1,8 +1,8 @@
 <template>
-  <q-page class="q-pa-lg bg-dark text-white">
+  <q-page class="p-2 sm:p-6 bg-dark text-white text-xs sm:text-sm">
     <div class="settings-container">
       <div class="q-gutter-y-lg">
-        <div class="text-h4 text-weight-bold text-center">
+        <div class="text-2xl sm:text-h4 text-weight-bold text-center">
           <i :class="iconStyle + 'fa-gear'" size="32px" color="primary" class="q-mr-sm" />
           Настройки
         </div>
@@ -16,14 +16,17 @@
                 class="q-mr-md"
               />
               <div
-                class="text-subtitle1 text-weight-medium"
+                class="text-sm sm:text-subtitle1 text-weight-medium"
                 :class="{ 'text-grey-6': !audioEnabled }"
               >
                 Звук
               </div>
               <q-space />
               <div class="row items-center q-gutter-md">
-                <div class="text-h6 text-weight-bold" :class="{ 'text-grey-6': !audioEnabled }">
+                <div
+                  class="text-base sm:text-h6 text-weight-bold"
+                  :class="{ 'text-grey-6': !audioEnabled }"
+                >
                   {{ volumePercent }}%
                 </div>
                 <q-toggle
@@ -62,7 +65,7 @@
         </q-card>
         <q-card class="bg-grey-9 text-white" flat bordered>
           <q-card-section>
-            <div class="text-h6 text-weight-bold q-mb-md">
+            <div class="text-base sm:text-h6 text-weight-bold q-mb-md">
               <i :class="iconStyle + 'fa-icons'" size="20px" color="secondary" class="q-mr-sm" />
               Стиль иконок
             </div>
@@ -97,7 +100,7 @@
         </q-card>
         <q-card class="bg-grey-9 text-white" flat bordered>
           <q-card-section>
-            <div class="text-h6 text-weight-bold q-mb-md">
+            <div class="text-base sm:text-h6 text-weight-bold q-mb-md">
               <i :class="iconStyle + 'fa-sliders'" size="20px" color="secondary" class="q-mr-sm" />
               Общие настройки
             </div>

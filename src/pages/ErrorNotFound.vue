@@ -1,9 +1,11 @@
 <template>
-  <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
+  <div
+    class="fullscreen bg-blue text-white text-center p-3 sm:p-4 flex flex-center text-xs sm:text-sm"
+  >
     <div>
-      <div style="font-size: 30vh">404</div>
+      <div class="text-[20vh] sm:text-[30vh] leading-none">404</div>
 
-      <div class="text-h2" style="opacity: 0.4">Oops. Nothing here...</div>
+      <div class="text-2xl sm:text-h2 opacity-40">Oops. Nothing here...</div>
 
       <q-btn
         class="q-mt-xl"

@@ -1,10 +1,9 @@
 <template>
-  <div class="row q-gutter-md">
+  <div class="row gap-2 sm:gap-4 text-xs sm:text-sm">
     <q-card
       v-for="sv in scientistsView"
       :key="sv.id"
-      class="q-pa-md flex column items-center bg-blue-grey-9 text-white justify-between"
-      style="width: 230px; height: 220px"
+      class="p-2 sm:p-4 flex column items-center bg-blue-grey-9 text-white justify-between w-full max-w-50 sm:max-w-57.5 min-h-42 sm:min-h-55"
       flat
       bordered
     >
@@ -34,11 +33,8 @@
       </div>
     </q-card>
     <q-card
-      class="q-pa-md flex column items-center bg-blue-grey-9 text-white justify-between q-hoverable"
+      class="p-2 sm:p-4 flex column items-center bg-blue-grey-9 text-white justify-between q-hoverable w-full max-w-50 sm:max-w-57.5 min-h-42 sm:min-h-55"
       style="
-        width: 200px;
-        min-height: 200px;
-        height: 220px;
         display: flex;
         flex-direction: column;
         overflow: hidden;

@@ -1,5 +1,5 @@
 <template>
-  <div class="magic-essence">
+  <div class="magic-essence text-xs sm:text-sm">
     <div class="essences-grid">
       <div
         v-for="essence in essencesForView"

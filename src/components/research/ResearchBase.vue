@@ -1,6 +1,6 @@
 <template>
   <div
-    class="q-gutter-md row wrap items-stretch q-pa-md research-container"
+    class="q-gutter-md row wrap items-stretch q-pa-md research-container text-xs sm:text-sm"
     style="overflow-y: auto"
   >
     <q-card

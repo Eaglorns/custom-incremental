@@ -1,5 +1,7 @@
 <template>
-  <div class="prestige-card-modern flex flex-center column items-center q-pa-xl">
+  <div
+    class="prestige-card-modern flex flex-center column items-center p-4 sm:p-8 text-xs sm:text-sm"
+  >
     <div class="prestige-header-modern flex items-center q-mb-lg">
       <i
         :class="iconStyle + 'fa-arrow-up-right-dots'"

@@ -1,5 +1,5 @@
 <template>
-  <div class="magic-mages">
+  <div class="magic-mages text-xs sm:text-sm">
     <div class="mages-layout">
       <div class="mage-panel-placeholder">
         <div class="hire-section">
@@ -25,7 +25,7 @@
             :virtual-scroll-item-size="itemSize"
             :virtual-scroll-slice-size="sliceSize"
             :virtual-scroll-slice-ratio="sliceRatio"
-            style="height: 60vh; min-height: 240px"
+            style="height: 52vh; min-height: 220px"
             v-slot="{ item: mv }"
           >
             <div class="mage-item" :key="mv.id">

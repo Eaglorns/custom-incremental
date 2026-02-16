@@ -1,5 +1,5 @@
 <template>
-  <div class="magic-rune">
+  <div class="magic-rune text-xs sm:text-sm">
     <div class="runes-grid">
       <div
         v-for="rune in runesWithMeta"
@@ -55,7 +55,7 @@ const craftProgress = ref(0);
 const craftTimer = ref<number | null>(null);
 const craftDuration = 500;
 const holdDelay = 100;
-const holdTimeout = ref<number | null>(null);
+const holdTimeout = ref<NodeJS.Timeout | null>(null);
 const isMouseDown = ref(false);
 const currentCraftingRune = ref<Rune | null>(null);
 const isCompleting = ref(false);
@@ -96,7 +96,7 @@ const startCrafting = (rune: Rune) => {
   if (holdTimeout.value) {
     clearTimeout(holdTimeout.value);
   }
-  holdTimeout.value = window.setTimeout(() => {
+  holdTimeout.value = globalThis.setTimeout(() => {
     if (!isMouseDown.value || currentCraftingRune.value?.id !== rune.id) return;
     startCraftingCycle(rune);
   }, holdDelay);

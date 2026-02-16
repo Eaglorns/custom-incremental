@@ -1,5 +1,5 @@
 <template>
-  <q-card flat class="q-pa-lg">
+  <q-card flat class="p-2 sm:p-6 text-xs sm:text-sm">
     <div class="row q-col-gutter-lg q-gutter-y-md">
       <div
         v-for="uv in helpersView"

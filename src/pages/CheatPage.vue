@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md">
+  <div class="p-2 sm:p-4 text-xs sm:text-sm">
     <section v-for="item in targets" :key="item.key" class="cheat-section cheat-card q-mb-md">
       <div class="q-gutter-y-sm">
         <div class="row items-center cheat-header">

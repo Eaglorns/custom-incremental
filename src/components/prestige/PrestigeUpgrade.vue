@@ -1,5 +1,5 @@
 <template>
-  <q-card flat class="q-pa-md">
+  <q-card flat class="p-2 sm:p-4 text-xs sm:text-sm">
     <div class="row q-col-gutter-sm q-gutter-y-sm">
       <div
         v-for="uv in upgradesView"
@@ -9,12 +9,11 @@
         <q-card
           flat
           bordered
-          class="q-pa-sm q-mb-sm prestige-card-dark"
-          style="min-width: 220px; max-width: 320px"
+          class="q-pa-sm q-mb-sm prestige-card-dark w-full min-w-0 sm:min-w-55 max-w-80"
         >
           <div class="row items-center q-mb-sm no-wrap">
             <i :class="iconStyle + uv.icon" size="28px" color="accent" class="q-mr-sm" />
-            <div class="text-h6 text-bold text-white ellipsis" style="max-width: 200px">
+            <div class="text-base sm:text-h6 text-bold text-white ellipsis max-w-40 sm:max-w-50">
               <span :title="uv.title">
                 {{ uv.title }}
                 <q-tooltip class="prestige-tooltip-large">{{ uv.title }}</q-tooltip>

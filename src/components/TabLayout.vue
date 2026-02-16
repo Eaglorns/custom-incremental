@@ -1,5 +1,5 @@
 <template>
-  <div class="tab-layout">
+  <div class="tab-layout text-xs sm:text-sm">
     <template v-if="isMobile">
       <q-tabs
         :model-value="activeTab"

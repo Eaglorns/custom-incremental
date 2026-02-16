@@ -1,12 +1,12 @@
 <template>
-  <q-page class="main-layout">
+  <q-page class="main-layout text-xs sm:text-sm">
     <div class="banner-row">
       <div
         class="flex items-center"
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
         <i :class="iconStyle + 'fa-gauge-high'" size="24px" color="primary" />
-        <span ref="epicRef" class="text-weight-bold text-h5">
+        <span ref="epicRef" class="text-weight-bold text-base sm:text-h5">
           {{ formatNumber(storeData.epicNumber) }}
         </span>
       </div>
@@ -16,7 +16,7 @@
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
         <i :class="iconStyle + 'fa-coins'" size="22px" color="secondary" />
-        <span ref="shopRef" class="text-weight-bold text-h5">
+        <span ref="shopRef" class="text-weight-bold text-base sm:text-h5">
           {{ formatNumber(storeShop.points) }}
         </span>
       </div>
@@ -26,7 +26,7 @@
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
         <i :class="iconStyle + 'fa-arrow-up-right-dots'" size="22px" color="secondary" />
-        <span ref="prestigeRef" class="text-weight-bold text-h5">
+        <span ref="prestigeRef" class="text-weight-bold text-base sm:text-h5">
           {{ formatNumber(storePrestige.points) }}
         </span>
       </div>
@@ -36,7 +36,7 @@
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
         <i :class="iconStyle + 'fa-flask'" size="22px" color="secondary" />
-        <span ref="researchRef" class="text-weight-bold text-h5">
+        <span ref="researchRef" class="text-weight-bold text-base sm:text-h5">
           {{ formatNumber(storeResearch.points) }}
         </span>
       </div>
@@ -46,7 +46,7 @@
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
         <i :class="iconStyle + 'fa-droplet'" size="22px" color="secondary" />
-        <span ref="magicRef" class="text-weight-bold text-h5">
+        <span ref="magicRef" class="text-weight-bold text-base sm:text-h5">
           {{ formatNumber(storeMagic.points) }}
         </span>
       </div>
@@ -56,7 +56,7 @@
         style="background: rgba(255, 255, 255, 0.04); border-radius: 10px"
       >
         <i :class="iconStyle + 'fa-hourglass-end'" size="22px" color="secondary" />
-        <span ref="eternityRef" class="text-weight-bold text-h5">
+        <span ref="eternityRef" class="text-weight-bold text-base sm:text-h5">
           {{ formatNumber(storeEternity.points) }}
         </span>
       </div>
